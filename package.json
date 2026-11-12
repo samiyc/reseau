@@ -1,0 +1,32 @@
+{
+  "name": "reseau",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Un réseau électrique en simulation : les centrales, les lignes et leurs lois, la météo par graine, et les décisions qui gardent la lumière allumée au moindre coût.",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=4",
+    "test:coverage": "node --test --test-concurrency=4 --experimental-test-coverage --test-coverage-include=src/** --test-coverage-lines=93 --test-coverage-branches=90 --test-coverage-functions=90",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "types": "tsc -p .",
+    "check": "npm run lint && npm run types && npm test",
+    "prepare": "git config core.hooksPath .githooks"
+  },
+  "author": "Sami",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "mcts-commun": "file:../mcts-commun"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "@types/node": "^24.19.2",
+    "eslint": "^9.39.5",
+    "eslint-plugin-sonarjs": "^4.2.2",
+    "globals": "^17.13.0",
+    "typescript": "^5.9.3"
+  }
+}
