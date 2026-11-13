@@ -6,7 +6,9 @@ puis les pannes, une ligne qui tombe et la charge qui se reporte sur les autres,
 
 Client de [`mcts-commun`](../mcts-commun/README.md). La recherche sera choisie par la mesure, contre l'ordre de préséance économique avec une marge de réserve, et la règle N-1.
 
-**État** : le dépôt existe, sans modèle. Le cadrage vient d'abord (`docs/modele.md`, `docs/recherche/`).
+**État** : la recherche du cadrage est écrite (`docs/recherche/`, 14/11/2026) : la physique, les bancs, les méthodes
+publiées, les pistes classées et les questions pour Sami. Pas de code avant ses réponses ; le modèle
+(`docs/modele.md`) suivra.
 
 ## Les commandes
 
