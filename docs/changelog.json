@@ -7,7 +7,7 @@
       "version": "0.3.0",
       "title": "La répartition au moindre coût, ses prix, et le prix de la sécurité",
       "date": "14/11/2026",
-      "commits": ["243823e"],
+      "commits": ["243823e", "f294b77"],
       "items": [
         "La répartition au moindre coût (le DC-OPF), par le solveur de la bibliothèque commune : elle retrouve les six coûts publiés par PGLib-OPF au dernier chiffre près, une fois la convention de PowerModels lue dans son code (sans les rapports de transformation).",
         "Les prix nodaux : ce que coûterait un MW de plus consommé à chaque nœud. Ils diffèrent quand une ligne est à sa limite, et sont vérifiés par différences finies.",
