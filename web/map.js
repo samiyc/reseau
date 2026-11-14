@@ -69,6 +69,7 @@ export function paintMap(map, view) {
     const branch = view.branches[k];
     shape.group.classList.toggle("open", branch.open);
     shape.group.classList.toggle("overloaded", branch.overloaded);
+    shape.group.classList.toggle("tripping", branch.tripping);
     shape.line.setAttribute("stroke", branch.color);
     shape.line.setAttribute("stroke-width", String(branch.width));
     shape.arrow.setAttribute("fill", branch.color);

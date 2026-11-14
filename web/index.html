@@ -11,12 +11,20 @@
     <header class="masthead">
       <p class="links"><a href="changelog.html">Journal des versions</a> · <span id="version"></span></p>
       <h1>Réseau</h1>
-      <p>Le réseau de test IEEE à 14 nœuds. Le courant n'y prend pas le chemin qu'on choisit : il se répartit entre toutes les lignes selon les lois de Kirchhoff. Coupez une ligne : son flux se reporte sur les autres.</p>
+      <p>Le réseau de test IEEE à 14 nœuds. Le courant n'y prend pas le chemin qu'on choisit : il se répartit entre toutes les lignes selon les lois de Kirchhoff. Coupez une ligne : son flux se reporte sur les autres. Lancez la cascade : les lignes en surcharge tombent, et leur flux va ailleurs.</p>
     </header>
     <main>
       <section class="controls">
         <label>Consommation<input id="load" type="range" min="0.5" max="1.6" step="0.05" value="1" /><span id="load-label"></span></label>
         <button type="button" id="reset">Tout remettre en service</button>
+        <button type="button" id="run">Lancer la cascade</button>
+      </section>
+      <section class="controls player" id="player" hidden>
+        <button type="button" id="play">Rejouer</button>
+        <input type="range" id="frame" min="0" max="1" step="1" value="0" aria-label="Pas de la cascade" />
+        <span id="frame-label"></span>
+        <button type="button" class="quiet" id="stop">Revenir au réseau</button>
+        <p class="cascade-text" id="cascade-text" aria-live="polite"></p>
       </section>
       <div class="layout">
         <section class="pane">
@@ -25,7 +33,8 @@
             <span>Charge de la ligne</span>
             <span class="ramp-scale"><span id="legend-ramp" class="ramp"></span><span class="ticks"><span>0 %</span><span>50 %</span><span>100 %</span></span></span>
             <span class="key"><span class="swatch critical"></span>⚠ surcharge, au-delà de 100 %</span>
-            <span class="key"><span class="swatch open"></span>ouverte</span>
+            <span class="key"><span class="swatch open"></span>ouverte ou tombée</span>
+            <span class="key"><span class="swatch tripping"></span>⚡ tombe à ce pas</span>
             <span class="key">épaisseur : le flux ; flèche : son sens</span>
           </div>
         </section>
@@ -44,10 +53,12 @@
       </div>
       <p class="hint">
         <strong>Comment lire.</strong> Le calcul est le modèle DC : sans pertes, les tensions à 1, seules comptent les
-        réactances des lignes. La centrale du nœud 2 produit ce que dit le fichier (29,5 MW) ; celle du nœud 1, la
-        référence, fournit tout le reste. Il n'y a pas encore de répartition : au-delà
-        de sa Pmax, la page le signale. Une partie du réseau coupée du reste devient un îlot ; sans centrale, sa
-        consommation est perdue. Les limites des lignes sont celles de PGLib. Source : <span id="source"></span>.
+        réactances des lignes. Les centrales se partagent la consommation au prorata de leur puissance maximale (une
+        hypothèse, en attendant la répartition au moindre coût) ; au-delà de leur capacité, le reste est délesté. Une partie
+        du réseau coupée du reste devient un îlot ; sans centrale, sa consommation est perdue. <strong>La cascade</strong>
+        suit la règle de Grid2Op, la plateforme de RTE : une ligne à plus de deux fois sa limite tombe aussitôt ; au-delà de
+        sa limite, elle tombe à son troisième pas de surcharge d'affilée (un pas : 5 minutes chez Grid2Op). Les limites des
+        lignes sont celles de PGLib. Source : <span id="source"></span>.
       </p>
     </main>
     <div id="tip" class="tip" role="tooltip" hidden></div>

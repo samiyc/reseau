@@ -102,7 +102,7 @@ Network*.
   et une seule de ligne par pas ; une action illégale devient « ne rien faire ».
 - **Le temps** : un pas de **5 minutes** ; un épisode du 14 nœuds dure 8 064 pas, soit 28 jours.
 - **Les surcharges** : une ligne au-delà de sa limite plus de 2 pas consécutifs est coupée, aussitôt au-delà d'un
-  seuil dur, et reconnectable après 10 pas ([physique.md](physique.md) § 5).
+  seuil dur de 2 fois la limite (lu dans son code), et reconnectable après 10 pas ([physique.md](physique.md) § 5).
 - **Les environnements** (tableau de la doc, à jour en avril 2021, donc peut-être vieilli) :
 
 | Environnement | Postes | Lignes | Centrales | Charges | Particularités |

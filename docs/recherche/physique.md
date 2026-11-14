@@ -91,10 +91,14 @@ distribution du nombre de composants perdus « a une région en loi de puissance
 probabilité notable de panne totale au-delà. **C'est l'expérience à reproduire** (P3) : la taille des coupures selon
 la charge du réseau, et le coude.
 
-**La règle de Grid2Op** (paramètres par défaut, lus le 13/11) : une ligne au-dessus de sa limite thermique plus de
-**2 pas** (de 5 minutes) consécutifs est déconnectée ; au-dessus d'un seuil dur (l'exemple de la doc prend 2 fois la
-limite, la valeur par défaut n'est pas dite) elle l'est aussitôt ; elle ne peut être reconnectée qu'après 10 pas.
-C'est une règle déterministe, simple à reprendre.
+**La règle de Grid2Op**, lue dans son code le 14/11 (version 1.12.6 : `Parameters.py`, `Backend.next_grid_state`,
+`BaseEnv`) : `HARD_OVERFLOW_THRESHOLD = 2.0`, `SOFT_OVERFLOW_THRESHOLD = 1.0`, `NB_TIMESTEP_OVERFLOW_ALLOWED = 2`,
+`NB_TIMESTEP_RECONNECTION = 10`. Dans un pas (5 minutes), une ligne au-delà de 2 fois sa limite tombe aussitôt et les
+flux sont recalculés, en boucle, jusqu'à ce que plus rien ne tombe ; une ligne au-delà de sa limite a son compteur
+monté d'un cran par pas et tombe quand il dépasse 2, donc à son 3e pas de surcharge d'affilée ; le compteur revient à
+0 dès qu'elle repasse sous sa limite. Une ligne tombée ne se reconnecte qu'après 10 pas. C'est une règle
+déterministe, reprise telle quelle au J2 (`src/cascade/cascade.js`). Grid2Op l'applique à des courants (en A), nous
+à des flux actifs (en MW).
 
 ## 6. Trois grandes pannes, et une qui n'est pas une cascade thermique
 

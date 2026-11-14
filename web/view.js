@@ -16,32 +16,43 @@ const LABELLED = 0.7;
 
 export const branchName = (grid, /** @type {number} */ k) => `${grid.busId[grid.from[k]]}-${grid.busId[grid.to[k]]}`;
 
-function branchLabel(/** @type {boolean} */ open, /** @type {number} */ loading) {
-  if (open) return "ouverte";
+/** How a branch out of service is named: opened by hand, or tripped by the cascade (this step, or before). */
+const DOWN = { hand: "ouverte", now: "⚡ tombe", before: "tombée" };
+
+function branchLabel(/** @type {string} */ down, /** @type {number} */ loading) {
+  if (down) return DOWN[down];
   if (loading > 1) return `⚠ ${pct(loading)}`;
   return loading >= LABELLED ? pct(loading) : "";
 }
 
-function branchView(grid, state, /** @type {Uint8Array} */ inService, /** @type {number} */ k) {
+function downOf(/** @type {Uint8Array} */ inService, /** @type {number} */ k, context) {
+  if (inService[k]) return "";
+  if (!context.tripped) return "hand";
+  if (context.tripped.has(k)) return "now";
+  return context.start[k] ? "before" : "hand";
+}
+
+function branchView(state, /** @type {Uint8Array} */ inService, /** @type {number} */ k, context) {
   const flow = state.flows.flow[k];
   const loading = state.loading[k];
   const open = !inService[k];
+  const down = downOf(inService, k, context);
   return {
     open,
+    tripping: down === "now",
     overloaded: loading > 1,
     color: loadingColor(loading),
     width: 3 + 11 * Math.min(1, Math.abs(flow) / 250),
     arrow: !open && Math.abs(flow) > 0.05,
     reversed: flow < 0,
-    label: branchLabel(open, loading),
+    label: branchLabel(down, loading),
   };
 }
 
-/** What the generators at each bus produce: the file's Pg, the reference bus's balance on top. */
+/** What the generators at each bus produce in a state. */
 export function productionByBus(grid, state) {
   const production = new Float64Array(grid.busCount);
-  for (let g = 0; g < grid.genCount; g += 1) if (grid.genOn[g]) production[grid.genBus[g]] += grid.pg[g];
-  state.islands.forEach((island) => (production[island.bus] = island.production));
+  for (let g = 0; g < grid.genCount; g += 1) production[grid.genBus[g]] += state.generation[g];
   return production;
 }
 
@@ -51,18 +62,20 @@ function busViews(grid, state) {
   const islandOf = state.flows.islands.of;
   return Array.from({ length: grid.busCount }, (_, i) => {
     const island = state.islands[islandOf[i]];
-    const stranded = island.short && island.capacity === 0;
     return {
       production: capacity[i] > 0 ? `G ${mw(production[i])}` : "",
-      short: (island.short && island.bus === i) || stranded,
+      short: island.shed > 0.05,
     };
   });
 }
 
-/** The view of a state: a branch view per branch, a bus view per bus. */
-export function buildView(grid, state, /** @type {Uint8Array} */ inService) {
+/**
+ * The view of a state: a branch view per branch, a bus view per bus. In a cascade, `context.tripped` holds the
+ * branches tripping at this step and `context.start` the branches in service when it began, to tell them apart.
+ */
+export function buildView(grid, state, /** @type {Uint8Array} */ inService, context = {}) {
   return {
-    branches: Array.from({ length: grid.branchCount }, (_, k) => branchView(grid, state, inService, k)),
+    branches: Array.from({ length: grid.branchCount }, (_, k) => branchView(state, inService, k, context)),
     buses: busViews(grid, state),
   };
 }

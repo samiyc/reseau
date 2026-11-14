@@ -23,6 +23,9 @@
 .pane h2 { font-size: 1rem; margin: 6px 0 8px; }
 .controls label { display: flex; align-items: center; gap: 8px; }
 .controls input[type="range"] { width: 220px; accent-color: var(--accent); }
+.player { align-items: center; flex-wrap: wrap; }
+.player input[type="range"] { flex: 1; min-width: 180px; accent-color: var(--accent); }
+.cascade-text { flex-basis: 100%; margin: 4px 0 0; font-variant-numeric: tabular-nums; }
 #load-label { min-width: 3.5em; font-variant-numeric: tabular-nums; }
 
 #map { display: block; width: 100%; height: auto; aspect-ratio: 1; }
@@ -32,6 +35,8 @@
 .branch:hover .wire, .branch:focus-visible .wire { filter: drop-shadow(0 0 3px var(--ink-2)); }
 .branch:focus { outline: none; }
 .branch.open .wire { stroke: var(--ink-2); stroke-width: 3; stroke-dasharray: 10 10; }
+.branch.tripping .wire { stroke: var(--critical); stroke-width: 7; stroke-dasharray: 6 9; }
+.branch.tripping .branch-label { fill: var(--critical); font-weight: 700; }
 .arrow.hidden { display: none; }
 .branch-label { font-size: 22px; fill: var(--ink); text-anchor: middle; dominant-baseline: middle; paint-order: stroke; stroke: var(--panel); stroke-width: 6px; }
 .branch.overloaded .branch-label { font-weight: 700; }
@@ -47,6 +52,7 @@
 .key { display: inline-flex; align-items: center; gap: 6px; }
 .swatch { display: inline-block; width: 26px; height: 4px; border-radius: 2px; }
 .swatch.critical { background: var(--critical); }
+.swatch.tripping { background: repeating-linear-gradient(to right, var(--critical) 0 5px, transparent 5px 9px); height: 6px; }
 .swatch.open { background: repeating-linear-gradient(to right, var(--ink-2) 0 6px, transparent 6px 12px); }
 
 .measures { display: grid; grid-template-columns: auto 1fr; gap: 3px 12px; margin: 0 0 12px; font-variant-numeric: tabular-nums; }
@@ -59,3 +65,4 @@
 .lines tr.overloaded td { font-weight: 700; }
 .lines tr.open td { color: var(--ink-2); font-style: italic; }
 .tip { position: fixed; z-index: 10; max-width: 320px; background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; padding: 6px 9px; font-size: 0.85rem; box-shadow: var(--shadow); pointer-events: none; }
+.player[hidden] { display: none; }

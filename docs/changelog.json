@@ -4,10 +4,27 @@
   "intro": "Un réseau électrique en simulation : des lignes où le courant suit les lois de Kirchhoff, des centrales, une consommation, puis les pannes et leurs cascades. Un modèle pour comprendre, pas pour exploiter un vrai réseau.",
   "versions": [
     {
+      "version": "0.2.0",
+      "title": "La cascade, et la charge critique",
+      "date": "14/11/2026",
+      "commits": [],
+      "items": [
+        "La cascade, avec la règle de Grid2Op lue dans son code : une ligne à plus de deux fois sa limite tombe aussitôt, une ligne en surcharge tombe à son troisième pas d'affilée, et les flux se recalculent après chaque chute.",
+        "Une répartition provisoire : les centrales se partagent la consommation au prorata de leur puissance maximale ; une partie du réseau sans assez de production déleste le reste. Les productions des fichiers PGLib n'étaient pas un vrai point de fonctionnement.",
+        "La mesure, sur les trois réseaux : toutes les pertes d'une ligne et 300 paires, de 0,6 à 1,5 fois la charge. Il y a un coude, et c'est le point où le réseau intact surcharge (1,03 fois la charge sur le 30, 1,09 sur le 118) ; au-delà, presque toute panne coûte plus de 10 % de la consommation.",
+        "Aucun des trois réseaux ne tient la règle N-1 à sa charge de base avec cette répartition : la règle aura un coût, à mesurer avec la répartition au moindre coût.",
+        "La page : un bouton lance la cascade depuis l'état affiché, et la rejoue pas à pas ; les lignes qui tombent, les parties délestées et la raison de chaque chute s'affichent."
+      ]
+    },
+    {
       "version": "0.1.0",
       "title": "Les flux de l'IEEE 14, et une ligne qui tombe",
       "date": "14/11/2026",
-      "commits": ["21f15d1", "b5cddbe", "f9e8e5b"],
+      "commits": [
+        "21f15d1",
+        "b5cddbe",
+        "f9e8e5b"
+      ],
       "items": [
         "Le cadrage : la physique des flux, la règle N-1 et les grandes pannes, les réseaux de test publics vérifiés sur leurs fichiers (IEEE, PGLib-OPF, RTS-GMLC, Grid2Op), onze pistes classées ; les recommandations validées par Sami.",
         "Le calcul des flux en courant continu sur les réseaux IEEE à 14, 30 et 118 nœuds de PGLib-OPF, avec leurs limites de ligne : un clic coupe une ligne, son flux se reporte sur les autres.",

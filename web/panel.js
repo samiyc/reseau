@@ -13,27 +13,29 @@ function item(/** @type {HTMLElement} */ list, /** @type {string} */ term, /** @
   list.append(dt, dd);
 }
 
-function islandsText(grid, state) {
+const total = (/** @type {object[]} */ parts, /** @type {string} */ key) => parts.reduce((sum, part) => sum + part[key], 0);
+
+function islandsText(state) {
   if (state.islands.length === 1) return "1, le réseau est d'un seul tenant";
-  const stranded = state.islands.filter((island) => island.capacity === 0 && island.production > 0.05);
-  const loss = stranded.reduce((sum, island) => sum + island.production, 0);
-  return stranded.length === 0 ? `${state.islands.length}` : `⚠ ${state.islands.length}, dont ${stranded.length} sans production : ${mw(loss)} à délester`;
+  const short = state.islands.filter((island) => island.shed > 0.05).length;
+  return short === 0 ? `${state.islands.length}` : `⚠ ${state.islands.length}, dont ${short} sans assez de production`;
 }
 
 /** The summary of a state, in the definition list `list`. */
 export function renderSummary(list, grid, state, /** @type {number} */ loadFactor) {
   list.replaceChildren();
-  const load = grid.load.reduce((sum, value) => sum + value, 0) * loadFactor;
-  item(list, "Consommation", `${mw(load)} (× ${loadFactor.toFixed(2).replace(".", ",")})`);
-  const main = state.islands[state.flows.islands.of[grid.reference]];
-  const over = main.production > main.capacity ? " ⚠ au-delà de sa Pmax : il faudra répartir (J3)" : "";
-  item(list, `Référence (nœud ${grid.busId[main.bus]})`, `${mw(main.production)} sur ${mw(main.capacity)}${over}`);
+  const demand = total(state.islands, "demand");
+  item(list, "Consommation", `${mw(demand)} (× ${loadFactor.toFixed(2).replace(".", ",")})`);
+  const installed = grid.pmax.reduce((sum, value) => sum + value, 0);
+  const production = total(state.islands, "production");
+  item(list, "Production", `${mw(production)}, ${pct(production / installed)} de la capacité installée (${mw(installed)})`);
+  item(list, "Délestage", state.shed > 0.05 ? `⚠ ${mw(state.shed)}, ${pct(state.shed / demand)} de la consommation` : "aucun");
   let top = 0;
   for (let k = 1; k < grid.branchCount; k += 1) if (state.loading[k] > state.loading[top]) top = k;
   item(list, "Ligne la plus chargée", `${branchName(grid, top)}, ${pct(state.loading[top])}`);
   const names = state.overloaded.map((k) => branchName(grid, k)).join(", ");
   item(list, "Surcharges", state.overloaded.length === 0 ? "aucune" : `⚠ ${state.overloaded.length} : ${names}`);
-  item(list, "Îlots", islandsText(grid, state));
+  item(list, "Îlots", islandsText(state));
 }
 
 function cell(/** @type {HTMLTableRowElement} */ row, /** @type {string} */ text) {
@@ -51,7 +53,7 @@ export function renderTable(/** @type {HTMLElement} */ body, rows) {
       row.classList.toggle("overloaded", r.loading > 1);
       const sign = r.change > 0 ? "+" : "−";
       const change = Math.abs(r.change) < 0.05 ? "–" : sign + mw(Math.abs(r.change));
-      [r.name, r.open ? "ouverte" : r.direction, mw(r.flow), mw(r.limit), (r.loading > 1 ? "⚠ " : "") + pct(r.loading), change].forEach((text) => cell(row, text));
+      [r.name, r.open ? "hors service" : r.direction, mw(r.flow), mw(r.limit), (r.loading > 1 ? "⚠ " : "") + pct(r.loading), change].forEach((text) => cell(row, text));
       return row;
     }),
   );

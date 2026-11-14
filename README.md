@@ -6,10 +6,11 @@ puis les pannes, une ligne qui tombe et la charge qui se reporte sur les autres,
 
 Client de [`mcts-commun`](../mcts-commun/README.md). La recherche sera choisie par la mesure, contre l'ordre de préséance économique avec une marge de réserve, et la règle N-1.
 
-**État** (14/11/2026, version 0.1.0) : le cadrage est fait (`docs/recherche/`, les réponses de Sami dans
-`questions.md`), le modèle écrit (`docs/modele.md`). Le J1 est là : le calcul DC des flux sur les IEEE 14, 30 et 118 de
-PGLib-OPF, les facteurs de report (PTDF, LODF), et la page, où l'on coupe une ligne pour voir son flux se reporter.
-La suite, la cascade (J2), est dans `docs/recherche/pistes.md`.
+**État** (14/11/2026, version 0.2.0) : le cadrage est fait (`docs/recherche/`, les réponses de Sami dans
+`questions.md`), le modèle écrit (`docs/modele.md`). J1 : le calcul DC des flux sur les IEEE 14, 30 et 118 de
+PGLib-OPF, les facteurs de report (PTDF, LODF). J2 : la cascade, avec la règle de Grid2Op, et sa mesure
+(`docs/mesures/cascade-j2.md`). La page montre la carte, coupe une ligne, lance la cascade et la rejoue pas à pas.
+La suite, la répartition au moindre coût (J3), attend le solveur QP de `mcts-commun`.
 
 ## Les commandes
 
@@ -21,6 +22,7 @@ La suite, la cascade (J2), est dans `docs/recherche/pistes.md`.
 | `npm run types` | tsc vérifie le JavaScript d'après ses commentaires JSDoc, sans rien compiler |
 | `npm test` (`test:coverage`) | les tests de `node --test`, dont la longueur des `.md` et les empreintes du modèle |
 | `npm run page` | la page, sur http://127.0.0.1:4808/web/ ; l'état se partage par l'adresse (`#ouvertes=1-2&conso=1.3`) |
+| `node scripts/cascade-sweep.js [paires] [graine]` | la mesure du J2, par un créneau (`mcts-backlog --slot 1 -- …`), 25 s |
 | `npm run changelog` | `web/changelog.html` depuis `docs/changelog.json`, après une nouvelle version |
 
 Les règles du dépôt sont dans [`CLAUDE.md`](CLAUDE.md).

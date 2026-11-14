@@ -52,18 +52,25 @@ Pour des injections nettes P (production moins consommation, par nœud) et un en
 - **Le test** : pour chaque branche qui n'est pas un pont, le flux après sa perte par la LODF égale celui d'une
   nouvelle résolution sans elle, à 10⁻⁹ MW près.
 
-## 4. L'état de base (J1)
+## 4. L'état du réseau, et la répartition provisoire
 
-Les productions du fichier, le nœud de référence absorbant l'écart ; la consommation du fichier, multipliée par un
-**facteur de charge** (1 par défaut ; la page le fait varier). C'est l'état que la page dessine, et sur lequel on
-coupe des lignes à la main. Si la centrale de référence dépasse sa Pmax, l'état le dit : il n'y a pas encore de
-répartition (J3).
+La consommation du fichier, multipliée par un **facteur de charge** (1 par défaut ; la page le fait varier). Dans
+chaque îlot, **toutes les centrales produisent la même part de leur Pmax**, celle qui couvre la demande de l'îlot
+(`src/grid/supply.js`) ; si la demande dépasse la capacité, toutes sont à Pmax et l'îlot **déleste** le reste, au
+prorata ; un îlot sans centrale perd toute sa consommation. C'est une **hypothèse** provisoire, en attendant le DC-OPF
+du J3 (décidée le 14/11, au J2) : les productions des fichiers PGLib sont un « départ à plat », pas une répartition,
+et le nœud de référence seul pour équilibrer faisait délester 393 MW au 118 sans aucune panne. Avec elle, aucune
+ligne des trois réseaux n'est en surcharge à la charge de base ([mesures/cascade-j2.md](mesures/cascade-j2.md)).
 
-## 5. Ce qui viendra (le détail dans [recherche/pistes.md](recherche/pistes.md))
+Les productions du fichier ne servent plus qu'aux tests du calcul des flux (`baseInjection`).
 
-- **J2, la cascade** : la règle de Grid2Op, déterministe (Sami, 14/11) : une branche en surcharge plus de 2 pas
-  tombe, au-delà de 2 fois sa limite aussitôt (**hypothèse**, la valeur par défaut n'est pas publiée) ; un îlot sans
-  production est délesté. Les pannes initiales sont tirées par graine (`createRng`).
+## 5. Les jalons (le détail dans [recherche/pistes.md](recherche/pistes.md))
+
+- **J2, la cascade** (fait le 14/11, `src/cascade/`) : la règle de Grid2Op 1.12.6, déterministe (Sami, 14/11),
+  lue dans son code : dans un pas, une branche au-delà de 2 fois sa limite tombe aussitôt, et on recalcule jusqu'à ce
+  que plus rien ne tombe ; une branche au-delà de sa limite tombe à son 3e pas d'affilée ; un îlot sans assez de
+  production déleste. L'expérience : toutes les pertes simples et des paires tirées par graine (`createRng`), à
+  chaque facteur de charge ([mesures/cascade-j2.md](mesures/cascade-j2.md)).
 - **J3, la répartition** : le DC-OPF, avec le solveur QP de la lib (demandé le 14/11), validé contre les coûts DC de
   PGLib-OPF ; les prix nodaux ; la règle N-1 par la LODF.
 - **J4, la journée** : RTS-GMLC, au pas horaire ; la liste de préséance avec réserve, réglée par `mcts-race`.
@@ -90,6 +97,7 @@ les surcharges, puis le coût (Sami, 14/11).
 
 ## 8. Les empreintes
 
-`tests/fingerprint.test.js` garde un hachage de ce que fait le modèle : les flux de l'état de base des trois réseaux,
-et ceux d'après chaque perte d'une branche de l'IEEE 14. Une refonte n'en change aucun ; un changement voulu du
+`tests/fingerprint.test.js` garde un hachage de ce que fait le modèle : les flux de l'injection du fichier sur les trois réseaux,
+et ceux d'après chaque perte d'une branche de l'IEEE 14 (J1) ; la répartition des trois réseaux à 1,2 fois leur
+charge, et les cascades de l'IEEE 30 après chaque perte simple, au même facteur (J2). Une refonte n'en change aucun ; un changement voulu du
 modèle met à jour le hachage et le dit dans son commit, avec les mesures avant et après.

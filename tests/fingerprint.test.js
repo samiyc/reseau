@@ -2,7 +2,8 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { solveFlows } from "../src/flow/dcflow.js";
-import { baseInjection } from "../src/grid/state.js";
+import { runCascade } from "../src/cascade/cascade.js";
+import { baseInjection, describeState } from "../src/grid/state.js";
 import { grid } from "./cases.js";
 
 /**
@@ -17,6 +18,10 @@ const EXPECTED = {
   base118: "9ba8fc3335e9fb81",
   // 14/11/2026, J1: the IEEE 14 after the loss of each branch in turn, islands included.
   outages14: "c471c0939cbea295",
+  // 14/11/2026, J2: the state of each grid at 1.2 times its load, its generators sharing it in proportion to Pmax.
+  state: "86853e89baa8bba0",
+  // 14/11/2026, J2: the cascade after each single loss on the IEEE 30 at 1.2 times its load, Grid2Op's rule.
+  cascades30: "ffc502f43f41ed16",
 };
 
 const digest = (value) => createHash("sha256").update(JSON.stringify(value)).digest("hex").slice(0, 16);
@@ -39,6 +44,23 @@ function outages() {
   );
 }
 
+function states() {
+  return digest([14, 30, 118].map((size) => {
+    const s = describeState(grid(size), { loadFactor: 1.2 });
+    return [rounded(s.generation), rounded(s.flows.flow), rounded([s.shed])];
+  }));
+}
+
+function cascades() {
+  const g = grid(30);
+  return digest(
+    Array.from({ length: g.branchCount }, (_, k) => {
+      const r = runCascade(g, { loadFactor: 1.2, inService: Uint8Array.from(g.inService, (on, b) => (b === k ? 0 : on)) });
+      return [r.steps.map((s) => s.tripped.map((t) => [t.branch, t.why, t.round])), rounded([r.shed])];
+    }),
+  );
+}
+
 describe("the fingerprints of the model", () => {
   it("keeps the base flows of the three PGLib grids", () => {
     assert.deepEqual({ base14: base(14), base30: base(30), base118: base(118) }, { base14: EXPECTED.base14, base30: EXPECTED.base30, base118: EXPECTED.base118 });
@@ -46,5 +68,13 @@ describe("the fingerprints of the model", () => {
 
   it("keeps the IEEE 14's flows after each single loss", () => {
     assert.equal(outages(), EXPECTED.outages14);
+  });
+
+  it("keeps the dispatch in proportion to Pmax", () => {
+    assert.equal(states(), EXPECTED.state);
+  });
+
+  it("keeps the IEEE 30's cascades", () => {
+    assert.equal(cascades(), EXPECTED.cascades30);
   });
 });

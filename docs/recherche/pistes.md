@@ -47,9 +47,13 @@ distribuée, les surcharges (nombre et MW·h au-delà des limites). Un tri rapid
 
 ## P3. La cascade et la charge critique (J2)
 
-- **La règle** : celle de Grid2Op ([physique.md](physique.md) § 5) : une ligne au-delà de sa limite plus de 2 pas
-  tombe ; au-delà d'un seuil dur (2 fois la limite, **hypothèse**), aussitôt. Après chaque chute, on recalcule ; une
-  île sans production est délestée, une île sans consommation perd sa production.
+**Faite le 14/11** : [../mesures/cascade-j2.md](../mesures/cascade-j2.md). Il y a un coude, et c'est la limite N-0 de
+la répartition (1,03 sur le 30, 1,09 sur le 118) ; aucun des trois réseaux n'est N-1 à sa charge de base (0,58,
+0,65, 0,68). La queue de Dobson ne se voit pas encore : à refaire au J3, avec le DC-OPF.
+
+- **La règle** : celle de Grid2Op ([physique.md](physique.md) § 5), lue dans son code : au-delà de 2 fois sa limite,
+  une ligne tombe aussitôt ; au-delà de sa limite, à son 3e pas d'affilée. Après chaque chute, on recalcule ; un
+  îlot sans assez de production déleste.
 - **L'expérience** : la consommation de base multipliée par un facteur de 0,6 à 1,4 ; à chaque facteur, des centaines
   de pannes initiales tirées par graine (une ou deux lignes) ; on mesure la consommation perdue.
 - **Ce qu'on attend** (Dobson 2005) : peu de pertes à faible charge, puis un coude, une queue lourde, et des pannes
