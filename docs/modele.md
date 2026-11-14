@@ -23,6 +23,11 @@ consommation, ses pannes. Pour comprendre les reports de flux, les cascades, et 
 - **Les centrales** : un nœud, Pmin, Pmax, la production du fichier `Pg`, un coût polynomial (c2, c1, c0, en $/h).
   Les compensateurs synchrones (Pmax = 0) sont gardés, sans effet en DC.
 - **Le nœud de référence** : celui de type 3 dans le fichier.
+- **Les écarts d'angle** : ANGMIN et ANGMAX bornent θf − θt (±30° sur les trois réseaux PGLib) ; aucune borne à ±360°
+  ou au-delà, ni quand les deux valent 0, comme MATPOWER les lit.
+- **Deux conventions** pour la susceptance : celle de MATPOWER, celle du modèle ; et celle de PowerModels en DC,
+  b = x / (r² + x²), sans rapport ni déphasage (lu dans son code, v0.19.9). La seconde ne sert qu'à retrouver les
+  coûts publiés par PGLib-OPF, qui en viennent ([mesures/opf-j3.md](mesures/opf-j3.md)).
 
 ## 2. Les flux
 
@@ -64,19 +69,40 @@ ligne des trois réseaux n'est en surcharge à la charge de base ([mesures/casca
 
 Les productions du fichier ne servent plus qu'aux tests du calcul des flux (`baseInjection`).
 
-## 5. Les jalons (le détail dans [recherche/pistes.md](recherche/pistes.md))
+## 5. La répartition au moindre coût (J3)
+
+`src/opf/`, le DC-OPF du manuel de MATPOWER (§ 6.2), résolu par le solveur `qp` de la lib :
+
+- **Le programme** : les productions des centrales en service (Pmax > Pmin ; les autres à Pmax), qui minimisent
+  Σ c2·p² + c1·p ; sous une égalité, la production égale la consommation (shunts compris) ; les bornes Pmin ≤ p ≤ Pmax ;
+  et, pour chaque branche, deux lignes de la PTDF : son flux entre ses limites. La limite d'une branche est RATE_A et
+  ses écarts d'angle : en DC, θf − θt = F / (baseMVA · b) + φ, la plus serrée l'emporte. Les coûts de PGLib sont
+  linéaires : c'est un LP.
+- **Les prix nodaux** : ce que coûte un MW de plus consommé au nœud, tirés des multiplicateurs de Karush-Kuhn-Tucker
+  que rend `qp` : −eq − Σ le[r]·a_r[n]. Vérifiés par différences finies sur les 118 nœuds.
+- **La règle N-1** (`security`) : après la répartition, la LODF donne d'un coup les flux après chaque perte d'une
+  branche ; celles qui dépassent leur limite entrent dans le programme, qu'on résout de nouveau à chaud, jusqu'à ce
+  qu'aucune ne dépasse. Un pont n'est pas une perte de la règle (sa perte coupe le réseau). Après une perte, une
+  branche garde sa limite RATE_A et perd ses écarts d'angle : une **hypothèse**, l'usage d'un SCOPF en DC.
+- **Jusqu'où la charge peut monter** (`maxLoad`) : le plus grand facteur de charge qui a une répartition, par
+  dichotomie, sans et avec la règle N-1.
+- **Le réseau doit être d'un seul tenant** : la PTDF l'exige. La répartition dans les îlots viendra avec la cascade.
+
+## 6. Les jalons (le détail dans [recherche/pistes.md](recherche/pistes.md))
 
 - **J2, la cascade** (fait le 14/11, `src/cascade/`) : la règle de Grid2Op 1.12.6, déterministe (Sami, 14/11),
   lue dans son code : dans un pas, une branche au-delà de 2 fois sa limite tombe aussitôt, et on recalcule jusqu'à ce
   que plus rien ne tombe ; une branche au-delà de sa limite tombe à son 3e pas d'affilée ; un îlot sans assez de
   production déleste. L'expérience : toutes les pertes simples et des paires tirées par graine (`createRng`), à
   chaque facteur de charge ([mesures/cascade-j2.md](mesures/cascade-j2.md)).
-- **J3, la répartition** : le DC-OPF, avec le solveur QP de la lib (demandé le 14/11), validé contre les coûts DC de
-  PGLib-OPF ; les prix nodaux ; la règle N-1 par la LODF.
+- **J3, la répartition** (fait le 14/11, `src/opf/`) : le DC-OPF avec le solveur `qp` de la lib (livré le 14/11),
+  qui retrouve les six coûts DC de PGLib-OPF au dernier chiffre publié près ; les prix nodaux ; la règle N-1 par la
+  LODF ; la charge maximale sans et avec elle, et le prix de la sécurité
+  ([mesures/opf-j3.md](mesures/opf-j3.md)).
 - **J4, la journée** : RTS-GMLC, au pas horaire ; la liste de préséance avec réserve, réglée par `mcts-race`.
 - **J5 et après** : le faisceau puis l'ISMCTS sur le démarrage ; la conduite au pas de 5 minutes ; le stockage au J7.
 
-## 6. Les mesures
+## 7. Les mesures
 
 Trois objectifs, **jamais fondus** en un score : le **coût** ($), l'**énergie non distribuée** (MWh) et les
 **surcharges** (nombre de branche-pas au-delà de 1, et MW·h au-delà des limites). Une recherche et une règle se
@@ -84,20 +110,21 @@ comparent sur les **mêmes jours** tirés par graine, par l'écart apparié et s
 objectif. Pour choisir entre deux plans, la recherche les range **dans l'ordre** : l'énergie non distribuée, puis
 les surcharges, puis le coût (Sami, 14/11).
 
-## 7. Ce qu'on prend de la lib
+## 8. Ce qu'on prend de la lib
 
 | Module | Pour | Quand |
 |---|---|---|
 | `random` | les pannes et les jours tirés par graine | J2 |
 | `events` | les pannes datées dans une journée | J2, J4 |
 | `measure`, `race` | les comparaisons appariées, le réglage des règles | J4 |
-| le solveur QP (à venir) | le DC-OPF | J3 |
+| `qp` | le DC-OPF, ses prix nodaux, la règle N-1 | J3 |
 | `beam`, `search`, `climb` | le démarrage, la conduite, le stockage | J5 et après |
 | `web/theme.css`, `bin/serve.js` | la page, port 4808 | J1 |
 
-## 8. Les empreintes
+## 9. Les empreintes
 
 `tests/fingerprint.test.js` garde un hachage de ce que fait le modèle : les flux de l'injection du fichier sur les trois réseaux,
 et ceux d'après chaque perte d'une branche de l'IEEE 14 (J1) ; la répartition des trois réseaux à 1,2 fois leur
-charge, et les cascades de l'IEEE 30 après chaque perte simple, au même facteur (J2). Une refonte n'en change aucun ; un changement voulu du
-modèle met à jour le hachage et le dit dans son commit, avec les mesures avant et après.
+charge, et les cascades de l'IEEE 30 après chaque perte simple, au même facteur (J2) ; la répartition des trois réseaux
+à 0,7 fois leur charge, sans et avec la règle N-1, ses prix nodaux et son coût (J3). Une refonte n'en change aucun ;
+un changement voulu du modèle met à jour le hachage et le dit dans son commit, avec les mesures avant et après.

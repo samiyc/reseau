@@ -59,8 +59,10 @@ limite, de 53 MW (4-9) à 664 MW (4-5). Consommation : 259 MW.
 
 **C'est notre test de validation** du DC-OPF (P5) : retrouver la colonne DC à quelques millièmes près. Le DC
 « infaisable » des petits angles montre que la formulation de PowerModels garde les **limites d'écart d'angle** ;
-notre formulation devra les garder aussi pour comparer. **Hypothèse** : les autres choix de PowerModels (pertes
-nulles, compensateurs ignorés) sont ceux de MATPOWER § 6.2 ; à vérifier sur le code au J3.
+notre formulation devra les garder aussi pour comparer. **Vérifié dans son code au J3** (v0.19.9, `src/form/dcp.jl`) :
+le flux d'une branche y vaut −b·(θf − θt) avec b = Im(1 / (r + jx)), **sans rapport de transformation ni
+déphasage**, à la différence de MATPOWER (1 / (x · τ)) ; les shunts comptent comme une consommation. Sous cette
+convention, nous retrouvons les six coûts ([../mesures/opf-j3.md](../mesures/opf-j3.md)).
 
 ## 3. RTS-GMLC (le réseau de test de fiabilité, modernisé par les laboratoires du DOE)
 

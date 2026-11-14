@@ -1,5 +1,5 @@
 /**
- * The cascade (docs/modele.md § 5), Grid2Op's rule read in its code (grid2op 1.12.6, `Backend.next_grid_state` and
+ * The cascade (docs/modele.md § 6), Grid2Op's rule read in its code (grid2op 1.12.6, `Backend.next_grid_state` and
  * `BaseEnv`): within a step, a branch past `hard` times its limit trips at once, the flows are recomputed, and again
  * until nothing trips; a branch past its limit has its counter raised once a step, and trips when the counter goes
  * past `allowed`, so on its third overloaded step in a row. A branch back under its limit at the end of a step has

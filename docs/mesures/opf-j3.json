@@ -1,0 +1,945 @@
+{
+ "validation": [
+  {
+   "size": 14,
+   "variant": "typ",
+   "baseline": 2051.5,
+   "powermodels": 2051.526309,
+   "matpower": 2051.526309
+  },
+  {
+   "size": 14,
+   "variant": "api",
+   "baseline": 4797.6,
+   "powermodels": 4797.5995466642225,
+   "matpower": 4664.357523179985
+  },
+  {
+   "size": 14,
+   "variant": "sad",
+   "baseline": null,
+   "powermodels": "infeasible",
+   "matpower": "infeasible"
+  },
+  {
+   "size": 30,
+   "variant": "typ",
+   "baseline": 7472.8,
+   "powermodels": 7472.81467037241,
+   "matpower": 7504.440462022941
+  },
+  {
+   "size": 30,
+   "variant": "api",
+   "baseline": 16145,
+   "powermodels": 16145.052566780896,
+   "matpower": 16185.063932142166
+  },
+  {
+   "size": 30,
+   "variant": "sad",
+   "baseline": null,
+   "powermodels": "infeasible",
+   "matpower": 7504.440462022941
+  },
+  {
+   "size": 118,
+   "variant": "typ",
+   "baseline": 93101,
+   "powermodels": 93100.72992629845,
+   "matpower": 93132.67928780729
+  },
+  {
+   "size": 118,
+   "variant": "api",
+   "baseline": 231290,
+   "powermodels": 231291.90948605345,
+   "matpower": 234168.6344006765
+  },
+  {
+   "size": 118,
+   "variant": "sad",
+   "baseline": null,
+   "powermodels": "infeasible",
+   "matpower": "infeasible"
+  }
+ ],
+ "results": [
+  {
+   "size": 14,
+   "capacity": 1.5405405405405408,
+   "n0": 1.5404846191406247,
+   "n1": 0.7219604492187499,
+   "proportional": {
+    "n0": null,
+    "n1": 0.58
+   },
+   "rows": [
+    {
+     "loadFactor": 0.4,
+     "plain": 820.6105235999993,
+     "secure": 820.6105235999993,
+     "binding": 0,
+     "secureBinding": 0,
+     "prices": [
+      7.920950999999998,
+      7.920950999999998
+     ],
+     "securePrices": [
+      7.920950999999998,
+      7.920950999999998
+     ],
+     "passes": 1,
+     "rows": 40
+    },
+    {
+     "loadFactor": 0.45,
+     "plain": 923.1868390499942,
+     "secure": 923.1868390499942,
+     "binding": 0,
+     "secureBinding": 0,
+     "prices": [
+      7.920950999999998,
+      7.920950999999998
+     ],
+     "securePrices": [
+      7.920950999999998,
+      7.920950999999998
+     ],
+     "passes": 1,
+     "rows": 40
+    },
+    {
+     "loadFactor": 0.5,
+     "plain": 1025.7631545,
+     "secure": 1048.785969,
+     "binding": 0,
+     "secureBinding": 1,
+     "prices": [
+      7.920950999999998,
+      7.920950999999998
+     ],
+     "securePrices": [
+      7.920950999999997,
+      23.26949400000001
+     ],
+     "passes": 2,
+     "rows": 41
+    },
+    {
+     "loadFactor": 0.55,
+     "plain": 1128.339469950002,
+     "secure": 1350.1259163000066,
+     "binding": 0,
+     "secureBinding": 1,
+     "prices": [
+      7.920950999999998,
+      7.920950999999998
+     ],
+     "securePrices": [
+      7.920950999999999,
+      23.26949400000001
+     ],
+     "passes": 2,
+     "rows": 41
+    },
+    {
+     "loadFactor": 0.6,
+     "plain": 1230.915785399997,
+     "secure": 1651.4658635999913,
+     "binding": 0,
+     "secureBinding": 1,
+     "prices": [
+      7.920950999999998,
+      7.920950999999998
+     ],
+     "securePrices": [
+      7.920950999999996,
+      23.269494000000012
+     ],
+     "passes": 2,
+     "rows": 41
+    },
+    {
+     "loadFactor": 0.65,
+     "plain": 1333.4921008499991,
+     "secure": 1952.8058108999908,
+     "binding": 0,
+     "secureBinding": 1,
+     "prices": [
+      7.920950999999998,
+      7.920950999999998
+     ],
+     "securePrices": [
+      7.920950999999994,
+      23.26949400000001
+     ],
+     "passes": 2,
+     "rows": 41
+    },
+    {
+     "loadFactor": 0.7,
+     "plain": 1436.0684162999942,
+     "secure": 2254.14575819999,
+     "binding": 0,
+     "secureBinding": 1,
+     "prices": [
+      7.920950999999998,
+      7.920950999999998
+     ],
+     "securePrices": [
+      7.920950999999995,
+      23.26949400000001
+     ],
+     "passes": 2,
+     "rows": 41
+    },
+    {
+     "loadFactor": 0.75,
+     "plain": 1538.64473175,
+     "secure": null,
+     "binding": 0,
+     "secureBinding": null,
+     "prices": [
+      7.920950999999998,
+      7.920950999999998
+     ],
+     "securePrices": null,
+     "passes": 2,
+     "rows": 41
+    },
+    {
+     "loadFactor": 0.8,
+     "plain": 1641.2210472000056,
+     "secure": null,
+     "binding": 0,
+     "secureBinding": null,
+     "prices": [
+      7.920950999999998,
+      7.920950999999998
+     ],
+     "securePrices": null,
+     "passes": 2,
+     "rows": 41
+    },
+    {
+     "loadFactor": 0.85,
+     "plain": 1743.7973626499934,
+     "secure": null,
+     "binding": 0,
+     "secureBinding": null,
+     "prices": [
+      7.920950999999998,
+      7.920950999999998
+     ],
+     "securePrices": null,
+     "passes": 2,
+     "rows": 41
+    },
+    {
+     "loadFactor": 0.9,
+     "plain": 1846.373678099999,
+     "secure": null,
+     "binding": 0,
+     "secureBinding": null,
+     "prices": [
+      7.920950999999998,
+      7.920950999999998
+     ],
+     "securePrices": null,
+     "passes": 2,
+     "rows": 41
+    },
+    {
+     "loadFactor": 0.95,
+     "plain": 1948.9499935499941,
+     "secure": null,
+     "binding": 0,
+     "secureBinding": null,
+     "prices": [
+      7.920950999999998,
+      7.920950999999998
+     ],
+     "securePrices": null,
+     "passes": 2,
+     "rows": 41
+    },
+    {
+     "loadFactor": 1,
+     "plain": 2051.526309,
+     "secure": null,
+     "binding": 0,
+     "secureBinding": null,
+     "prices": [
+      7.920950999999998,
+      7.920950999999998
+     ],
+     "securePrices": null,
+     "passes": 2,
+     "rows": 41
+    },
+    {
+     "loadFactor": 1.05,
+     "plain": 2154.102624450002,
+     "secure": null,
+     "binding": 0,
+     "secureBinding": null,
+     "prices": [
+      7.920950999999998,
+      7.920950999999998
+     ],
+     "securePrices": null,
+     "passes": 2,
+     "rows": 41
+    },
+    {
+     "loadFactor": 1.1,
+     "plain": 2256.678939899997,
+     "secure": null,
+     "binding": 0,
+     "secureBinding": null,
+     "prices": [
+      7.920950999999998,
+      7.920950999999998
+     ],
+     "securePrices": null,
+     "passes": 2,
+     "rows": 41
+    },
+    {
+     "loadFactor": 1.15,
+     "plain": 2359.255255349999,
+     "secure": null,
+     "binding": 0,
+     "secureBinding": null,
+     "prices": [
+      7.920950999999998,
+      7.920950999999998
+     ],
+     "securePrices": null,
+     "passes": 2,
+     "rows": 41
+    },
+    {
+     "loadFactor": 1.2,
+     "plain": 2461.831570799994,
+     "secure": null,
+     "binding": 0,
+     "secureBinding": null,
+     "prices": [
+      7.920950999999998,
+      7.920950999999998
+     ],
+     "securePrices": null,
+     "passes": 2,
+     "rows": 41
+    },
+    {
+     "loadFactor": 1.25,
+     "plain": 2564.40788625,
+     "secure": null,
+     "binding": 0,
+     "secureBinding": null,
+     "prices": [
+      7.920950999999998,
+      7.920950999999998
+     ],
+     "securePrices": null,
+     "passes": 2,
+     "rows": 41
+    },
+    {
+     "loadFactor": 1.3,
+     "plain": 2666.9842017000055,
+     "secure": null,
+     "binding": 0,
+     "secureBinding": null,
+     "prices": [
+      7.920950999999998,
+      7.920950999999998
+     ],
+     "securePrices": null,
+     "passes": 2,
+     "rows": 41
+    },
+    {
+     "loadFactor": 1.35,
+     "plain": 2917.673957100002,
+     "secure": null,
+     "binding": 0,
+     "secureBinding": null,
+     "prices": [
+      23.269493999999998,
+      23.269493999999998
+     ],
+     "securePrices": null,
+     "passes": 2,
+     "rows": 41
+    }
+   ],
+   "ms": {
+    "plain": 0.16779999999999973,
+    "secure": 0.22749999999999204
+   }
+  },
+  {
+   "size": 30,
+   "capacity": 1.2808750882145379,
+   "n0": 1.1043045043945314,
+   "n1": 0.8077560424804687,
+   "proportional": {
+    "n0": 1.03,
+    "n1": 0.65
+   },
+   "rows": [
+    {
+     "loadFactor": 0.4,
+     "plain": 2088.264414079977,
+     "secure": 2088.264414079977,
+     "binding": 0,
+     "secureBinding": 0,
+     "prices": [
+      18.42152799999999,
+      18.42152799999999
+     ],
+     "securePrices": [
+      18.42152799999999,
+      18.42152799999999
+     ],
+     "passes": 1,
+     "rows": 82
+    },
+    {
+     "loadFactor": 0.45,
+     "plain": 2349.2974658399785,
+     "secure": 2349.2974658399785,
+     "binding": 0,
+     "secureBinding": 0,
+     "prices": [
+      18.42152799999999,
+      18.42152799999999
+     ],
+     "securePrices": [
+      18.42152799999999,
+      18.42152799999999
+     ],
+     "passes": 1,
+     "rows": 82
+    },
+    {
+     "loadFactor": 0.5,
+     "plain": 2610.330517599914,
+     "secure": 2796.0145105999463,
+     "binding": 0,
+     "secureBinding": 1,
+     "prices": [
+      18.421527999999977,
+      18.421527999999977
+     ],
+     "securePrices": [
+      18.421527999999977,
+      52.18225400000003
+     ],
+     "passes": 2,
+     "rows": 85
+    },
+    {
+     "loadFactor": 0.55,
+     "plain": 2871.3635693599645,
+     "secure": 3531.3857626600043,
+     "binding": 0,
+     "secureBinding": 1,
+     "prices": [
+      18.42152799999999,
+      18.42152799999999
+     ],
+     "securePrices": [
+      18.421528,
+      52.18225400000003
+     ],
+     "passes": 2,
+     "rows": 86
+    },
+    {
+     "loadFactor": 0.6,
+     "plain": 3132.3966211199504,
+     "secure": 4266.757014719995,
+     "binding": 0,
+     "secureBinding": 1,
+     "prices": [
+      18.421528000000006,
+      18.421528000000006
+     ],
+     "securePrices": [
+      18.421528000000006,
+      52.18225400000003
+     ],
+     "passes": 2,
+     "rows": 86
+    },
+    {
+     "loadFactor": 0.65,
+     "plain": 3393.42967287996,
+     "secure": 5002.12826677997,
+     "binding": 0,
+     "secureBinding": 1,
+     "prices": [
+      18.421528000000006,
+      18.421528000000006
+     ],
+     "securePrices": [
+      18.421528000000002,
+      52.182254000000036
+     ],
+     "passes": 2,
+     "rows": 87
+    },
+    {
+     "loadFactor": 0.7,
+     "plain": 3654.4627246399446,
+     "secure": 5737.499518839944,
+     "binding": 0,
+     "secureBinding": 1,
+     "prices": [
+      18.421528000000006,
+      18.421528000000006
+     ],
+     "securePrices": [
+      18.421528,
+      52.18225400000004
+     ],
+     "passes": 2,
+     "rows": 89
+    },
+    {
+     "loadFactor": 0.75,
+     "plain": 4229.906716046228,
+     "secure": 6472.870770899946,
+     "binding": 1,
+     "secureBinding": 1,
+     "prices": [
+      18.421527999999988,
+      52.18225400000001
+     ],
+     "securePrices": [
+      18.421527999999995,
+      52.18225400000003
+     ],
+     "passes": 2,
+     "rows": 101
+    },
+    {
+     "loadFactor": 0.8,
+     "plain": 4884.813465241621,
+     "secure": 7208.24202295996,
+     "binding": 1,
+     "secureBinding": 1,
+     "prices": [
+      18.42152799999999,
+      52.182254
+     ],
+     "securePrices": [
+      18.421527999999988,
+      52.182254000000036
+     ],
+     "passes": 2,
+     "rows": 101
+    },
+    {
+     "loadFactor": 0.85,
+     "plain": 5539.720214436964,
+     "secure": null,
+     "binding": 1,
+     "secureBinding": null,
+     "prices": [
+      18.421528,
+      52.182254000000015
+     ],
+     "securePrices": null,
+     "passes": 2,
+     "rows": 101
+    },
+    {
+     "loadFactor": 0.9,
+     "plain": 6194.626963632276,
+     "secure": null,
+     "binding": 1,
+     "secureBinding": null,
+     "prices": [
+      18.421527999999995,
+      52.182254000000015
+     ],
+     "securePrices": null,
+     "passes": 2,
+     "rows": 101
+    },
+    {
+     "loadFactor": 0.95,
+     "plain": 6849.533712827586,
+     "secure": null,
+     "binding": 1,
+     "secureBinding": null,
+     "prices": [
+      18.42152799999997,
+      52.182254000000015
+     ],
+     "securePrices": null,
+     "passes": 2,
+     "rows": 101
+    },
+    {
+     "loadFactor": 1,
+     "plain": 7504.440462022941,
+     "secure": null,
+     "binding": 1,
+     "secureBinding": null,
+     "prices": [
+      18.421527999999995,
+      52.182254
+     ],
+     "securePrices": null,
+     "passes": 2,
+     "rows": 101
+    },
+    {
+     "loadFactor": 1.05,
+     "plain": 8159.347211218292,
+     "secure": null,
+     "binding": 1,
+     "secureBinding": null,
+     "prices": [
+      18.42152799999999,
+      52.182254
+     ],
+     "securePrices": null,
+     "passes": 2,
+     "rows": 101
+    },
+    {
+     "loadFactor": 1.1,
+     "plain": 8814.253960413627,
+     "secure": null,
+     "binding": 1,
+     "secureBinding": null,
+     "prices": [
+      18.421527999999988,
+      52.18225400000001
+     ],
+     "securePrices": null,
+     "passes": 2,
+     "rows": 101
+    }
+   ],
+   "ms": {
+    "plain": 0.5242000000000075,
+    "secure": 0.609499999999997
+   }
+  },
+  {
+   "size": 118,
+   "capacity": 1.5358321546440359,
+   "n0": 1.338374328613281,
+   "n1": 0.7676040649414062,
+   "proportional": {
+    "n0": 1.09,
+    "n1": 0.68
+   },
+   "rows": [
+    {
+     "loadFactor": 0.4,
+     "plain": 30865.317314596152,
+     "secure": 32518.13261680777,
+     "binding": 1,
+     "secureBinding": 4,
+     "prices": [
+      12.612169999999981,
+      30.488853079790168
+     ],
+     "securePrices": [
+      12.61217000000001,
+      29.765372437196728
+     ],
+     "passes": 3,
+     "rows": 465
+    },
+    {
+     "loadFactor": 0.45,
+     "plain": 35742.58680962617,
+     "secure": 37589.59298478294,
+     "binding": 2,
+     "secureBinding": 4,
+     "prices": [
+      12.612169999999978,
+      31.051992906396194
+     ],
+     "securePrices": [
+      12.61216999999997,
+      29.791319546682818
+     ],
+     "passes": 3,
+     "rows": 554
+    },
+    {
+     "loadFactor": 0.5,
+     "plain": 40804.30362455662,
+     "secure": 42695.24008951799,
+     "binding": 2,
+     "secureBinding": 4,
+     "prices": [
+      12.612169999999887,
+      31.0519929063966
+     ],
+     "securePrices": [
+      12.612169999999995,
+      29.7913195466827
+     ],
+     "passes": 3,
+     "rows": 557
+    },
+    {
+     "loadFactor": 0.55,
+     "plain": 45870.92872633734,
+     "secure": 47800.88719425293,
+     "binding": 2,
+     "secureBinding": 4,
+     "prices": [
+      12.612169999999978,
+      31.071428074904304
+     ],
+     "securePrices": [
+      12.612169999999916,
+      29.791319546682743
+     ],
+     "passes": 3,
+     "rows": 562
+    },
+    {
+     "loadFactor": 0.6,
+     "plain": 50943.131322858106,
+     "secure": 52973.15697338202,
+     "binding": 2,
+     "secureBinding": 5,
+     "prices": [
+      12.612169999999988,
+      31.071428074904254
+     ],
+     "securePrices": [
+      12.612170000000177,
+      29.776199527858328
+     ],
+     "passes": 3,
+     "rows": 581
+    },
+    {
+     "loadFactor": 0.65,
+     "plain": 56015.333919379525,
+     "secure": 58197.430806642915,
+     "binding": 2,
+     "secureBinding": 5,
+     "prices": [
+      12.612170000000043,
+      31.071428074905032
+     ],
+     "securePrices": [
+      12.612170000000013,
+      29.8784076267838
+     ],
+     "passes": 3,
+     "rows": 585
+    },
+    {
+     "loadFactor": 0.7,
+     "plain": 61097.34037663189,
+     "secure": 66144.87667784226,
+     "binding": 2,
+     "secureBinding": 8,
+     "prices": [
+      12.612170000000086,
+      31.118405730257233
+     ],
+     "securePrices": [
+      0.5317728729512572,
+      194.09424471985201
+     ],
+     "passes": 3,
+     "rows": 589
+    },
+    {
+     "loadFactor": 0.75,
+     "plain": 66194.88864656385,
+     "secure": 76509.37038899277,
+     "binding": 2,
+     "secureBinding": 8,
+     "prices": [
+      12.612170000000143,
+      31.11840573025715
+     ],
+     "securePrices": [
+      0.5317728729506594,
+      194.09424471985307
+     ],
+     "passes": 3,
+     "rows": 613
+    },
+    {
+     "loadFactor": 0.8,
+     "plain": 71327.26496724221,
+     "secure": null,
+     "binding": 2,
+     "secureBinding": null,
+     "prices": [
+      24.600772000000052,
+      25.429644412847473
+     ],
+     "securePrices": null,
+     "passes": 3,
+     "rows": 703
+    },
+    {
+     "loadFactor": 0.85,
+     "plain": 76692.68513232548,
+     "secure": null,
+     "binding": 1,
+     "secureBinding": null,
+     "prices": [
+      24.0601018217739,
+      25.89451770453044
+     ],
+     "securePrices": null,
+     "passes": 3,
+     "rows": 653
+    },
+    {
+     "loadFactor": 0.9,
+     "plain": 82111.58104808429,
+     "secure": null,
+     "binding": 2,
+     "secureBinding": null,
+     "prices": [
+      24.60510199999999,
+      28.64947099999999
+     ],
+     "securePrices": null,
+     "passes": 2,
+     "rows": 509
+    },
+    {
+     "loadFactor": 0.95,
+     "plain": 87599.70223457264,
+     "secure": null,
+     "binding": 2,
+     "secureBinding": null,
+     "prices": [
+      24.60510199999999,
+      28.649470999999988
+     ],
+     "securePrices": null,
+     "passes": 2,
+     "rows": 506
+    },
+    {
+     "loadFactor": 1,
+     "plain": 93132.67928780729,
+     "secure": null,
+     "binding": 2,
+     "secureBinding": null,
+     "prices": [
+      25.75844199999996,
+      28.64947099999998
+     ],
+     "securePrices": null,
+     "passes": 2,
+     "rows": 544
+    },
+    {
+     "loadFactor": 1.05,
+     "plain": 99172.899106312,
+     "secure": null,
+     "binding": 2,
+     "secureBinding": null,
+     "prices": [
+      25.758441999999963,
+      32.98176441800291
+     ],
+     "securePrices": null,
+     "passes": 2,
+     "rows": 541
+    },
+    {
+     "loadFactor": 1.1,
+     "plain": 105569.10631031668,
+     "secure": null,
+     "binding": 3,
+     "secureBinding": null,
+     "prices": [
+      25.75844199999996,
+      35.982847905264364
+     ],
+     "securePrices": null,
+     "passes": 2,
+     "rows": 635
+    },
+    {
+     "loadFactor": 1.15,
+     "plain": 111994.77160667379,
+     "secure": null,
+     "binding": 3,
+     "secureBinding": null,
+     "prices": [
+      25.758441999999956,
+      35.98284790526438
+     ],
+     "securePrices": null,
+     "passes": 2,
+     "rows": 638
+    },
+    {
+     "loadFactor": 1.2,
+     "plain": 118420.43690303092,
+     "secure": null,
+     "binding": 3,
+     "secureBinding": null,
+     "prices": [
+      25.758441999999935,
+      35.98284790526438
+     ],
+     "securePrices": null,
+     "passes": 2,
+     "rows": 646
+    },
+    {
+     "loadFactor": 1.25,
+     "plain": 124846.10219938811,
+     "secure": null,
+     "binding": 3,
+     "secureBinding": null,
+     "prices": [
+      25.758442000000166,
+      35.98284790526428
+     ],
+     "securePrices": null,
+     "passes": 2,
+     "rows": 692
+    },
+    {
+     "loadFactor": 1.3,
+     "plain": 134798.7759304991,
+     "secure": null,
+     "binding": 4,
+     "secureBinding": null,
+     "prices": [
+      20.19180852486175,
+      342.9271462043331
+     ],
+     "securePrices": null,
+     "passes": 2,
+     "rows": 997
+    }
+   ],
+   "ms": {
+    "plain": 7.643299999999954,
+    "secure": 13.409999999999854
+   }
+  }
+ ]
+}

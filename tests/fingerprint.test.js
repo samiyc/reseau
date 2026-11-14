@@ -4,6 +4,7 @@ import { createHash } from "node:crypto";
 import { solveFlows } from "../src/flow/dcflow.js";
 import { runCascade } from "../src/cascade/cascade.js";
 import { baseInjection, describeState } from "../src/grid/state.js";
+import { solveDispatch } from "../src/opf/dispatch.js";
 import { grid } from "./cases.js";
 
 /**
@@ -22,6 +23,8 @@ const EXPECTED = {
   state: "86853e89baa8bba0",
   // 14/11/2026, J2: the cascade after each single loss on the IEEE 30 at 1.2 times its load, Grid2Op's rule.
   cascades30: "ffc502f43f41ed16",
+  // 14/11/2026, J3: the DC-OPF of the three grids at 0.7 times their load, without and with the N-1 rule.
+  dispatch: "ebe5c8e2f419ef19",
 };
 
 const digest = (value) => createHash("sha256").update(JSON.stringify(value)).digest("hex").slice(0, 16);
@@ -61,6 +64,13 @@ function cascades() {
   );
 }
 
+function dispatches() {
+  return digest([14, 30, 118].flatMap((size) => [false, true].map((security) => {
+    const r = solveDispatch(grid(size), { loadFactor: 0.7, security });
+    return [rounded(r.generation), rounded(r.prices), rounded([r.cost])];
+  })));
+}
+
 describe("the fingerprints of the model", () => {
   it("keeps the base flows of the three PGLib grids", () => {
     assert.deepEqual({ base14: base(14), base30: base(30), base118: base(118) }, { base14: EXPECTED.base14, base30: EXPECTED.base30, base118: EXPECTED.base118 });
@@ -76,5 +86,9 @@ describe("the fingerprints of the model", () => {
 
   it("keeps the IEEE 30's cascades", () => {
     assert.equal(cascades(), EXPECTED.cascades30);
+  });
+
+  it("keeps the dispatch of the three grids, without and with the N-1 rule", () => {
+    assert.equal(dispatches(), EXPECTED.dispatch);
   });
 });

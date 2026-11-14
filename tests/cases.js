@@ -1,15 +1,25 @@
 import { readFileSync } from "node:fs";
 import { createGrid } from "../src/grid/case.js";
 
-/** The cases of data/, for the tests: `grid(14)` is PGLib's IEEE 14. */
-export const caseData = (/** @type {number} */ size) =>
-  JSON.parse(readFileSync(new URL(`../data/pglib_opf_case${size}_ieee.json`, import.meta.url), "utf8"));
+/**
+ * The cases of data/, for the tests: `grid(14)` is PGLib's IEEE 14; `variant` "api" or "sad" the congested ones and
+ * those with small angle limits; `convention` "powermodels" to compare with PGLib's costs.
+ */
+export const caseName = (/** @type {number} */ size, variant = "") => `pglib_opf_case${size}_ieee` + (variant ? `__${variant}` : "");
 
-export const grid = (/** @type {number} */ size) => createGrid(caseData(size));
+export const caseData = (/** @type {number} */ size, variant = "") =>
+  JSON.parse(readFileSync(new URL(`../data/${caseName(size, variant)}.json`, import.meta.url), "utf8"));
 
-/** A three-bus triangle solved by hand: every line x = 0.1, 100 MW drawn at bus 2, bus 1 the reference. */
-export function triangle() {
-  const row = (from, to) => [from, to, 0, 0.1, 0, 100, 100, 100, 0, 0, 1, -30, 30];
+export const grid = (/** @type {number} */ size, { variant = "", convention = "matpower" } = {}) => createGrid(caseData(size, variant), { convention });
+
+/**
+ * A three-bus triangle solved by hand: every line x = 0.1, 100 MW drawn at bus 2, bus 1 the reference. One generator
+ * at bus 1, 10 $/MWh; `congested` adds one at bus 3, 30 $/MWh, and limits line 1-2 to 50 MW.
+ */
+export function triangle({ congested = false } = {}) {
+  const row = (from, to) => [from, to, 0, 0.1, 0, congested && to === 2 && from === 1 ? 50 : 100, 100, 100, 0, 0, 1, -30, 30];
+  const gens = congested ? [[1, 0, 1, 200, 0], [3, 0, 1, 200, 0]] : [[1, 0, 1, 200, 0]];
+  const costs = congested ? [[0, 10, 0], [0, 30, 0]] : [[0, 10, 0]];
   return createGrid({
     name: "triangle",
     source: "à la main",
@@ -24,11 +34,11 @@ export function triangle() {
         [3, 1, 0, 0],
       ],
     },
-    gen: { columns: ["bus", "Pg", "status", "Pmax", "Pmin"], rows: [[1, 0, 1, 200, 0]] },
+    gen: { columns: ["bus", "Pg", "status", "Pmax", "Pmin"], rows: gens },
     branch: {
       columns: ["fbus", "tbus", "r", "x", "b", "rateA", "rateB", "rateC", "ratio", "angle", "status", "angmin", "angmax"],
       rows: [row(1, 2), row(1, 3), row(3, 2)],
     },
-    gencost: { columns: ["c2", "c1", "c0"], rows: [[0, 10, 0]] },
+    gencost: { columns: ["c2", "c1", "c0"], rows: costs },
   });
 }

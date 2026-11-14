@@ -16,6 +16,7 @@
  * @typedef {object} Grid
  * @property {string} name
  * @property {number} baseMVA
+ * @property {string} convention "matpower" (the model's) or "powermodels" (to check against PGLib's costs)
  * @property {number} busCount
  * @property {Int32Array} busId the bus's number in the file, for display
  * @property {Map<number, number>} busIndex from the file's number to the index
@@ -25,8 +26,10 @@
  * @property {number} branchCount
  * @property {Int32Array} from
  * @property {Int32Array} to
- * @property {Float64Array} susceptance 1 / (x · ratio), in p.u.
- * @property {Float64Array} shift the phase shift, in radians
+ * @property {Float64Array} susceptance 1 / (x · ratio), in p.u. (PowerModels': x / (r² + x²))
+ * @property {Float64Array} shift the phase shift, in radians (PowerModels': 0)
+ * @property {Float64Array} angleMin the least θf − θt, in radians (−Infinity: none)
+ * @property {Float64Array} angleMax the most θf − θt, in radians (Infinity: none)
  * @property {Float64Array} rate the thermal limit RATE_A, in MW
  * @property {Uint8Array} inService the branch's status in the file
  * @property {number} genCount

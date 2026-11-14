@@ -2,15 +2,19 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { caseFromMatpower, matrixOf } from "../scripts/matpower-to-json.js";
-import { caseData, grid } from "./cases.js";
+import { createGrid } from "../src/grid/case.js";
+import { caseData, caseName, grid } from "./cases.js";
 
-const source = (size) => readFileSync(new URL(`../data/pglib/pglib_opf_case${size}_ieee.m`, import.meta.url), "utf8").replace(/\r\n/g, "\n");
+const source = (name) => readFileSync(new URL(`../data/pglib/${name}.m`, import.meta.url), "utf8").replace(/\r\n/g, "\n");
 const sum = (values) => values.reduce((a, b) => a + b, 0);
 
 describe("the conversion of a MATPOWER case", () => {
-  it("gives back the committed JSON, for each case", () => {
+  it("gives back the committed JSON, for each case and its congested and small-angle variants", () => {
     for (const size of [14, 30, 118]) {
-      assert.deepEqual(caseFromMatpower(source(size), `pglib_opf_case${size}_ieee`), caseData(size));
+      for (const variant of ["", "api", "sad"]) {
+        const name = caseName(size, variant);
+        assert.deepEqual(caseFromMatpower(source(name), name), caseData(size, variant));
+      }
     }
   });
 
@@ -60,6 +64,23 @@ describe("the grid of PGLib's IEEE 14 (docs/recherche/bancs.md § 2)", () => {
 
   it("has bus 1 as its reference", () => {
     assert.equal(g.busId[g.reference], 1);
+  });
+
+  it("reads the angle limits, ±30° on every branch, and none at ±360°", () => {
+    assert.ok(g.angleMax.every((a) => Math.abs(a - Math.PI / 6) < 1e-12));
+    assert.ok(g.angleMin.every((a) => Math.abs(a + Math.PI / 6) < 1e-12));
+    const data = caseData(14);
+    const at = data.branch.columns.indexOf("angmax");
+    data.branch.rows[0][at] = 360;
+    assert.equal(createGrid(data).angleMax[0], Infinity);
+  });
+
+  it("takes x / (r² + x²) without the ratio under PowerModels' convention, the one of PGLib's costs", () => {
+    const pm = grid(14, { convention: "powermodels" });
+    assert.ok(Math.abs(pm.susceptance[8] - 0.55618 / 0.55618 ** 2) < 1e-12);
+    assert.ok(Math.abs(pm.susceptance[0] - 0.05917 / (0.01938 ** 2 + 0.05917 ** 2)) < 1e-12);
+    assert.equal(pm.convention, "powermodels");
+    assert.throws(() => createGrid(caseData(14), { convention: "pandapower" }), /convention inconnue/);
   });
 });
 

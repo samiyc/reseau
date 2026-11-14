@@ -62,6 +62,10 @@ la répartition (1,03 sur le 30, 1,09 sur le 118) ; aucun des trois réseaux n'e
 
 ## P4. Le DC-OPF (J3)
 
+**Fait le 14/11** : [../mesures/opf-j3.md](../mesures/opf-j3.md). Les six coûts DC de BASELINE.md sont retrouvés, au
+dernier chiffre publié près, sous la convention de PowerModels (sans rapports de transformation), lue dans son code ;
+les trois cas aux petits angles sont infaisables, comme chez lui. Les prix nodaux sont vérifiés par différences finies.
+
 - **Le solveur** : celui de la lib, demandé à commun le 14/11 ([methodes.md](methodes.md) § 5). En attendant, la
   répartition par préséance sans réseau suffit à P1-P3.
 - **La validation** : retrouver les coûts DC de BASELINE.md : 2 051,5 $/h (14), 7 472,8 (30), 93 101 (118), et
@@ -70,6 +74,11 @@ la répartition (1,03 sur le 30, 1,09 sur le 118) ; aucun des trois réseaux n'e
 - **Les prix nodaux** : les multiplicateurs de l'équilibre et des lignes. Ils s'affichent sur la carte.
 
 ## P5. La règle N-1 (J3-J4)
+
+**Vérifier et prévenir, faits le 14/11** ([../mesures/opf-j3.md](../mesures/opf-j3.md)) : aucun des trois réseaux
+n'est N-1 à sa charge de base, même avec la meilleure répartition ; la règle tient jusqu'à 0,72, 0,81 et 0,77 fois la
+charge. En dessous, elle coûte de 2 à 57 % sur le 14 et le 30, de 4 à 16 % sur le 118. Reste le scénario de 2006,
+sous 0,7 fois la charge.
 
 - **Vérifier** : pour un état, la LODF donne toutes les pertes de ligne d'un coup ; on liste celles qui surchargent.
 - **Prévenir** (SCOPF) : le DC-OPF avec les limites après perte, ajoutées au fil de l'eau. On mesure **le prix de la
