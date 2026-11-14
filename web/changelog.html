@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Journal des versions</title>
+    <link rel="stylesheet" href="../node_modules/mcts-commun/web/theme.css" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="changelog.css" />
+  </head>
+  <body>
+    <header class="masthead">
+      <p class="links"><a href="index.html">← la carte</a></p>
+      <h1>Réseau : journal des versions</h1>
+      <p>Un réseau électrique en simulation : des lignes où le courant suit les lois de Kirchhoff, des centrales, une consommation, puis les pannes et leurs cascades. Un modèle pour comprendre, pas pour exploiter un vrai réseau.</p>
+    </header>
+    <main class="changelog">
+      <section>
+        <h2>Les versions</h2>
+
+      <article class="version">
+        <h3><span class="tag">0.1.0</span> Les flux de l'IEEE 14, et une ligne qui tombe <span class="date">14/11/2026</span></h3>
+        <ul>
+          <li>Le cadrage : la physique des flux, la règle N-1 et les grandes pannes, les réseaux de test publics vérifiés sur leurs fichiers (IEEE, PGLib-OPF, RTS-GMLC, Grid2Op), onze pistes classées ; les recommandations validées par Sami.</li>
+          <li>Le calcul des flux en courant continu sur les réseaux IEEE à 14, 30 et 118 nœuds de PGLib-OPF, avec leurs limites de ligne : un clic coupe une ligne, son flux se reporte sur les autres.</li>
+          <li>Les facteurs de report (PTDF, LODF) : le flux d'après la perte d'une ligne se calcule sans tout refaire, et donne exactement le même résultat qu'un nouveau calcul.</li>
+          <li>Une ligne dont la perte coupe le réseau en deux est reconnue : la partie isolée devient un îlot, et sa consommation est perdue s'il n'a pas de centrale.</li>
+          <li>La page : la carte, les lignes colorées par leur charge, une consommation qu'on fait varier, le tableau des lignes et leur écart au réseau intact.</li>
+        </ul>
+        <p class="commits"><code>21f15d1</code> <code>b5cddbe</code></p>
+      </article>
+      </section>
+      <p class="hint">Le détail, les chiffres et leurs sources sont dans <code>docs/modele.md</code> et <code>docs/recherche/</code>.</p>
+    </main>
+  </body>
+</html>

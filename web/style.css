@@ -1,0 +1,61 @@
+/*
+ * The page's Khaki, from Notepad++'s own theme (themes/khaki.xml: 5F5F00 on D7D7AF), as Sami prefers, as raquette
+ * and feux have it. Light in both modes: this block comes after the theme, so that it wins over its dark mode too.
+ */
+:root {
+  color-scheme: light;
+  --bg: #d7d7af;
+  --panel: #e8e8cd;
+  --ink: #2f2f00;
+  --ink-2: #4d4d00;
+  --line: #a9a97e;
+  --accent: #5f5f00;
+  --accent-2: #474700;
+  --accent-ink: #ffffff;
+  --masthead: #5f5f00;
+  --masthead-ink: #ffffff;
+  --critical: #d03b3b;
+}
+
+.layout { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 16px; }
+@media (max-width: 860px) { .layout { grid-template-columns: minmax(0, 1fr); } }
+.pane { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px; min-width: 0; }
+.pane h2 { font-size: 1rem; margin: 6px 0 8px; }
+.controls label { display: flex; align-items: center; gap: 8px; }
+.controls input[type="range"] { width: 220px; accent-color: var(--accent); }
+#load-label { min-width: 3.5em; font-variant-numeric: tabular-nums; }
+
+#map { display: block; width: 100%; height: auto; aspect-ratio: 1; }
+.branch { cursor: pointer; }
+.branch .hit { stroke: transparent; stroke-width: 34; }
+.branch .wire { stroke-linecap: round; }
+.branch:hover .wire, .branch:focus-visible .wire { filter: drop-shadow(0 0 3px var(--ink-2)); }
+.branch:focus { outline: none; }
+.branch.open .wire { stroke: var(--ink-2); stroke-width: 3; stroke-dasharray: 10 10; }
+.arrow.hidden { display: none; }
+.branch-label { font-size: 22px; fill: var(--ink); text-anchor: middle; dominant-baseline: middle; paint-order: stroke; stroke: var(--panel); stroke-width: 6px; }
+.branch.overloaded .branch-label { font-weight: 700; }
+.bus circle { fill: var(--panel); stroke: var(--ink); stroke-width: 3; }
+.bus.short circle { stroke: var(--critical); stroke-width: 6; }
+.bus-id { font-size: 18px; font-weight: 700; fill: var(--ink); text-anchor: middle; dominant-baseline: central; pointer-events: none; }
+.production { font-size: 20px; fill: var(--ink-2); paint-order: stroke; stroke: var(--panel); stroke-width: 6px; }
+
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: center; font-size: 0.85rem; color: var(--ink-2); margin-top: 6px; }
+.ramp-scale { display: inline-flex; flex-direction: column; width: 160px; }
+.ramp { display: block; height: 10px; border-radius: 3px; }
+.ticks { display: flex; justify-content: space-between; font-size: 0.75rem; }
+.key { display: inline-flex; align-items: center; gap: 6px; }
+.swatch { display: inline-block; width: 26px; height: 4px; border-radius: 2px; }
+.swatch.critical { background: var(--critical); }
+.swatch.open { background: repeating-linear-gradient(to right, var(--ink-2) 0 6px, transparent 6px 12px); }
+
+.measures { display: grid; grid-template-columns: auto 1fr; gap: 3px 12px; margin: 0 0 12px; font-variant-numeric: tabular-nums; }
+.measures dt { color: var(--ink-2); }
+.measures dd { margin: 0; }
+.lines { width: 100%; border-collapse: collapse; font-size: 0.85rem; font-variant-numeric: tabular-nums; }
+.lines th, .lines td { padding: 3px 6px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
+.lines th:first-child, .lines td:first-child, .lines td:nth-child(2) { text-align: left; }
+.lines th { color: var(--ink-2); font-weight: 600; }
+.lines tr.overloaded td { font-weight: 700; }
+.lines tr.open td { color: var(--ink-2); font-style: italic; }
+.tip { position: fixed; z-index: 10; max-width: 320px; background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; padding: 6px 9px; font-size: 0.85rem; box-shadow: var(--shadow); pointer-events: none; }

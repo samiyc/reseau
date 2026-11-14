@@ -45,6 +45,7 @@ Its line in the roadmap: `mcts-commun/docs/feuille-de-route.md`, § 2.C. Start t
 ## To add when their turn comes
 
 Each of these exists in the other clients; copy it from them when there is something for it to hold, not before.
+The fingerprints, the page and the changelog are in place since 14/11/2026 (J1, version 0.1.0); the bench waits.
 
 - **The fingerprints** (`tests/fingerprint.test.js`), with the first model: a hash of what the model does. A refactor
   changes none; a change meant to alter the model updates its hash and says so in the commit, with the measures before

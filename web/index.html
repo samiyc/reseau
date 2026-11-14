@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Réseau</title>
+    <link rel="stylesheet" href="../node_modules/mcts-commun/web/theme.css" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="masthead">
+      <p class="links"><a href="changelog.html">Journal des versions</a> · <span id="version"></span></p>
+      <h1>Réseau</h1>
+      <p>Le réseau de test IEEE à 14 nœuds. Le courant n'y prend pas le chemin qu'on choisit : il se répartit entre toutes les lignes selon les lois de Kirchhoff. Coupez une ligne : son flux se reporte sur les autres.</p>
+    </header>
+    <main>
+      <section class="controls">
+        <label>Consommation<input id="load" type="range" min="0.5" max="1.6" step="0.05" value="1" /><span id="load-label"></span></label>
+        <button type="button" id="reset">Tout remettre en service</button>
+      </section>
+      <div class="layout">
+        <section class="pane">
+          <svg id="map" role="img" aria-label="La carte du réseau : les lignes colorées par leur charge"></svg>
+          <div class="legend" aria-hidden="true">
+            <span>Charge de la ligne</span>
+            <span class="ramp-scale"><span id="legend-ramp" class="ramp"></span><span class="ticks"><span>0 %</span><span>50 %</span><span>100 %</span></span></span>
+            <span class="key"><span class="swatch critical"></span>⚠ surcharge, au-delà de 100 %</span>
+            <span class="key"><span class="swatch open"></span>ouverte</span>
+            <span class="key">épaisseur : le flux ; flèche : son sens</span>
+          </div>
+        </section>
+        <section class="pane">
+          <h2>L'état</h2>
+          <dl class="measures" id="summary"></dl>
+          <h2>Les lignes</h2>
+          <table class="lines">
+            <thead>
+              <tr><th>Ligne</th><th>Sens</th><th>Flux</th><th>Limite</th><th>Charge</th><th>Écart</th></tr>
+            </thead>
+            <tbody id="rows"></tbody>
+          </table>
+          <p class="hint">L'écart compare le flux à celui du réseau intact, à la même consommation.</p>
+        </section>
+      </div>
+      <p class="hint">
+        <strong>Comment lire.</strong> Le calcul est le modèle DC : sans pertes, les tensions à 1, seules comptent les
+        réactances des lignes. La centrale du nœud 2 produit ce que dit le fichier (29,5 MW) ; celle du nœud 1, la
+        référence, fournit tout le reste. Il n'y a pas encore de répartition : au-delà
+        de sa Pmax, la page le signale. Une partie du réseau coupée du reste devient un îlot ; sans centrale, sa
+        consommation est perdue. Les limites des lignes sont celles de PGLib. Source : <span id="source"></span>.
+      </p>
+    </main>
+    <div id="tip" class="tip" role="tooltip" hidden></div>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>

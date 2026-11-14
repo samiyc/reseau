@@ -14,6 +14,8 @@
     "lint:fix": "eslint . --fix",
     "types": "tsc -p .",
     "check": "npm run lint && npm run types && npm test",
+    "page": "node node_modules/mcts-commun/bin/serve.js 4808",
+    "changelog": "node scripts/changelog.js",
     "prepare": "git config core.hooksPath .githooks"
   },
   "author": "Sami",
