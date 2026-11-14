@@ -7,7 +7,7 @@
       "version": "0.2.0",
       "title": "La cascade, et la charge critique",
       "date": "14/11/2026",
-      "commits": [],
+      "commits": ["f515699"],
       "items": [
         "La cascade, avec la règle de Grid2Op lue dans son code : une ligne à plus de deux fois sa limite tombe aussitôt, une ligne en surcharge tombe à son troisième pas d'affilée, et les flux se recalculent après chaque chute.",
         "Une répartition provisoire : les centrales se partagent la consommation au prorata de leur puissance maximale ; une partie du réseau sans assez de production déleste le reste. Les productions des fichiers PGLib n'étaient pas un vrai point de fonctionnement.",
