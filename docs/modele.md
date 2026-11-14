@@ -57,17 +57,28 @@ Pour des injections nettes P (production moins consommation, par nœud) et un en
 - **Le test** : pour chaque branche qui n'est pas un pont, le flux après sa perte par la LODF égale celui d'une
   nouvelle résolution sans elle, à 10⁻⁹ MW près.
 
-## 4. L'état du réseau, et la répartition provisoire
+## 4. L'état du réseau
 
-La consommation du fichier, multipliée par un **facteur de charge** (1 par défaut ; la page le fait varier). Dans
-chaque îlot, **toutes les centrales produisent la même part de leur Pmax**, celle qui couvre la demande de l'îlot
-(`src/grid/supply.js`) ; si la demande dépasse la capacité, toutes sont à Pmax et l'îlot **déleste** le reste, au
-prorata ; un îlot sans centrale perd toute sa consommation. C'est une **hypothèse** provisoire, en attendant le DC-OPF
-du J3 (décidée le 14/11, au J2) : les productions des fichiers PGLib sont un « départ à plat », pas une répartition,
-et le nœud de référence seul pour équilibrer faisait délester 393 MW au 118 sans aucune panne. Avec elle, aucune
-ligne des trois réseaux n'est en surcharge à la charge de base ([mesures/cascade-j2.md](mesures/cascade-j2.md)).
+La consommation du fichier, multipliée par un **facteur de charge** (1 par défaut ; la page le fait varier). Puis
+deux temps (`src/grid/state.js`) :
 
-Les productions du fichier ne servent plus qu'aux tests du calcul des flux (`baseInjection`).
+1. **La répartition**, sur le réseau tel que son fichier l'a (toutes ses branches en service) : depuis le J3, celle
+   **au moindre coût** (§ 5). Si aucune ne sert toute la consommation, elle en déleste le moins possible, puis, à
+   délestage égal, choisit la moins chère : l'ordre lexicographique de Sami (§ 7), en deux résolutions, sans prix de
+   la défaillance.
+2. **L'équilibre des îlots** (`src/grid/balance.js`) : les branches coupées ne changent pas la répartition. Les
+   centrales gardent ses consignes, et chaque îlot comble son propre écart. S'il manque de puissance, ses centrales
+   montent toutes de la même part de leur marge (jusqu'à Pmax), et il déleste le reste au prorata de ses
+   consommations. S'il en a trop, elles baissent toutes de la même part de leur production. C'est une **hypothèse**,
+   comme un réglage de fréquence partagé selon la marge. Un îlot sans centrale perd toute sa consommation.
+
+**La répartition du J2** (`dispatch: "pmax"`, `src/grid/supply.js`) reste disponible pour rejouer ses mesures. Dans
+chaque îlot, toutes les centrales y produisent la même part de leur Pmax. Avec des consignes au prorata de Pmax,
+l'équilibre des îlots redonne exactement cette règle. Les productions des fichiers PGLib (un « départ à plat », pas une
+répartition) ne servent qu'aux tests du calcul des flux (`baseInjection`).
+
+**Une surcharge** est un taux de charge au-delà de 1 + 10⁻⁶. La répartition tient des lignes exactement à leur
+limite, et un arrondi ne doit pas les compter en surcharge. Grid2Op compare strictement avec 1.
 
 ## 5. La répartition au moindre coût (J3)
 
@@ -86,11 +97,16 @@ Les productions du fichier ne servent plus qu'aux tests du calcul des flux (`bas
   branche garde sa limite RATE_A et perd ses écarts d'angle : une **hypothèse**, l'usage d'un SCOPF en DC.
 - **Jusqu'où la charge peut monter** (`maxLoad`) : le plus grand facteur de charge qui a une répartition, par
   dichotomie, sans et avec la règle N-1.
-- **Le réseau doit être d'un seul tenant** : la PTDF l'exige. La répartition dans les îlots viendra avec la cascade.
+- **Le réseau doit être d'un seul tenant** : la PTDF l'exige. L'état d'un réseau coupé en îlots équilibre chacun
+  autour de la répartition du réseau intact (§ 4).
+- **Le délestage** (`shedding`) : quand aucune répartition ne sert toute la consommation, une variable par nœud
+  consommateur, entre 0 et sa consommation. Une première résolution minimise le délestage, une seconde le coût, à
+  délestage au plus égal. Les prix nodaux n'ont alors plus de sens, et ne sont pas rendus.
 
 ## 6. Les jalons (le détail dans [recherche/pistes.md](recherche/pistes.md))
 
-- **J2, la cascade** (fait le 14/11, `src/cascade/`) : la règle de Grid2Op 1.12.6, déterministe (Sami, 14/11),
+- **J2, la cascade** (fait le 14/11, `src/cascade/`, refaite au J3 sous la répartition au moindre coût :
+  [mesures/cascade-j3.md](mesures/cascade-j3.md)) : la règle de Grid2Op 1.12.6, déterministe (Sami, 14/11),
   lue dans son code : dans un pas, une branche au-delà de 2 fois sa limite tombe aussitôt, et on recalcule jusqu'à ce
   que plus rien ne tombe ; une branche au-delà de sa limite tombe à son 3e pas d'affilée ; un îlot sans assez de
   production déleste. L'expérience : toutes les pertes simples et des paires tirées par graine (`createRng`), à
@@ -126,5 +142,7 @@ les surcharges, puis le coût (Sami, 14/11).
 `tests/fingerprint.test.js` garde un hachage de ce que fait le modèle : les flux de l'injection du fichier sur les trois réseaux,
 et ceux d'après chaque perte d'une branche de l'IEEE 14 (J1) ; la répartition des trois réseaux à 1,2 fois leur
 charge, et les cascades de l'IEEE 30 après chaque perte simple, au même facteur (J2) ; la répartition des trois réseaux
-à 0,7 fois leur charge, sans et avec la règle N-1, ses prix nodaux et son coût (J3). Une refonte n'en change aucun ;
+à 0,7 fois leur charge, sans et avec la règle N-1, ses prix nodaux et son coût ; l'état des trois réseaux à 1,2 fois
+leur charge et les cascades de l'IEEE 30 à sa charge de base, sous cette répartition (J3). Les empreintes du J2
+gardent leur répartition (`dispatch: "pmax"`). Une refonte n'en change aucun ;
 un changement voulu du modèle met à jour le hachage et le dit dans son commit, avec les mesures avant et après.

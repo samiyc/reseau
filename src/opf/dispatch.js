@@ -27,7 +27,9 @@ import { n1Overloads, securityRow } from "./security.js";
  * @property {Float64Array} [generation] each generator's output, in MW
  * @property {Float64Array} [injection] each bus's net injection, in MW
  * @property {import("../types.js").Flows} [flows]
- * @property {Float64Array} [prices] each bus's nodal price, in $/MWh
+ * @property {Float64Array} [shed] the load each bus sheds, in MW (with `shedding`, when no dispatch serves it all)
+ * @property {number} [shedTotal]
+ * @property {Float64Array | null} [prices] each bus's nodal price, in $/MWh; null when load is shed
  * @property {{ branch: number, outage: number, side: number, multiplier: number }[]} [binding]
  * @property {number} rows the limit rows of the programme
  * @property {number} passes the solves
@@ -38,6 +40,8 @@ import { n1Overloads, securityRow } from "./security.js";
 
 /** Below this, a limit's multiplier is zero: the limit does not bind. */
 const BINDING = 1e-7;
+/** The second pass of the shedding may shed this much more, relative and in MW, than the first found. */
+const SHED_SLACK = 1e-9;
 
 /** Each generator's output, in MW: the units from the solution, the others at Pmax. */
 function generationOf(/** @type {DispatchModel} */ model, /** @type {Float64Array} */ x) {
@@ -47,10 +51,18 @@ function generationOf(/** @type {DispatchModel} */ model, /** @type {Float64Arra
   return out;
 }
 
+/** The load shed at each bus, in MW. */
+function shedOf(/** @type {DispatchModel} */ model, /** @type {Float64Array} */ x) {
+  const out = new Float64Array(model.grid.busCount);
+  const { shedBus, unitCount } = model.columns;
+  shedBus.forEach((n, j) => (out[n] = x[unitCount + j]));
+  return out;
+}
+
 /** The net injection of each bus, in MW. */
 function injectionOf(/** @type {DispatchModel} */ model, /** @type {Float64Array} */ x) {
   const out = Float64Array.from(model.base);
-  model.units.forEach((g, u) => (out[model.grid.genBus[g]] += x[u]));
+  model.columns.bus.forEach((n, j) => (out[n] += x[j]));
   return out;
 }
 
@@ -90,13 +102,17 @@ function outcomeOf(/** @type {DispatchModel} */ model, result, /** @type {{ pass
   if (result.status !== "optimal") return { status: result.status, culprit: culpritOf(model, result.culprit), ...work };
   const generation = generationOf(model, result.x);
   const injection = injectionOf(model, result.x);
+  const shed = shedOf(model, result.x);
+  const shedTotal = shed.reduce((sum, v) => sum + v, 0);
   return {
     status: result.status,
     cost: costOf(model.grid, generation),
     generation,
     injection,
+    shed,
+    shedTotal,
     flows: solveFlows(model.grid, injection),
-    prices: pricesOf(model, result.multipliers.eq, result.multipliers.le),
+    prices: model.columns.shedBus.length > 0 ? null : pricesOf(model, result.multipliers.eq, result.multipliers.le),
     binding: bindingOf(model, result.multipliers.le),
     ...work,
   };
@@ -113,18 +129,37 @@ function flowsOf(/** @type {DispatchModel} */ model, /** @type {Float64Array} */
   });
 }
 
+/** The options of `solveDispatch`, with their defaults. */
+function settingsOf({ loadFactor = 1, security = false, shedding = false, maxPasses = 50 }) {
+  if (security && shedding) throw new Error("le délestage avec la règle N-1 n'est pas écrit");
+  return { loadFactor, security, shedding, maxPasses };
+}
+
 /**
  * The cheapest dispatch of a grid in one piece at a load factor; with `security`, N-1 secure. `status` is qp's:
  * "optimal", or "infeasible" with the `culprit`, the constraint no dispatch can meet. `passes` counts the solves;
  * with `security`, `left` counts the overloads after a loss that the last one leaves (0: secure; more only when
- * `maxPasses` ran out), and is null without it.
+ * `maxPasses` ran out), and is null without it. With `shedding` (not with `security`), a grid no dispatch serves
+ * whole sheds load, in Sami's order: the least load shed, then the least cost (docs/modele.md § 5).
  */
-export function solveDispatch(/** @type {Grid} */ grid, { loadFactor = 1, security = false, maxPasses = 50 } = {}) {
+export function solveDispatch(/** @type {Grid} */ grid, options = {}) {
+  const { loadFactor, security, shedding, maxPasses } = settingsOf(options);
   const model = createDispatchModel(grid, { loadFactor });
-  const qp = createQp(model.units.length);
+  const qp = createQp(model.columns.bus.length);
   const result = qp.solve(programOf(model));
+  if (shedding && result.status === "infeasible") return shedLeast(grid, loadFactor);
   if (!security) return outcomeOf(model, result, { passes: 1, left: null });
   return secure(model, qp, result, maxPasses);
+}
+
+/** The two passes of the lexicographic order: the least load shed, then the cheapest dispatch that sheds no more. */
+function shedLeast(/** @type {Grid} */ grid, /** @type {number} */ loadFactor) {
+  const model = createDispatchModel(grid, { loadFactor, shedding: true });
+  const qp = createQp(model.columns.bus.length);
+  const least = qp.solve(programOf(model, { objective: "shed" }));
+  if (least.status !== "optimal") return outcomeOf(model, least, { passes: 1, left: null });
+  const cap = least.value * (1 + SHED_SLACK) + SHED_SLACK;
+  return outcomeOf(model, qp.solve(programOf(model, { cap }), { warm: least.active }), { passes: 2, left: null });
 }
 
 /** The N-1 passes: add the limits after a loss that the last dispatch breaks, solve again from its active set. */

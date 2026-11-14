@@ -13,14 +13,33 @@ describe("the cascade, under Grid2Op's rule", () => {
     assert.deepEqual({ ...GRID2OP_RULE }, { allowed: 2, hard: 2 });
   });
 
-  it("holds at once on the intact IEEE 14", () => {
-    const result = runCascade(grid(14));
-    assert.deepEqual([result.steps.length, result.lost, result.shed, result.settled], [1, 0, 0, true]);
+  it("holds at once on the intact IEEE 14, under either dispatch", () => {
+    for (const dispatch of ["cost", "pmax"]) {
+      const result = runCascade(grid(14), { dispatch });
+      assert.deepEqual([result.steps.length, result.lost, result.shed, result.settled], [1, 0, 0, true], dispatch);
+    }
+  });
+
+  it("trips 1-5 at once under the cheapest dispatch when 1-2 is out: bus 1 sends 259 MW, past twice 128", () => {
+    const g = grid(14);
+    const result = runCascade(g, { inService: without(g, "1-2") });
+    assert.deepEqual(trips(g, result), [["1-5:hard"], []]);
+    assert.ok(Math.abs(result.steps[0].tripped[0].loading - 259 / 128) < 1e-6);
+    assert.ok(Math.abs(result.shed - 200) < 1e-6);
+  });
+
+  it("keeps the setpoints through the cascade: the dispatch is solved once, before the first step", () => {
+    const g = grid(30);
+    const cascade = createCascade(g, { loadFactor: 1.05, inService: without(g, "1-2") });
+    const before = Float64Array.from(cascade.setpoints.generation);
+    stepCascade(cascade);
+    stepCascade(cascade);
+    assert.deepEqual(cascade.setpoints.generation, before);
   });
 
   it("trips 1-5 on its third overloaded step when 1-2 is out, then sheds what bus 2's 59 MW cannot serve", () => {
     const g = grid(14);
-    const result = runCascade(g, { inService: without(g, "1-2") });
+    const result = runCascade(g, { inService: without(g, "1-2"), dispatch: "pmax" });
     assert.deepEqual(trips(g, result), [[], [], ["1-5:soft"], []]);
     assert.ok(Math.abs(result.steps[2].tripped[0].loading - 340 * (259 / 399) / 128) < 1e-9);
     assert.ok(Math.abs(result.shed - 200) < 1e-9);
@@ -30,13 +49,13 @@ describe("the cascade, under Grid2Op's rule", () => {
 
   it("trips 1-5 at once past twice its rating, at 1.2 times the load", () => {
     const g = grid(14);
-    const result = runCascade(g, { loadFactor: 1.2, inService: without(g, "1-2") });
+    const result = runCascade(g, { loadFactor: 1.2, inService: without(g, "1-2"), dispatch: "pmax" });
     assert.deepEqual(trips(g, result), [["1-5:hard"], []]);
   });
 
   it("trips a line whose counter is already at 2, and resets a line back under its limit", () => {
     const g = grid(14);
-    const cascade = createCascade(g, { inService: without(g, "1-2") });
+    const cascade = createCascade(g, { inService: without(g, "1-2"), dispatch: "pmax" });
     cascade.counter[branch(g, "1-5")] = 2;
     cascade.counter[branch(g, "2-3")] = 2;
     const { tripped } = stepCascade(cascade);
@@ -46,7 +65,7 @@ describe("the cascade, under Grid2Op's rule", () => {
 
   it("recomputes within a step: on the IEEE 118 at 1.3 times the load, losing 38-37 trips lines in later rounds", () => {
     const g = grid(118);
-    const result = runCascade(g, { loadFactor: 1.3, inService: without(g, "38-37") });
+    const result = runCascade(g, { loadFactor: 1.3, inService: without(g, "38-37"), dispatch: "pmax" });
     const late = result.steps.flatMap((step) => step.tripped).filter((t) => t.round > 0);
     assert.ok(late.length > 0 && late.every((t) => t.why === "hard"));
     assert.equal(result.lost, 54);
@@ -55,7 +74,7 @@ describe("the cascade, under Grid2Op's rule", () => {
 
   it("stops at maxSteps, unsettled", () => {
     const g = grid(14);
-    const result = runCascade(g, { inService: without(g, "1-2") }, { maxSteps: 2 });
+    const result = runCascade(g, { inService: without(g, "1-2"), dispatch: "pmax" }, { maxSteps: 2 });
     assert.deepEqual([result.steps.length, result.settled], [2, false]);
   });
 
@@ -67,7 +86,7 @@ describe("the cascade, under Grid2Op's rule", () => {
 
   it("keeps each step's state and branches in service when asked", () => {
     const g = grid(14);
-    const result = runCascade(g, { inService: without(g, "1-2") }, { keep: true });
+    const result = runCascade(g, { inService: without(g, "1-2"), dispatch: "pmax" }, { keep: true });
     assert.equal(result.steps[3].inService[branch(g, "1-5")], 0);
     assert.equal(result.steps[1].inService[branch(g, "1-5")], 1);
     assert.ok(result.steps[3].state.flows);

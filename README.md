@@ -6,12 +6,14 @@ puis les pannes, une ligne qui tombe et la charge qui se reporte sur les autres,
 
 Client de [`mcts-commun`](../mcts-commun/README.md). La recherche sera choisie par la mesure, contre l'ordre de préséance économique avec une marge de réserve, et la règle N-1.
 
-**État** (14/11/2026, version 0.2.0) : le cadrage est fait (`docs/recherche/`, les réponses de Sami dans
+**État** (14/11/2026, version 0.3.0) : le cadrage est fait (`docs/recherche/`, les réponses de Sami dans
 `questions.md`), le modèle écrit (`docs/modele.md`). J1 : le calcul DC des flux sur les IEEE 14, 30 et 118 de
 PGLib-OPF, les facteurs de report (PTDF, LODF). J2 : la cascade, avec la règle de Grid2Op, et sa mesure
 (`docs/mesures/cascade-j2.md`). J3 : la répartition au moindre coût (le DC-OPF, par le solveur `qp` de
 `mcts-commun`), qui retrouve les coûts publiés par PGLib-OPF, ses prix nodaux, la règle N-1 et son prix
-(`docs/mesures/opf-j3.md`). La page montre la carte, coupe une ligne, lance la cascade et la rejoue pas à pas.
+(`docs/mesures/opf-j3.md`) ; elle est l'état du modèle, et les cascades sont remesurées depuis elle
+(`docs/mesures/cascade-j3.md`). La page montre la carte, la répartition et ses prix, coupe une ligne, lance la
+cascade et la rejoue pas à pas.
 
 ## Les commandes
 
@@ -23,7 +25,7 @@ PGLib-OPF, les facteurs de report (PTDF, LODF). J2 : la cascade, avec la règle 
 | `npm run types` | tsc vérifie le JavaScript d'après ses commentaires JSDoc, sans rien compiler |
 | `npm test` (`test:coverage`) | les tests de `node --test`, dont la longueur des `.md` et les empreintes du modèle |
 | `npm run page` | la page, sur http://127.0.0.1:4808/web/ ; l'état se partage par l'adresse (`#ouvertes=1-2&conso=1.3`) |
-| `node scripts/cascade-sweep.js [paires] [graine]` | la mesure du J2, par un créneau (`mcts-backlog --slot 1 -- …`), 25 s |
+| `node scripts/cascade-sweep.js [paires] [graine] [cost\|pmax]` | les cascades, par un créneau (`mcts-backlog --slot 1 -- …`) : sous la répartition au moindre coût (J3, 35 s) ou celle du J2 (25 s) |
 | `node scripts/opf-measure.js` | la mesure du J3 : la validation contre PGLib, la charge maximale, le prix de la sécurité ; 10 s |
 | `npm run changelog` | `web/changelog.html` depuis `docs/changelog.json`, après une nouvelle version |
 

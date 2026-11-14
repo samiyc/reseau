@@ -53,9 +53,12 @@
       </div>
       <p class="hint">
         <strong>Comment lire.</strong> Le calcul est le modèle DC : sans pertes, les tensions à 1, seules comptent les
-        réactances des lignes. Les centrales se partagent la consommation au prorata de leur puissance maximale (une
-        hypothèse, en attendant la répartition au moindre coût) ; au-delà de leur capacité, le reste est délesté. Une partie
-        du réseau coupée du reste devient un îlot ; sans centrale, sa consommation est perdue. <strong>La cascade</strong>
+        réactances des lignes. <strong>La répartition</strong> est celle du moindre coût sur le réseau intact (le DC-OPF,
+        validé contre les coûts publiés par PGLib-OPF), qui garde chaque ligne sous sa limite ; si aucune ne sert toute la
+        consommation, elle en déleste le moins possible. Les <strong>prix nodaux</strong> disent ce que coûterait un MW de
+        plus consommé à chaque nœud : ils diffèrent quand une ligne est à sa limite. Une ligne coupée ne change pas la
+        répartition : chaque partie du réseau rééquilibre ses centrales autour d'elle, et une partie sans assez de
+        production déleste le reste. <strong>La cascade</strong>
         suit la règle de Grid2Op, la plateforme de RTE : une ligne à plus de deux fois sa limite tombe aussitôt ; au-delà de
         sa limite, elle tombe à son troisième pas de surcharge d'affilée (un pas : 5 minutes chez Grid2Op). Les limites des
         lignes sont celles de PGLib. Source : <span id="source"></span>.

@@ -49,7 +49,10 @@ distribuée, les surcharges (nombre et MW·h au-delà des limites). Un tri rapid
 
 **Faite le 14/11** : [../mesures/cascade-j2.md](../mesures/cascade-j2.md). Il y a un coude, et c'est la limite N-0 de
 la répartition (1,03 sur le 30, 1,09 sur le 118) ; aucun des trois réseaux n'est N-1 à sa charge de base (0,58,
-0,65, 0,68). La queue de Dobson ne se voit pas encore : à refaire au J3, avec le DC-OPF.
+0,65, 0,68). La queue de Dobson ne se voit pas encore : à refaire au J3, avec le DC-OPF. **Refaite au J3**
+([../mesures/cascade-j3.md](../mesures/cascade-j3.md)) : la répartition au moindre coût laisse des lignes exactement à
+leur limite, et une perte sur deux fait cascade pour quelques millionièmes de dépassement. Le point de départ est
+posé à Sami.
 
 - **La règle** : celle de Grid2Op ([physique.md](physique.md) § 5), lue dans son code : au-delà de 2 fois sa limite,
   une ligne tombe aussitôt ; au-delà de sa limite, à son 3e pas d'affilée. Après chaque chute, on recalcule ; un

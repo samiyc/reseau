@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { solveFlows } from "../src/flow/dcflow.js";
 import { runCascade } from "../src/cascade/cascade.js";
-import { baseInjection, describeState } from "../src/grid/state.js";
+import { baseInjection, describeState, setpointsFor } from "../src/grid/state.js";
 import { solveDispatch } from "../src/opf/dispatch.js";
 import { grid } from "./cases.js";
 
@@ -25,6 +25,10 @@ const EXPECTED = {
   cascades30: "ffc502f43f41ed16",
   // 14/11/2026, J3: the DC-OPF of the three grids at 0.7 times their load, without and with the N-1 rule.
   dispatch: "ebe5c8e2f419ef19",
+  // 14/11/2026, J3: the state of each grid at 1.2 times its load under the cheapest dispatch, shedding included.
+  stateCost: "d9b1b18b2eece3a6",
+  // 14/11/2026, J3: the IEEE 30's cascades after each single loss at its base load, under the cheapest dispatch.
+  cascades30Cost: "abf238133ff7e7ca",
 };
 
 const digest = (value) => createHash("sha256").update(JSON.stringify(value)).digest("hex").slice(0, 16);
@@ -47,18 +51,19 @@ function outages() {
   );
 }
 
-function states() {
+function states(dispatch = "pmax") {
   return digest([14, 30, 118].map((size) => {
-    const s = describeState(grid(size), { loadFactor: 1.2 });
+    const s = describeState(grid(size), { loadFactor: 1.2, dispatch });
     return [rounded(s.generation), rounded(s.flows.flow), rounded([s.shed])];
   }));
 }
 
-function cascades() {
+function cascades(dispatch = "pmax", loadFactor = 1.2) {
   const g = grid(30);
+  const setpoints = setpointsFor(g, { loadFactor, dispatch });
   return digest(
     Array.from({ length: g.branchCount }, (_, k) => {
-      const r = runCascade(g, { loadFactor: 1.2, inService: Uint8Array.from(g.inService, (on, b) => (b === k ? 0 : on)) });
+      const r = runCascade(g, { loadFactor, dispatch, setpoints, inService: Uint8Array.from(g.inService, (on, b) => (b === k ? 0 : on)) });
       return [r.steps.map((s) => s.tripped.map((t) => [t.branch, t.why, t.round])), rounded([r.shed])];
     }),
   );
@@ -86,6 +91,10 @@ describe("the fingerprints of the model", () => {
 
   it("keeps the IEEE 30's cascades", () => {
     assert.equal(cascades(), EXPECTED.cascades30);
+  });
+
+  it("keeps the state and the IEEE 30's cascades under the cheapest dispatch", () => {
+    assert.deepEqual({ stateCost: states("cost"), cascades30Cost: cascades("cost", 1) }, { stateCost: EXPECTED.stateCost, cascades30Cost: EXPECTED.cascades30Cost });
   });
 
   it("keeps the dispatch of the three grids, without and with the N-1 rule", () => {

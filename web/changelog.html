@@ -19,6 +19,19 @@
         <h2>Les versions</h2>
 
       <article class="version">
+        <h3><span class="tag">0.3.0</span> La répartition au moindre coût, ses prix, et le prix de la sécurité <span class="date">14/11/2026</span></h3>
+        <ul>
+          <li>La répartition au moindre coût (le DC-OPF), par le solveur de la bibliothèque commune : elle retrouve les six coûts publiés par PGLib-OPF au dernier chiffre près, une fois la convention de PowerModels lue dans son code (sans les rapports de transformation).</li>
+          <li>Les prix nodaux : ce que coûterait un MW de plus consommé à chaque nœud. Ils diffèrent quand une ligne est à sa limite, et sont vérifiés par différences finies.</li>
+          <li>La règle N-1 dans la répartition : aucun des trois réseaux ne la tient à sa charge de base, même au mieux ; elle tient jusqu'à 0,72, 0,81 et 0,77 fois la charge. En dessous, elle coûte de 2 à 57 % sur les petits réseaux, de 4 à 16 % sur le 118.</li>
+          <li>La répartition au moindre coût devient l'état du modèle : au-delà de ce que le réseau peut servir, elle déleste le moins possible, puis choisit la moins chère. Une ligne coupée ne la change pas : chaque partie du réseau rééquilibre ses centrales autour d'elle.</li>
+          <li>Les cascades remesurées depuis elle : elle tient mieux au-delà de la limite du J2, moins bien en dessous, car elle laisse des lignes exactement à leur limite. Le point de départ des cascades est une question pour Sami.</li>
+          <li>La page montre le coût de la répartition et l'écart de ses prix nodaux.</li>
+        </ul>
+        <p class="commits"><code>243823e</code></p>
+      </article>
+
+      <article class="version">
         <h3><span class="tag">0.2.0</span> La cascade, et la charge critique <span class="date">14/11/2026</span></h3>
         <ul>
           <li>La cascade, avec la règle de Grid2Op lue dans son code : une ligne à plus de deux fois sa limite tombe aussitôt, une ligne en surcharge tombe à son troisième pas d'affilée, et les flux se recalculent après chaque chute.</li>

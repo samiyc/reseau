@@ -1,11 +1,19 @@
 /**
- * The state of the grid (docs/modele.md § 4): the file's consumption times a load factor, the generators of each
- * island sharing it in proportion to their Pmax, the rest shed (src/grid/supply.js); then its flows and the loading
- * of each branch. What the page draws, what a cut line changes, and what the cascade steps through.
+ * The state of the grid (docs/modele.md § 4): the file's consumption times a load factor, the generators set by a
+ * dispatch, each island balanced around it; then its flows and the loading of each branch. What the page draws, what
+ * a cut line changes, and what the cascade steps through.
+ *
+ * Two dispatches: "cost", the model's since J3, the cheapest on the grid as the file has it (the DC-OPF, shedding the
+ * least load when it must: src/opf/dispatch.js), each island then balanced around it (src/grid/balance.js); and
+ * "pmax", J2's, every generator of an island at the same share of its Pmax (src/grid/supply.js).
  */
 
 import { solveFlows } from "../flow/dcflow.js";
+import { solveDispatch } from "../opf/dispatch.js";
+import { balanceIslands } from "./balance.js";
 import { islandSupply } from "./supply.js";
+
+/** @typedef {import("./balance.js").Setpoints} Setpoints */
 
 /** @typedef {import("../types.js").Grid} Grid */
 
@@ -27,20 +35,47 @@ export function loadingOf(/** @type {Grid} */ grid, /** @type {Float64Array} */ 
   return Float64Array.from(flow, (f, k) => (grid.rate[k] > 0 ? Math.abs(f) / grid.rate[k] : 0));
 }
 
+/**
+ * Past this loading, a branch is overloaded. Grid2Op compares strictly with 1; the margin keeps a branch the dispatch
+ * holds exactly at its limit (1 + 10⁻¹², by rounding) from counting as overloaded.
+ */
+export const OVERLOAD = 1 + 1e-6;
+
 /** The branches in service past their limit. */
 export function overloadedOf(/** @type {Float64Array} */ loading, /** @type {Uint8Array} */ inService) {
   const overloaded = [];
-  for (let k = 0; k < loading.length; k += 1) if (inService[k] && loading[k] > 1) overloaded.push(k);
+  for (let k = 0; k < loading.length; k += 1) if (inService[k] && loading[k] > OVERLOAD) overloaded.push(k);
   return overloaded;
+}
+
+/** The setpoints of the cheapest dispatch of the grid as its file has it, at a load factor. */
+export function setpointsOf(/** @type {Grid} */ grid, loadFactor = 1) {
+  const dispatch = solveDispatch(grid, { loadFactor, shedding: true });
+  if (dispatch.status !== "optimal") throw new Error(`aucune répartition à ${loadFactor} fois la charge : ${dispatch.status}`);
+  return /** @type {Setpoints} */ ({ generation: dispatch.generation, shed: dispatch.shed, cost: dispatch.cost, prices: dispatch.prices });
+}
+
+/**
+ * The setpoints a state or a cascade runs on: none under J2's "pmax" dispatch; under "cost", those given, or the
+ * dispatch solved now.
+ * @param {Grid} grid
+ * @param {{ loadFactor?: number, dispatch?: string, setpoints?: Setpoints | null }} options
+ */
+export function setpointsFor(grid, { loadFactor = 1, dispatch = "cost", setpoints = null }) {
+  if (dispatch === "pmax") return null;
+  return setpoints ?? setpointsOf(grid, loadFactor);
 }
 
 /**
  * The state under a load factor and a set of branches in service: each generator's output, the flows, the loadings,
  * the overloaded branches, the MW shed, and for each island its reference bus, demand, production, capacity, shed.
+ * Under the "cost" dispatch, `setpoints` spares solving it again (a cascade solves it once), and the state keeps them.
  */
-export function describeState(/** @type {Grid} */ grid, { loadFactor = 1, inService = grid.inService } = {}) {
-  const supply = islandSupply(grid, inService, loadFactor);
+export function describeState(/** @type {Grid} */ grid, options = {}) {
+  const { loadFactor = 1, inService = grid.inService } = options;
+  const set = setpointsFor(grid, options);
+  const supply = set ? balanceIslands(grid, inService, loadFactor, set) : islandSupply(grid, inService, loadFactor);
   const flows = solveFlows(grid, supply.injection, inService);
   const loading = loadingOf(grid, flows.flow);
-  return { injection: supply.injection, generation: supply.generation, flows, loading, overloaded: overloadedOf(loading, inService), islands: supply.parts, shed: supply.shed };
+  return { injection: supply.injection, generation: supply.generation, flows, loading, overloaded: overloadedOf(loading, inService), islands: supply.parts, shed: supply.shed, setpoints: set };
 }

@@ -5,7 +5,7 @@
  */
 
 import { createGrid } from "../src/grid/case.js";
-import { describeState } from "../src/grid/state.js";
+import { describeState, setpointsOf } from "../src/grid/state.js";
 import { RAMP_GRADIENT } from "./color.js";
 import { LAYOUT_14 } from "./layout.js";
 import { createMap, paintMap } from "./map.js";
@@ -21,7 +21,14 @@ const STEP_MS = 1100;
 
 const [data, changelog] = await Promise.all([readJson("../data/pglib_opf_case14_ieee.json"), readJson("../docs/changelog.json")]);
 const grid = createGrid(data);
-const page = { inService: Uint8Array.from(grid.inService), loadFactor: 1, state: null, cascade: null, timer: 0 };
+const page = { inService: Uint8Array.from(grid.inService), loadFactor: 1, setpoints: setpointsOf(grid, 1), state: null, cascade: null, timer: 0 };
+
+/** The load factor, and the dispatch that goes with it (solved again only when the factor changes). */
+function setLoad(/** @type {number} */ loadFactor) {
+  if (loadFactor === page.loadFactor) return;
+  page.loadFactor = loadFactor;
+  page.setpoints = setpointsOf(grid, loadFactor);
+}
 
 const map = createMap(/** @type {SVGSVGElement} */ (/** @type {unknown} */ (byId("map"))), grid, LAYOUT_14, {
   branch(/** @type {number} */ k) {
@@ -40,7 +47,7 @@ function readAddress() {
   const open = new Set((params.get("ouvertes") ?? "").split(",").filter(Boolean));
   for (let k = 0; k < grid.branchCount; k += 1) if (open.has(branchName(grid, k))) page.inService[k] = 0;
   const load = Number(params.get("conso"));
-  if (load >= 0.5 && load <= 1.6) page.loadFactor = load;
+  if (load >= 0.5 && load <= 1.6) setLoad(load);
   input("load").value = String(page.loadFactor);
   if (params.has("pas")) startCascade(Number(params.get("pas")) || 0, false);
 }
@@ -55,7 +62,7 @@ function writeAddress() {
 }
 
 function startCascade(/** @type {number} */ index = 0, play = true) {
-  const frames = buildFrames(grid, page.loadFactor, page.inService);
+  const frames = buildFrames(grid, page.loadFactor, page.inService, page.setpoints);
   page.cascade = { frames, index: Math.min(Math.max(0, index), frames.length - 1) };
   input("frame").max = String(frames.length - 1);
   if (play) playCascade();
@@ -88,7 +95,7 @@ function refresh() {
   writeAddress();
   const { state, inService, context } = shown();
   page.state = state;
-  const intact = describeState(grid, { loadFactor: page.loadFactor }).flows.flow;
+  const intact = describeState(grid, { loadFactor: page.loadFactor, setpoints: page.setpoints }).flows.flow;
   paintMap(map, buildView(grid, state, inService, context));
   renderSummary(byId("summary"), grid, state, page.loadFactor);
   renderTable(byId("rows"), tableRows(grid, state, inService, intact));
@@ -104,7 +111,7 @@ function refresh() {
 
 input("load").addEventListener("input", () => {
   stopCascade();
-  page.loadFactor = Number(input("load").value);
+  setLoad(Number(input("load").value));
   refresh();
 });
 byId("reset").addEventListener("click", () => {

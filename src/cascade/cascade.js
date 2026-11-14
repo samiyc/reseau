@@ -3,20 +3,29 @@
  * `BaseEnv`): within a step, a branch past `hard` times its limit trips at once, the flows are recomputed, and again
  * until nothing trips; a branch past its limit has its counter raised once a step, and trips when the counter goes
  * past `allowed`, so on its third overloaded step in a row. A branch back under its limit at the end of a step has
- * its counter reset. Islands are balanced by src/grid/supply.js: an island without enough production is shed.
+ * its counter reset. The generators keep the setpoints of the dispatch, solved once before the first step; each island
+ * is balanced around them (src/grid/balance.js), or, under J2's "pmax" dispatch, by src/grid/supply.js.
  */
 
-import { describeState } from "../grid/state.js";
+import { OVERLOAD, describeState, setpointsFor } from "../grid/state.js";
 
 /** @typedef {import("../types.js").Grid} Grid */
 
 /** Grid2Op's defaults (grid2op/Parameters.py): NB_TIMESTEP_OVERFLOW_ALLOWED = 2, HARD_OVERFLOW_THRESHOLD = 2.0. */
 export const GRID2OP_RULE = Object.freeze({ allowed: 2, hard: 2 });
 
-/** A cascade ready to step: the branches in service, the load factor, the rule, and each branch's counter. */
-export function createCascade(/** @type {Grid} */ grid, { loadFactor = 1, inService = grid.inService, rule = GRID2OP_RULE } = {}) {
-  return { grid, loadFactor, rule, inService: Uint8Array.from(inService), counter: new Int32Array(grid.branchCount), step: 0 };
+/**
+ * A cascade ready to step: the branches in service, the load factor, the dispatch and its setpoints (solved here
+ * unless given), the rule, and each branch's counter.
+ */
+export function createCascade(/** @type {Grid} */ grid, options = {}) {
+  const { loadFactor = 1, inService = grid.inService, rule = GRID2OP_RULE, dispatch = "cost" } = options;
+  const setpoints = setpointsFor(grid, options);
+  return { grid, loadFactor, dispatch, setpoints, rule, inService: Uint8Array.from(inService), counter: new Int32Array(grid.branchCount), step: 0 };
 }
+
+/** The state of a cascade's grid now. */
+const stateOf = (cascade) => describeState(cascade.grid, { loadFactor: cascade.loadFactor, inService: cascade.inService, dispatch: cascade.dispatch, setpoints: cascade.setpoints });
 
 /** The branches to trip now, each with its reason; raises the step's counters on the way. */
 function toTrip(cascade, /** @type {Float64Array} */ loading, /** @type {Int32Array} */ local, /** @type {Uint8Array} */ raised) {
@@ -24,7 +33,7 @@ function toTrip(cascade, /** @type {Float64Array} */ loading, /** @type {Int32Ar
   const trips = [];
   for (let k = 0; k < loading.length; k += 1) {
     if (!inService[k]) continue;
-    if (loading[k] > 1 && !raised[k]) {
+    if (loading[k] > OVERLOAD && !raised[k]) {
       local[k] += 1;
       raised[k] = 1;
     }
@@ -43,7 +52,7 @@ export function stepCascade(cascade) {
   const local = Int32Array.from(counter);
   const raised = new Uint8Array(grid.branchCount);
   const tripped = [];
-  let state = describeState(grid, { loadFactor: cascade.loadFactor, inService });
+  let state = stateOf(cascade);
   for (let round = 0; round <= grid.branchCount; round += 1) {
     const trips = toTrip(cascade, state.loading, local, raised);
     if (trips.length === 0) break;
@@ -51,9 +60,9 @@ export function stepCascade(cascade) {
       inService[trip.branch] = 0;
       tripped.push({ ...trip, loading: state.loading[trip.branch], round });
     }
-    state = describeState(grid, { loadFactor: cascade.loadFactor, inService });
+    state = stateOf(cascade);
   }
-  for (let k = 0; k < grid.branchCount; k += 1) counter[k] = inService[k] && state.loading[k] > 1 ? counter[k] + 1 : 0;
+  for (let k = 0; k < grid.branchCount; k += 1) counter[k] = inService[k] && state.loading[k] > OVERLOAD ? counter[k] + 1 : 0;
   cascade.step += 1;
   return { step: cascade.step, tripped, state };
 }

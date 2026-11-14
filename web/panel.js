@@ -3,6 +3,7 @@
  * colour), and the tooltip of the branch or bus under the pointer.
  */
 
+import { OVERLOAD } from "../src/grid/state.js";
 import { branchName, mw, pct, productionByBus } from "./view.js";
 
 function item(/** @type {HTMLElement} */ list, /** @type {string} */ term, /** @type {string} */ value) {
@@ -36,6 +37,21 @@ export function renderSummary(list, grid, state, /** @type {number} */ loadFacto
   const names = state.overloaded.map((k) => branchName(grid, k)).join(", ");
   item(list, "Surcharges", state.overloaded.length === 0 ? "aucune" : `⚠ ${state.overloaded.length} : ${names}`);
   item(list, "Îlots", islandsText(state));
+  if (state.setpoints) dispatchItems(list, state.setpoints);
+}
+
+const dollars = (/** @type {number} */ value, digits = 0) => `${value.toLocaleString("fr-FR", { maximumFractionDigits: digits, minimumFractionDigits: digits })} $`;
+
+/** The cost of the dispatch and the spread of its nodal prices. */
+function dispatchItems(list, setpoints) {
+  item(list, "Coût de la répartition", `${dollars(setpoints.cost)}/h`);
+  if (!setpoints.prices) {
+    item(list, "Prix nodaux", "sans objet : la répartition déleste");
+    return;
+  }
+  const [low, high] = [Math.min(...setpoints.prices), Math.max(...setpoints.prices)];
+  const spread = high - low < 0.005 ? `${dollars(low, 2)}/MWh partout, aucune ligne ne lie` : `de ${dollars(low, 2)} à ${dollars(high, 2)}/MWh`;
+  item(list, "Prix nodaux", spread);
 }
 
 function cell(/** @type {HTMLTableRowElement} */ row, /** @type {string} */ text) {
@@ -50,10 +66,10 @@ export function renderTable(/** @type {HTMLElement} */ body, rows) {
     ...rows.map((r) => {
       const row = document.createElement("tr");
       row.classList.toggle("open", r.open);
-      row.classList.toggle("overloaded", r.loading > 1);
+      row.classList.toggle("overloaded", r.loading > OVERLOAD);
       const sign = r.change > 0 ? "+" : "−";
       const change = Math.abs(r.change) < 0.05 ? "–" : sign + mw(Math.abs(r.change));
-      [r.name, r.open ? "hors service" : r.direction, mw(r.flow), mw(r.limit), (r.loading > 1 ? "⚠ " : "") + pct(r.loading), change].forEach((text) => cell(row, text));
+      [r.name, r.open ? "hors service" : r.direction, mw(r.flow), mw(r.limit), (r.loading > OVERLOAD ? "⚠ " : "") + pct(r.loading), change].forEach((text) => cell(row, text));
       return row;
     }),
   );

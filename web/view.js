@@ -3,6 +3,7 @@
  * each bus, the summary and the table. Numbers formatted in French.
  */
 
+import { OVERLOAD } from "../src/grid/state.js";
 import { capacityByBus } from "../src/flow/islands.js";
 import { loadingColor } from "./color.js";
 
@@ -21,7 +22,7 @@ const DOWN = { hand: "ouverte", now: "⚡ tombe", before: "tombée" };
 
 function branchLabel(/** @type {string} */ down, /** @type {number} */ loading) {
   if (down) return DOWN[down];
-  if (loading > 1) return `⚠ ${pct(loading)}`;
+  if (loading > OVERLOAD) return `⚠ ${pct(loading)}`;
   return loading >= LABELLED ? pct(loading) : "";
 }
 
@@ -40,7 +41,7 @@ function branchView(state, /** @type {Uint8Array} */ inService, /** @type {numbe
   return {
     open,
     tripping: down === "now",
-    overloaded: loading > 1,
+    overloaded: loading > OVERLOAD,
     color: loadingColor(loading),
     width: 3 + 11 * Math.min(1, Math.abs(flow) / 250),
     arrow: !open && Math.abs(flow) > 0.05,

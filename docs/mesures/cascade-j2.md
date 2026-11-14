@@ -1,7 +1,7 @@
 # J2 : la cascade et la charge critique
 
 Mesuré le 14/11/2026 (piste P3 de [../recherche/pistes.md](../recherche/pistes.md)) :
-`node scripts/cascade-sweep.js 300 1`, passé par un créneau d'un fil de la file (`mcts-backlog --slot 1`), 25 s en
+`node scripts/cascade-sweep.js 300 1 pmax` (sans `pmax` avant le J3), passé par un créneau d'un fil de la file (`mcts-backlog --slot 1`), 25 s en
 tout. Les données brutes sont dans [cascade-j2.json](cascade-j2.json).
 
 ## Le dispositif

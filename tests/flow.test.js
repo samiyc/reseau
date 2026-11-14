@@ -42,7 +42,7 @@ describe("the DC power flow", () => {
   });
 
   it("shares the IEEE 14's 259 MW in proportion to Pmax: 340 and 59 MW at 259/399 of their capacity", () => {
-    const state = describeState(grid(14));
+    const state = describeState(grid(14), { dispatch: "pmax" });
     const share = 259 / 399;
     assert.ok(gap(state.generation, [340 * share, 59 * share, 0, 0, 0]) < 1e-9);
     assert.equal(state.shed, 0);
@@ -50,8 +50,25 @@ describe("the DC power flow", () => {
     assert.deepEqual(state.overloaded, []);
   });
 
-  it("puts no line past its limit at base load, on the three PGLib grids", () => {
-    for (const size of [14, 30, 118]) assert.deepEqual(describeState(grid(size)).overloaded, [], `IEEE ${size}`);
+  it("puts no line past its limit at base load, on the three PGLib grids, under either dispatch", () => {
+    for (const size of [14, 30, 118]) {
+      for (const dispatch of ["cost", "pmax"]) assert.deepEqual(describeState(grid(size), { dispatch }).overloaded, [], `IEEE ${size}, ${dispatch}`);
+    }
+  });
+
+  it("runs the cheapest dispatch by default: on the IEEE 14, all 259 MW from bus 1, at 7.92 $/MWh", () => {
+    const state = describeState(grid(14));
+    assert.ok(gap(state.generation, [259, 0, 0, 0, 0]) < 1e-6);
+    assert.ok(Math.abs(state.setpoints.cost - 2051.526) < 1e-3);
+    assert.ok(gap(state.setpoints.prices, new Array(14).fill(7.920951)) < 1e-6);
+  });
+
+  it("balances an island around the setpoints: bus 2's 59 MW rise to serve what bus 1 no longer reaches", () => {
+    const g = grid(14);
+    const out = [...g.from.keys()].filter((k) => g.busId[g.from[k]] === 1);
+    const state = describeState(g, { inService: cut(g, ...out) });
+    const main = state.flows.islands.of[g.busIndex.get(2)];
+    assert.ok(gap([state.generation[0], state.generation[1], state.islands[main].shed], [0, 59, 200]) < 1e-6);
   });
 
   it("carries nothing on a branch out of service", () => {
@@ -82,8 +99,10 @@ describe("the DC power flow", () => {
   });
 
   it("runs every generator at Pmax past the capacity, and sheds the rest: 1.6 × 259 − 399 MW", () => {
-    const state = describeState(grid(14), { loadFactor: 1.6 });
-    assert.ok(gap([state.islands[0].production, state.shed, state.generation[0]], [399, 1.6 * 259 - 399, 340]) < 1e-9);
-    assert.ok(Math.abs(state.flows.balance[0]) < 1e-9);
+    for (const dispatch of ["cost", "pmax"]) {
+      const state = describeState(grid(14), { loadFactor: 1.6, dispatch });
+      assert.ok(gap([state.islands[0].production, state.shed, state.generation[0]], [399, 1.6 * 259 - 399, 340]) < 1e-6, dispatch);
+      assert.ok(Math.abs(state.flows.balance[0]) < 1e-6, dispatch);
+    }
   });
 });

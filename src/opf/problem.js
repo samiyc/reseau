@@ -58,16 +58,35 @@ function flowRow(/** @type {Grid} */ grid, model, /** @type {number} */ k, /** @
 }
 
 /**
- * What the programme needs of a grid at a load factor: the PTDF, the flows of the shifts alone (`offset`), the
- * demand, the units, the injection without them (`base`), and a row for each finite limit of a branch in service.
- * The grid must be in one piece (the PTDF throws otherwise).
+ * The programme's variables, in MW: the units' outputs, then, with `shedding`, the load shed at each bus that has
+ * some (between 0 and its demand; shedding a MW injects one at its bus).
  */
-export function createDispatchModel(/** @type {Grid} */ grid, { loadFactor = 1 } = {}) {
+function columnsOf(/** @type {Grid} */ grid, /** @type {Int32Array} */ units, /** @type {Float64Array} */ demand, /** @type {boolean} */ shedding) {
+  const shed = shedding ? [...demand.keys()].filter((n) => demand[n] > 0) : [];
+  const ofUnits = (/** @type {(g: number) => number} */ value) => Array.from(units, value);
+  return {
+    unitCount: units.length,
+    shedBus: Int32Array.from(shed),
+    bus: Int32Array.from([...ofUnits((g) => grid.genBus[g]), ...shed]),
+    c1: Float64Array.from([...ofUnits((g) => grid.cost[3 * g + 1]), ...shed.map(() => 0)]),
+    c2: Float64Array.from([...ofUnits((g) => grid.cost[3 * g]), ...shed.map(() => 0)]),
+    lower: Float64Array.from([...ofUnits((g) => grid.pmin[g]), ...shed.map(() => 0)]),
+    upper: Float64Array.from([...ofUnits((g) => grid.pmax[g]), ...shed.map((n) => demand[n])]),
+  };
+}
+
+/**
+ * What the programme needs of a grid at a load factor: the PTDF, the flows of the shifts alone (`offset`), the
+ * demand, the units, the injection without them (`base`), the variables, and a row for each finite limit of a branch
+ * in service. The grid must be in one piece (the PTDF throws otherwise).
+ */
+export function createDispatchModel(/** @type {Grid} */ grid, { loadFactor = 1, shedding = false } = {}) {
   const transfer = ptdf(grid);
   const offset = solveFlows(grid, new Float64Array(grid.busCount)).flow;
   const demand = demandOf(grid, loadFactor);
   const { units, fixed } = unitsOf(grid);
-  const model = { grid, loadFactor, transfer, offset, demand, units, base: Float64Array.from(demand, (d, n) => fixed[n] - d), limits: flowLimits(grid), rows: /** @type {LimitRow[]} */ ([]) };
+  const base = Float64Array.from(demand, (d, n) => fixed[n] - d);
+  const model = { grid, loadFactor, transfer, offset, demand, units, base, columns: columnsOf(grid, units, demand, shedding), limits: flowLimits(grid), rows: /** @type {LimitRow[]} */ ([]) };
   for (let k = 0; k < grid.branchCount; k += 1) {
     if (!grid.inService[k]) continue;
     if (Number.isFinite(model.limits.upper[k])) model.rows.push(flowRow(grid, model, k, 1));
@@ -80,33 +99,43 @@ export function createDispatchModel(/** @type {Grid} */ grid, { loadFactor = 1 }
 
 const dot = (/** @type {Float64Array} */ a, /** @type {Float64Array} */ b) => a.reduce((sum, v, i) => sum + v * b[i], 0);
 
-/** The rows of the limits over the units: Σ_u bus[genBus(u)] · p[u] ≤ limit − offset − bus · base. */
-function limitRows(/** @type {DispatchModel} */ model) {
-  const { units, rows, grid } = model;
-  const n = units.length;
-  const A = new Float64Array(rows.length * n);
-  const b = new Float64Array(rows.length);
+/**
+ * The rows of the limits over the variables, Σ_j bus[bus(j)] · x[j] ≤ limit − offset − bus · base; and, given a
+ * `cap`, one more: the load shed at most `cap`.
+ */
+function limitRows(/** @type {DispatchModel} */ model, /** @type {number | null} */ cap) {
+  const { rows, columns } = model;
+  const n = columns.bus.length;
+  const count = rows.length + (cap === null ? 0 : 1);
+  const A = new Float64Array(count * n);
+  const b = new Float64Array(count);
   rows.forEach((row, r) => {
-    for (let u = 0; u < n; u += 1) A[r * n + u] = row.bus[grid.genBus[units[u]]];
+    for (let j = 0; j < n; j += 1) A[r * n + j] = row.bus[columns.bus[j]];
     b[r] = row.limit - row.offset - dot(row.bus, model.base);
   });
+  if (cap === null) return { A, b };
+  A.fill(1, rows.length * n + columns.unitCount, count * n);
+  b[rows.length] = cap;
   return { A, b };
 }
 
-/** The programme for `qp`, over the outputs of the units, in MW; their costs c2 and c1 ($/h). */
-export function programOf(/** @type {DispatchModel} */ model) {
-  const { grid, units } = model;
-  const n = units.length;
-  const c = Float64Array.from(units, (g) => grid.cost[3 * g + 1]);
+/**
+ * The programme for `qp`. `objective` "cost": the units' costs c2 and c1 ($/h), the load shed free but held under
+ * `cap` when one is given; "shed": the load shed, in MW, alone (the first of Sami's lexicographic order).
+ */
+export function programOf(/** @type {DispatchModel} */ model, { objective = "cost", cap = null } = {}) {
+  const { columns } = model;
+  const n = columns.bus.length;
+  const c = objective === "shed" ? Float64Array.from(columns.bus, (_, j) => (j < columns.unitCount ? 0 : 1)) : columns.c1;
   const program = {
     c,
     eq: { A: new Float64Array(n).fill(1), b: [-model.base.reduce((sum, v) => sum + v, 0)] },
-    le: limitRows(model),
-    lower: Float64Array.from(units, (g) => grid.pmin[g]),
-    upper: Float64Array.from(units, (g) => grid.pmax[g]),
+    le: limitRows(model, cap),
+    lower: columns.lower,
+    upper: columns.upper,
   };
-  if (units.every((g) => grid.cost[3 * g] === 0)) return program;
+  if (objective === "shed" || columns.c2.every((v) => v === 0)) return program;
   const Q = new Float64Array(n * n);
-  units.forEach((g, u) => (Q[u * n + u] = 2 * grid.cost[3 * g]));
+  columns.c2.forEach((v, j) => (Q[j * n + j] = 2 * v));
   return { ...program, Q };
 }

@@ -52,7 +52,7 @@ describe("a sweep at one load factor", () => {
   it("loses 200 of 259 MW on the IEEE 14's single loss of 1-2, one event in 20", () => {
     const g = grid(14);
     const events = initialEvents(g);
-    const result = sweepFactor(g, 1, events);
+    const result = sweepFactor(g, 1, events, { dispatch: "pmax" });
     assert.equal(result.n, 20);
     assert.ok(Math.abs(result.mean - 200 / 259 / 20) < 1e-12);
     assert.equal(result.unsettled, 0);

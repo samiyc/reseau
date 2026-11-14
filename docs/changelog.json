@@ -4,6 +4,20 @@
   "intro": "Un réseau électrique en simulation : des lignes où le courant suit les lois de Kirchhoff, des centrales, une consommation, puis les pannes et leurs cascades. Un modèle pour comprendre, pas pour exploiter un vrai réseau.",
   "versions": [
     {
+      "version": "0.3.0",
+      "title": "La répartition au moindre coût, ses prix, et le prix de la sécurité",
+      "date": "14/11/2026",
+      "commits": ["243823e"],
+      "items": [
+        "La répartition au moindre coût (le DC-OPF), par le solveur de la bibliothèque commune : elle retrouve les six coûts publiés par PGLib-OPF au dernier chiffre près, une fois la convention de PowerModels lue dans son code (sans les rapports de transformation).",
+        "Les prix nodaux : ce que coûterait un MW de plus consommé à chaque nœud. Ils diffèrent quand une ligne est à sa limite, et sont vérifiés par différences finies.",
+        "La règle N-1 dans la répartition : aucun des trois réseaux ne la tient à sa charge de base, même au mieux ; elle tient jusqu'à 0,72, 0,81 et 0,77 fois la charge. En dessous, elle coûte de 2 à 57 % sur les petits réseaux, de 4 à 16 % sur le 118.",
+        "La répartition au moindre coût devient l'état du modèle : au-delà de ce que le réseau peut servir, elle déleste le moins possible, puis choisit la moins chère. Une ligne coupée ne la change pas : chaque partie du réseau rééquilibre ses centrales autour d'elle.",
+        "Les cascades remesurées depuis elle : elle tient mieux au-delà de la limite du J2, moins bien en dessous, car elle laisse des lignes exactement à leur limite. Le point de départ des cascades est une question pour Sami.",
+        "La page montre le coût de la répartition et l'écart de ses prix nodaux."
+      ]
+    },
+    {
       "version": "0.2.0",
       "title": "La cascade, et la charge critique",
       "date": "14/11/2026",

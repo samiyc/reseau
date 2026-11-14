@@ -6,7 +6,7 @@
 
 import { createRng } from "mcts-commun/random.js";
 import { wilson } from "mcts-commun/measure.js";
-import { describeState } from "../grid/state.js";
+import { describeState, setpointsOf } from "../grid/state.js";
 import { runCascade } from "./cascade.js";
 
 /** @typedef {import("../types.js").Grid} Grid */
@@ -51,14 +51,14 @@ export function summarize(/** @type {number[]} */ shares, /** @type {number[]} *
   };
 }
 
-/** Whether some branch is past its limit with `out` lost (none lost for an empty list). */
+/** Whether some branch is past its limit with `out` lost (none lost for an empty list), under J2's dispatch. */
 function overloadedWithout(/** @type {Grid} */ grid, /** @type {number} */ loadFactor, /** @type {number[]} */ out) {
   const inService = Uint8Array.from(grid.inService, (on, k) => (out.includes(k) ? 0 : on));
-  return describeState(grid, { loadFactor, inService }).overloaded.length > 0;
+  return describeState(grid, { loadFactor, inService, dispatch: "pmax" }).overloaded.length > 0;
 }
 
 /**
- * The security limits of the grid under the dispatch of src/grid/supply.js, by steps of `step` from `from`: the first
+ * The security limits of the grid under J2's dispatch (src/grid/supply.js; J3's are src/opf/loadability.js), by steps of `step` from `from`: the first
  * load factor at which the intact grid has a branch past its limit (N-0), and the first at which the loss of one
  * branch puts another past its limit (N-1), with that branch. Null when not reached by `to`.
  */
@@ -71,17 +71,22 @@ export function securityLimits(/** @type {Grid} */ grid, { from = 0.5, to = 1.6,
   return { n0, n1: { factor: n1Factor, branch: live.find((k) => overloadedWithout(grid, n1Factor, [k])) ?? -1 } };
 }
 
-/** Every event at one load factor: the summary, and how many cascades did not settle within `maxSteps`. */
-export function sweepFactor(/** @type {Grid} */ grid, /** @type {number} */ loadFactor, /** @type {number[][]} */ events, maxSteps = 50) {
+/**
+ * Every event at one load factor, under `dispatch` ("cost", solved once for all the events, or J2's "pmax"): the
+ * summary, how many cascades did not settle within `maxSteps`, and the MW the dispatch itself sheds, before any loss.
+ */
+export function sweepFactor(/** @type {Grid} */ grid, /** @type {number} */ loadFactor, /** @type {number[][]} */ events, { dispatch = "cost", maxSteps = 50 } = {}) {
+  const setpoints = dispatch === "pmax" ? null : setpointsOf(grid, loadFactor);
   const shares = [];
   const lost = [];
   let unsettled = 0;
   for (const event of events) {
     const inService = Uint8Array.from(grid.inService, (on, k) => (event.includes(k) ? 0 : on));
-    const result = runCascade(grid, { loadFactor, inService }, { maxSteps });
+    const result = runCascade(grid, { loadFactor, inService, dispatch, setpoints }, { maxSteps });
     shares.push(result.shedShare);
     lost.push(result.lost);
     if (!result.settled) unsettled += 1;
   }
-  return { loadFactor, ...summarize(shares, lost), unsettled };
+  const dispatched = setpoints ? setpoints.shed.reduce((sum, v) => sum + v, 0) : 0;
+  return { loadFactor, ...summarize(shares, lost), unsettled, dispatched };
 }

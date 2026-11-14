@@ -7,11 +7,11 @@ import { runCascade } from "../src/cascade/cascade.js";
 import { describeState } from "../src/grid/state.js";
 import { branchName, mw, pct } from "./view.js";
 
-/** The frames of the cascade that starts from `inService` at `loadFactor`. */
-export function buildFrames(grid, /** @type {number} */ loadFactor, /** @type {Uint8Array} */ inService) {
+/** The frames of the cascade that starts from `inService` at `loadFactor`, around the dispatch's `setpoints`. */
+export function buildFrames(grid, /** @type {number} */ loadFactor, /** @type {Uint8Array} */ inService, setpoints) {
   const start = Uint8Array.from(inService);
-  const result = runCascade(grid, { loadFactor, inService: start }, { keep: true });
-  const first = { state: describeState(grid, { loadFactor, inService: start }), inService: start, tripped: [] };
+  const result = runCascade(grid, { loadFactor, inService: start, setpoints }, { keep: true });
+  const first = { state: describeState(grid, { loadFactor, inService: start, setpoints }), inService: start, tripped: [] };
   const frames = [first, ...result.steps.map((step) => ({ state: step.state, inService: step.inService, tripped: step.tripped }))];
   return frames.map((frame) => ({ ...frame, state: { ...frame.state, loadFactor }, trippedSet: new Set(frame.tripped.map((t) => t.branch)) }));
 }
