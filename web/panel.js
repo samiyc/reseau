@@ -42,10 +42,17 @@ export function renderSummary(list, grid, state, /** @type {number} */ loadFacto
 
 const dollars = (/** @type {number} */ value, digits = 0) => `${value.toLocaleString("fr-FR", { maximumFractionDigits: digits, minimumFractionDigits: digits })} $`;
 
+/** Whether the dispatch holds the N-1 rule, and how far past it the worst loss puts a line. */
+function n1Text(setpoints) {
+  if (setpoints.secure) return "tenue : la perte d'une ligne n'en surcharge aucune autre";
+  if (setpoints.margin === null) return "non vérifiée : la répartition est la moins chère";
+  return `intenable : après la pire perte, une ligne à ${pct(setpoints.margin)} de sa limite, au plus`;
+}
+
 /** The cost of the dispatch and the spread of its nodal prices. */
 function dispatchItems(list, setpoints) {
   item(list, "Coût de la répartition", `${dollars(setpoints.cost)}/h`);
-  item(list, "Règle N-1", setpoints.secure ? "tenue : la perte d'une ligne n'en surcharge aucune autre" : "intenable à cette consommation : la répartition est la moins chère");
+  item(list, "Règle N-1", n1Text(setpoints));
   if (!setpoints.prices) {
     item(list, "Prix nodaux", "sans objet : la répartition déleste");
     return;

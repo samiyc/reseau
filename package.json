@@ -1,6 +1,6 @@
 {
   "name": "reseau",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "private": true,
   "description": "Un réseau électrique en simulation : les centrales, les lignes et leurs lois, la météo par graine, et les décisions qui gardent la lumière allumée au moindre coût.",
   "type": "module",

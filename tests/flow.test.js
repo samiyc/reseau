@@ -66,9 +66,16 @@ describe("the DC power flow", () => {
     assert.deepEqual(n1Overloads(g, state.flows.flow, lodf(g)), []);
   });
 
-  it("runs the cheapest dispatch past the N-1 limit: on the IEEE 14, all 259 MW from bus 1, at 7.92 $/MWh", () => {
+  it("lowers the worst loading after a loss past the N-1 limit: on the IEEE 14, bus 1 at 200 MW, bus 2 at its 59", () => {
     const state = describeState(grid(14));
     assert.equal(state.setpoints.secure, false);
+    assert.ok(Math.abs(state.setpoints.margin - 200 / 128) < 1e-9);
+    assert.ok(gap(state.generation, [200, 59, 0, 0, 0]) < 1e-6);
+  });
+
+  it("runs the cheapest dispatch under \"cost\": on the IEEE 14, all 259 MW from bus 1, at 7.92 $/MWh", () => {
+    const state = describeState(grid(14), { dispatch: "cost" });
+    assert.equal(state.setpoints.margin, null);
     assert.ok(gap(state.generation, [259, 0, 0, 0, 0]) < 1e-6);
     assert.ok(Math.abs(state.setpoints.cost - 2051.526) < 1e-3);
     assert.ok(gap(state.setpoints.prices, new Array(14).fill(7.920951)) < 1e-6);

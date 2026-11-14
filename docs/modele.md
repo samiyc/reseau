@@ -64,7 +64,9 @@ deux temps (`src/grid/state.js`) :
 
 1. **La répartition**, sur le réseau tel que son fichier l'a (toutes ses branches en service) : **la moins chère qui
    tient la règle N-1**, tant qu'il en existe une (§ 5 ; Sami, 14/11, au vu de [mesures/cascade-j3.md](mesures/cascade-j3.md)),
-   et la moins chère au-delà (`dispatch: "secure"`, par défaut). Si aucune ne sert toute la consommation, elle en
+   et au-delà, celle qui **rend la pire charge après une perte la plus faible possible**, puis la moins chère à ce
+   niveau (`dispatch: "secure"`, par défaut ; Sami, 14/11, au vu de la falaise de
+   [mesures/cascade-n1.md](mesures/cascade-n1.md)). Si aucune ne sert toute la consommation, elle en
    déleste le moins possible, puis, à délestage égal, choisit la moins chère : l'ordre lexicographique de Sami (§ 7),
    en deux résolutions, sans prix de la défaillance. `dispatch: "cost"` prend toujours la moins chère (le J3).
 2. **L'équilibre des îlots** (`src/grid/balance.js`) : les branches coupées ne changent pas la répartition. Les
@@ -96,6 +98,10 @@ limite, et un arrondi ne doit pas les compter en surcharge. Grid2Op compare stri
   branche ; celles qui dépassent leur limite entrent dans le programme, qu'on résout de nouveau à chaud, jusqu'à ce
   qu'aucune ne dépasse. Un pont n'est pas une perte de la règle (sa perte coupe le réseau). Après une perte, une
   branche garde sa limite RATE_A et perd ses écarts d'angle : une **hypothèse**, l'usage d'un SCOPF en DC.
+- **Au-delà de la limite N-1** (`src/opf/margin.js`) : une variable de plus, α ≥ 1, la pire charge après une perte ;
+  chaque limite après une perte devient F + LODF·F_c ≤ α · RATE_A, ajoutée quand la répartition la dépasse, comme
+  pour la règle. Trois résolutions, dans l'ordre de Sami : le moins de délestage, puis le plus petit α, puis le moindre
+  coût à α tenu. Les limites du réseau intact restent strictes. α = 1 : la règle tient.
 - **Jusqu'où la charge peut monter** (`maxLoad`) : le plus grand facteur de charge qui a une répartition, par
   dichotomie, sans et avec la règle N-1.
 - **Le réseau doit être d'un seul tenant** : la PTDF l'exige. L'état d'un réseau coupé en îlots équilibre chacun
@@ -145,6 +151,7 @@ et ceux d'après chaque perte d'une branche de l'IEEE 14 (J1) ; la répartition 
 charge, et les cascades de l'IEEE 30 après chaque perte simple, au même facteur (J2) ; la répartition des trois réseaux
 à 0,7 fois leur charge, sans et avec la règle N-1, ses prix nodaux et son coût ; l'état des trois réseaux à 1,2 fois
 leur charge et les cascades de l'IEEE 30 à sa charge de base, sous cette répartition (J3) ; les cascades de l'IEEE 30
-après des paires de pertes à 0,8 fois sa charge, sous la répartition N-1. Les empreintes du J2
+après des paires de pertes à 0,8 fois sa charge, sous la répartition N-1 ; l'état des trois réseaux à 1,2 fois leur
+charge et les cascades de l'IEEE 30 à sa charge de base, sous la répartition au-delà de la limite N-1. Les empreintes du J2
 gardent leur répartition (`dispatch: "pmax"`). Une refonte n'en change aucun ;
 un changement voulu du modèle met à jour le hachage et le dit dans son commit, avec les mesures avant et après.

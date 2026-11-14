@@ -13,8 +13,9 @@ import { findIslands } from "../flow/islands.js";
 
 /**
  * The setpoints of a dispatch: each generator's output and the load shed at each bus, in MW, and what the page shows
- * of it (its cost, its nodal prices, null when load is shed, and whether it holds the N-1 rule).
- * @typedef {{ generation: Float64Array, shed: Float64Array, cost: number, prices: Float64Array | null, secure: boolean }} Setpoints
+ * of it: its cost, its nodal prices (null when load is shed), whether it holds the N-1 rule, and its worst loading
+ * after a single loss (1 when it holds the rule; null when not computed, under the "cost" dispatch).
+ * @typedef {{ generation: Float64Array, shed: Float64Array, cost: number, prices: Float64Array | null, secure: boolean, margin: number | null }} Setpoints
  */
 
 /** Each island's demand (served by the dispatch), production, capacity, and its whole demand (shed included). */

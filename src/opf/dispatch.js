@@ -41,7 +41,7 @@ import { n1Overloads, securityRow } from "./security.js";
 /** Below this, a limit's multiplier is zero: the limit does not bind. */
 const BINDING = 1e-7;
 /** The second pass of the shedding may shed this much more, relative and in MW, than the first found. */
-const SHED_SLACK = 1e-9;
+export const SHED_SLACK = 1e-9;
 
 /** Each generator's output, in MW: the units from the solution, the others at Pmax. */
 function generationOf(/** @type {DispatchModel} */ model, /** @type {Float64Array} */ x) {
@@ -97,7 +97,7 @@ function culpritOf(/** @type {DispatchModel} */ model, /** @type {{ kind: string
 }
 
 /** @returns {Dispatch} */
-function outcomeOf(/** @type {DispatchModel} */ model, result, /** @type {{ passes: number, left: number | null }} */ security) {
+export function outcomeOf(/** @type {DispatchModel} */ model, result, /** @type {{ passes: number, left: number | null }} */ security) {
   const work = { rows: model.rows.length, ...security, rounds: result.rounds, iterations: result.iterations };
   if (result.status !== "optimal") return { status: result.status, culprit: culpritOf(model, result.culprit), ...work };
   const generation = generationOf(model, result.x);
@@ -119,7 +119,7 @@ function outcomeOf(/** @type {DispatchModel} */ model, result, /** @type {{ pass
 }
 
 /** F = PTDF · P + offset, for the units' outputs x. */
-function flowsOf(/** @type {DispatchModel} */ model, /** @type {Float64Array} */ x) {
+export function flowsOf(/** @type {DispatchModel} */ model, /** @type {Float64Array} */ x) {
   const injection = injectionOf(model, x);
   const n = model.grid.busCount;
   return Float64Array.from(model.offset, (offset, k) => {

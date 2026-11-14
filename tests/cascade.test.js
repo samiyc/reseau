@@ -30,9 +30,16 @@ describe("the cascade, under Grid2Op's rule", () => {
     }
   });
 
-  it("trips 1-5 at once under the cheapest dispatch when 1-2 is out: bus 1 sends 259 MW, past twice 128", () => {
+  it("trips 1-5 on its third step from the model's dispatch when 1-2 is out: bus 1 sends 200 MW, under twice 128", () => {
     const g = grid(14);
     const result = runCascade(g, { inService: without(g, "1-2") });
+    assert.deepEqual(trips(g, result), [[], [], ["1-5:soft"], []]);
+    assert.ok(Math.abs(result.shed - 200) < 1e-6);
+  });
+
+  it("trips 1-5 at once under the cheapest dispatch when 1-2 is out: bus 1 sends 259 MW, past twice 128", () => {
+    const g = grid(14);
+    const result = runCascade(g, { inService: without(g, "1-2"), dispatch: "cost" });
     assert.deepEqual(trips(g, result), [["1-5:hard"], []]);
     assert.ok(Math.abs(result.steps[0].tripped[0].loading - 259 / 128) < 1e-6);
     assert.ok(Math.abs(result.shed - 200) < 1e-6);

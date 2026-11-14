@@ -3,14 +3,15 @@
  * dispatch, each island balanced around it; then its flows and the loading of each branch. What the page draws, what
  * a cut line changes, and what the cascade steps through.
  *
- * Three dispatches. "secure", the model's (Sami, 14/11): the cheapest that holds the N-1 rule while one exists, the
- * cheapest past that. "cost": the cheapest on the grid as the file has it (the DC-OPF, shedding the least load when it
+ * Three dispatches. "secure", the model's (Sami, 14/11): the cheapest that holds the N-1 rule while one exists; past
+ * that, the one with the least worst loading after a loss, then the cheapest at it (src/opf/margin.js). "cost": the cheapest on the grid as the file has it (the DC-OPF, shedding the least load when it
  * must: src/opf/dispatch.js). Under both, each island is then balanced around it (src/grid/balance.js). "pmax", J2's:
  * every generator of an island at the same share of its Pmax (src/grid/supply.js).
  */
 
 import { solveFlows } from "../flow/dcflow.js";
 import { solveDispatch } from "../opf/dispatch.js";
+import { solveMargin } from "../opf/margin.js";
 import { balanceIslands } from "./balance.js";
 import { islandSupply } from "./supply.js";
 
@@ -49,23 +50,23 @@ export function overloadedOf(/** @type {Float64Array} */ loading, /** @type {Uin
   return overloaded;
 }
 
-/** The setpoints of a dispatch, and whether it holds the N-1 rule. */
-function setpointsFrom(/** @type {import("../opf/dispatch.js").Dispatch} */ dispatch, /** @type {boolean} */ secure) {
-  return /** @type {Setpoints} */ ({ generation: dispatch.generation, shed: dispatch.shed, cost: dispatch.cost, prices: dispatch.prices, secure });
+/** The setpoints of a dispatch, whether it holds the N-1 rule, and its worst loading after a loss (null: not known). */
+function setpointsFrom(/** @type {import("../opf/dispatch.js").Dispatch} */ dispatch, /** @type {number | null} */ margin) {
+  if (dispatch.status !== "optimal") throw new Error(`aucune répartition : ${dispatch.status}`);
+  return /** @type {Setpoints} */ ({ generation: dispatch.generation, shed: dispatch.shed, cost: dispatch.cost, prices: dispatch.prices, secure: margin === 1, margin });
 }
 
 /**
- * The setpoints of the grid as its file has it, at a load factor: with `security`, the cheapest dispatch that holds
- * the N-1 rule, if one does; otherwise the cheapest, shedding the least load when it must.
+ * The setpoints of the grid as its file has it, at a load factor. With `security`: the cheapest dispatch that holds
+ * the N-1 rule, if one does; otherwise the least load shed, then the least worst loading after a loss, then the least
+ * cost. Without: the cheapest, shedding the least load when it must.
  */
 export function setpointsOf(/** @type {Grid} */ grid, loadFactor = 1, { security = true } = {}) {
-  if (security) {
-    const secure = solveDispatch(grid, { loadFactor, security: true });
-    if (secure.status === "optimal" && secure.left === 0) return setpointsFrom(secure, true);
-  }
-  const dispatch = solveDispatch(grid, { loadFactor, shedding: true });
-  if (dispatch.status !== "optimal") throw new Error(`aucune répartition à ${loadFactor} fois la charge : ${dispatch.status}`);
-  return setpointsFrom(dispatch, false);
+  if (!security) return setpointsFrom(solveDispatch(grid, { loadFactor, shedding: true }), null);
+  const secure = solveDispatch(grid, { loadFactor, security: true });
+  if (secure.status === "optimal" && secure.left === 0) return setpointsFrom(secure, 1);
+  const margin = solveMargin(grid, { loadFactor });
+  return setpointsFrom(margin, margin.margin);
 }
 
 /**

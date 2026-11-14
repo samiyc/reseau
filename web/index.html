@@ -55,7 +55,8 @@
         <strong>Comment lire.</strong> Le calcul est le modèle DC : sans pertes, les tensions à 1, seules comptent les
         réactances des lignes. <strong>La répartition</strong> est la moins chère sur le réseau intact (le DC-OPF, validé
         contre les coûts publiés par PGLib-OPF) qui garde chaque ligne sous sa limite, et sous sa limite encore après la
-        perte de n'importe quelle autre ligne (la règle N-1), tant que c'est possible ; au-delà, la moins chère. Si aucune
+        perte de n'importe quelle autre ligne (la règle N-1), tant que c'est possible ; au-delà, celle qui garde la pire
+        surcharge après une perte la plus faible, puis la moins chère. Si aucune
         ne sert toute la consommation, elle en déleste le moins possible. Les <strong>prix nodaux</strong> disent ce que coûterait un MW de
         plus consommé à chaque nœud : ils diffèrent quand une ligne est à sa limite. Une ligne coupée ne change pas la
         répartition : chaque partie du réseau rééquilibre ses centrales autour d'elle, et une partie sans assez de

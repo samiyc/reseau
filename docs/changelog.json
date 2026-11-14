@@ -4,6 +4,18 @@
   "intro": "Un réseau électrique en simulation : des lignes où le courant suit les lois de Kirchhoff, des centrales, une consommation, puis les pannes et leurs cascades. Un modèle pour comprendre, pas pour exploiter un vrai réseau.",
   "versions": [
     {
+      "version": "0.3.2",
+      "title": "Au-delà de la règle N-1, la plus petite surcharge après une perte",
+      "date": "14/11/2026",
+      "commits": [],
+      "items": [
+        "Quand aucune répartition ne tient la règle N-1, le modèle ne retombe plus sur la moins chère : il prend celle dont la pire charge d'une ligne après une perte est la plus faible, puis la moins chère à ce niveau, après le moindre délestage. Le choix de Sami, au vu de la falaise de la 0.3.1.",
+        "Sur l'IEEE 14 à sa charge de base, à la main : la centrale du nœud 2 donne ses 59 MW, et si 1-2 tombe, 1-5 porte les 200 MW du nœud 1, 156 % de sa limite (259 MW au moindre coût). Elle coûte 44 % de plus.",
+        "La falaise devient une pente sur les IEEE 30 et 118 : à la charge de base, une perte coûte en moyenne 5 % de la consommation sur le 30 (30 % au moindre coût), 6 % sur le 118 (3,7 %, avec ses lignes au fil du rasoir). Rien ne change sur l'IEEE 14, où la perte de 1-2 fait toujours tomber 1-5.",
+        "La page dit, quand la règle N-1 est intenable, à combien de sa limite la pire perte met une ligne."
+      ]
+    },
+    {
       "version": "0.3.1",
       "title": "Les cascades partent d'une répartition qui tient la règle N-1",
       "date": "14/11/2026",

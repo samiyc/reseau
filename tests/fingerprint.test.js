@@ -32,6 +32,10 @@ const EXPECTED = {
   // 14/11/2026, J3: the IEEE 30's cascades after each pair of losses among its first 12 branches at 0.8 times its load,
   // under the N-1 secure dispatch (single losses trip nothing there).
   cascades30Secure: "1a76287cc0e910c1",
+  // 14/11/2026, J3: past the N-1 limit, the least worst loading after a loss (Sami): the state of the three grids at
+  // 1.2 times their load, and the IEEE 30's cascades after each single loss at its base load.
+  stateMargin: "5413cc647e3d03e8",
+  cascades30Margin: "e00e6d58b268a56b",
 };
 
 const digest = (value) => createHash("sha256").update(JSON.stringify(value)).digest("hex").slice(0, 16);
@@ -109,6 +113,10 @@ describe("the fingerprints of the model", () => {
 
   it("keeps the state and the IEEE 30's cascades under the cheapest dispatch", () => {
     assert.deepEqual({ stateCost: states("cost"), cascades30Cost: cascades("cost", 1) }, { stateCost: EXPECTED.stateCost, cascades30Cost: EXPECTED.cascades30Cost });
+  });
+
+  it("keeps the state and the IEEE 30's cascades past the N-1 limit", () => {
+    assert.deepEqual({ stateMargin: states("secure"), cascades30Margin: cascades("secure", 1) }, { stateMargin: EXPECTED.stateMargin, cascades30Margin: EXPECTED.cascades30Margin });
   });
 
   it("keeps the IEEE 30's cascades after pairs of losses under the N-1 dispatch", () => {
