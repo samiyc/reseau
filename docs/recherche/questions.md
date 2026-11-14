@@ -1,7 +1,14 @@
 # Les questions pour Sami, et pour un professionnel
 
 Rédigé le 14/11/2026. Chaque question porte une recommandation ; ce qui est recommandé est ce que le projet fera si
-Sami dit « ok ». Rien ne sera codé avant ses réponses.
+Sami dit « ok ».
+
+**La réponse de Sami (14/11)** : « Ok pour la suite. » **Les onze recommandations du § 1 sont donc décidées** :
+l'exploitation seulement ; l'IEEE 14, 30 et 118 de PGLib puis RTS-GMLC ; l'heure, puis 5 minutes pour la conduite ;
+la note lexicographique (énergie non distribuée, surcharges, coût) ; la cascade déterministe ; le DC seulement ;
+Grid2Op non installé ; pas de référence extérieure pour les flux ; `highs-js` en développement dans la lib (à la
+décision de commun) ; le stockage au J7, les barrages plus tard ; la carte dès le J1. Le modèle qui en découle est
+dans [`../modele.md`](../modele.md).
 
 ## 1. Pour Sami
 
