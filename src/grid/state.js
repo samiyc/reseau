@@ -3,9 +3,10 @@
  * dispatch, each island balanced around it; then its flows and the loading of each branch. What the page draws, what
  * a cut line changes, and what the cascade steps through.
  *
- * Two dispatches: "cost", the model's since J3, the cheapest on the grid as the file has it (the DC-OPF, shedding the
- * least load when it must: src/opf/dispatch.js), each island then balanced around it (src/grid/balance.js); and
- * "pmax", J2's, every generator of an island at the same share of its Pmax (src/grid/supply.js).
+ * Three dispatches. "secure", the model's (Sami, 14/11): the cheapest that holds the N-1 rule while one exists, the
+ * cheapest past that. "cost": the cheapest on the grid as the file has it (the DC-OPF, shedding the least load when it
+ * must: src/opf/dispatch.js). Under both, each island is then balanced around it (src/grid/balance.js). "pmax", J2's:
+ * every generator of an island at the same share of its Pmax (src/grid/supply.js).
  */
 
 import { solveFlows } from "../flow/dcflow.js";
@@ -48,28 +49,40 @@ export function overloadedOf(/** @type {Float64Array} */ loading, /** @type {Uin
   return overloaded;
 }
 
-/** The setpoints of the cheapest dispatch of the grid as its file has it, at a load factor. */
-export function setpointsOf(/** @type {Grid} */ grid, loadFactor = 1) {
-  const dispatch = solveDispatch(grid, { loadFactor, shedding: true });
-  if (dispatch.status !== "optimal") throw new Error(`aucune répartition à ${loadFactor} fois la charge : ${dispatch.status}`);
-  return /** @type {Setpoints} */ ({ generation: dispatch.generation, shed: dispatch.shed, cost: dispatch.cost, prices: dispatch.prices });
+/** The setpoints of a dispatch, and whether it holds the N-1 rule. */
+function setpointsFrom(/** @type {import("../opf/dispatch.js").Dispatch} */ dispatch, /** @type {boolean} */ secure) {
+  return /** @type {Setpoints} */ ({ generation: dispatch.generation, shed: dispatch.shed, cost: dispatch.cost, prices: dispatch.prices, secure });
 }
 
 /**
- * The setpoints a state or a cascade runs on: none under J2's "pmax" dispatch; under "cost", those given, or the
- * dispatch solved now.
+ * The setpoints of the grid as its file has it, at a load factor: with `security`, the cheapest dispatch that holds
+ * the N-1 rule, if one does; otherwise the cheapest, shedding the least load when it must.
+ */
+export function setpointsOf(/** @type {Grid} */ grid, loadFactor = 1, { security = true } = {}) {
+  if (security) {
+    const secure = solveDispatch(grid, { loadFactor, security: true });
+    if (secure.status === "optimal" && secure.left === 0) return setpointsFrom(secure, true);
+  }
+  const dispatch = solveDispatch(grid, { loadFactor, shedding: true });
+  if (dispatch.status !== "optimal") throw new Error(`aucune répartition à ${loadFactor} fois la charge : ${dispatch.status}`);
+  return setpointsFrom(dispatch, false);
+}
+
+/**
+ * The setpoints a state or a cascade runs on: none under J2's "pmax" dispatch; under "secure" or "cost", those given,
+ * or the dispatch solved now.
  * @param {Grid} grid
  * @param {{ loadFactor?: number, dispatch?: string, setpoints?: Setpoints | null }} options
  */
-export function setpointsFor(grid, { loadFactor = 1, dispatch = "cost", setpoints = null }) {
+export function setpointsFor(grid, { loadFactor = 1, dispatch = "secure", setpoints = null }) {
   if (dispatch === "pmax") return null;
-  return setpoints ?? setpointsOf(grid, loadFactor);
+  return setpoints ?? setpointsOf(grid, loadFactor, { security: dispatch === "secure" });
 }
 
 /**
  * The state under a load factor and a set of branches in service: each generator's output, the flows, the loadings,
  * the overloaded branches, the MW shed, and for each island its reference bus, demand, production, capacity, shed.
- * Under the "cost" dispatch, `setpoints` spares solving it again (a cascade solves it once), and the state keeps them.
+ * Under the "secure" or "cost" dispatch, `setpoints` spares solving it again (a cascade solves it once), and the state keeps them.
  */
 export function describeState(/** @type {Grid} */ grid, options = {}) {
   const { loadFactor = 1, inService = grid.inService } = options;

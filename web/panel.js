@@ -45,6 +45,7 @@ const dollars = (/** @type {number} */ value, digits = 0) => `${value.toLocaleSt
 /** The cost of the dispatch and the spread of its nodal prices. */
 function dispatchItems(list, setpoints) {
   item(list, "Coût de la répartition", `${dollars(setpoints.cost)}/h`);
+  item(list, "Règle N-1", setpoints.secure ? "tenue : la perte d'une ligne n'en surcharge aucune autre" : "intenable à cette consommation : la répartition est la moins chère");
   if (!setpoints.prices) {
     item(list, "Prix nodaux", "sans objet : la répartition déleste");
     return;

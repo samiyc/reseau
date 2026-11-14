@@ -14,9 +14,19 @@ describe("the cascade, under Grid2Op's rule", () => {
   });
 
   it("holds at once on the intact IEEE 14, under either dispatch", () => {
-    for (const dispatch of ["cost", "pmax"]) {
+    for (const dispatch of ["secure", "cost", "pmax"]) {
       const result = runCascade(grid(14), { dispatch });
       assert.deepEqual([result.steps.length, result.lost, result.shed, result.settled], [1, 0, 0, true], dispatch);
+    }
+  });
+
+  it("trips no line after any single loss under the N-1 dispatch (IEEE 14 at 0.7, IEEE 30 at 0.8)", () => {
+    for (const [size, loadFactor] of [[14, 0.7], [30, 0.8]]) {
+      const g = grid(size);
+      const { setpoints } = createCascade(g, { loadFactor });
+      assert.equal(setpoints.secure, true, `IEEE ${size}`);
+      const lost = [...g.from.keys()].map((k) => runCascade(g, { loadFactor, setpoints, inService: without(g, name(g, k)) }).lost);
+      assert.deepEqual(lost, new Array(g.branchCount).fill(0), `IEEE ${size}`);
     }
   });
 

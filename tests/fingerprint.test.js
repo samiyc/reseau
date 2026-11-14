@@ -29,6 +29,9 @@ const EXPECTED = {
   stateCost: "d9b1b18b2eece3a6",
   // 14/11/2026, J3: the IEEE 30's cascades after each single loss at its base load, under the cheapest dispatch.
   cascades30Cost: "abf238133ff7e7ca",
+  // 14/11/2026, J3: the IEEE 30's cascades after each pair of losses among its first 12 branches at 0.8 times its load,
+  // under the N-1 secure dispatch (single losses trip nothing there).
+  cascades30Secure: "1a76287cc0e910c1",
 };
 
 const digest = (value) => createHash("sha256").update(JSON.stringify(value)).digest("hex").slice(0, 16);
@@ -69,6 +72,17 @@ function cascades(dispatch = "pmax", loadFactor = 1.2) {
   );
 }
 
+function securePairs() {
+  const g = grid(30);
+  const loadFactor = 0.8;
+  const setpoints = setpointsFor(g, { loadFactor });
+  const pairs = Array.from({ length: 12 }, (_, a) => Array.from({ length: a }, (_, b) => [b, a])).flat();
+  return digest(pairs.map((pair) => {
+    const r = runCascade(g, { loadFactor, setpoints, inService: Uint8Array.from(g.inService, (on, k) => (pair.includes(k) ? 0 : on)) });
+    return [r.steps.map((s) => s.tripped.map((t) => [t.branch, t.why, t.round])), rounded([r.shed])];
+  }));
+}
+
 function dispatches() {
   return digest([14, 30, 118].flatMap((size) => [false, true].map((security) => {
     const r = solveDispatch(grid(size), { loadFactor: 0.7, security });
@@ -95,6 +109,10 @@ describe("the fingerprints of the model", () => {
 
   it("keeps the state and the IEEE 30's cascades under the cheapest dispatch", () => {
     assert.deepEqual({ stateCost: states("cost"), cascades30Cost: cascades("cost", 1) }, { stateCost: EXPECTED.stateCost, cascades30Cost: EXPECTED.cascades30Cost });
+  });
+
+  it("keeps the IEEE 30's cascades after pairs of losses under the N-1 dispatch", () => {
+    assert.equal(securePairs(), EXPECTED.cascades30Secure);
   });
 
   it("keeps the dispatch of the three grids, without and with the N-1 rule", () => {

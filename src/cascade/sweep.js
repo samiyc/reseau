@@ -6,7 +6,7 @@
 
 import { createRng } from "mcts-commun/random.js";
 import { wilson } from "mcts-commun/measure.js";
-import { describeState, setpointsOf } from "../grid/state.js";
+import { describeState, setpointsFor } from "../grid/state.js";
 import { runCascade } from "./cascade.js";
 
 /** @typedef {import("../types.js").Grid} Grid */
@@ -71,12 +71,19 @@ export function securityLimits(/** @type {Grid} */ grid, { from = 0.5, to = 1.6,
   return { n0, n1: { factor: n1Factor, branch: live.find((k) => overloadedWithout(grid, n1Factor, [k])) ?? -1 } };
 }
 
+/** What the dispatch itself sheds, in MW, before any loss, and whether it holds the N-1 rule. */
+function dispatchOf(/** @type {import("../grid/balance.js").Setpoints | null} */ setpoints) {
+  if (!setpoints) return { dispatched: 0, secure: false };
+  return { dispatched: setpoints.shed.reduce((sum, v) => sum + v, 0), secure: setpoints.secure };
+}
+
 /**
- * Every event at one load factor, under `dispatch` ("cost", solved once for all the events, or J2's "pmax"): the
- * summary, how many cascades did not settle within `maxSteps`, and the MW the dispatch itself sheds, before any loss.
+ * Every event at one load factor, under `dispatch` ("secure" or "cost", solved once for all the events, or J2's
+ * "pmax"): the summary, how many cascades did not settle within `maxSteps`, the MW the dispatch itself sheds before
+ * any loss, and whether it holds the N-1 rule.
  */
-export function sweepFactor(/** @type {Grid} */ grid, /** @type {number} */ loadFactor, /** @type {number[][]} */ events, { dispatch = "cost", maxSteps = 50 } = {}) {
-  const setpoints = dispatch === "pmax" ? null : setpointsOf(grid, loadFactor);
+export function sweepFactor(/** @type {Grid} */ grid, /** @type {number} */ loadFactor, /** @type {number[][]} */ events, { dispatch = "secure", maxSteps = 50 } = {}) {
+  const setpoints = setpointsFor(grid, { loadFactor, dispatch });
   const shares = [];
   const lost = [];
   let unsettled = 0;
@@ -87,6 +94,5 @@ export function sweepFactor(/** @type {Grid} */ grid, /** @type {number} */ load
     lost.push(result.lost);
     if (!result.settled) unsettled += 1;
   }
-  const dispatched = setpoints ? setpoints.shed.reduce((sum, v) => sum + v, 0) : 0;
-  return { loadFactor, ...summarize(shares, lost), unsettled, dispatched };
+  return { loadFactor, ...summarize(shares, lost), unsettled, ...dispatchOf(setpoints) };
 }

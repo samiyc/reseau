@@ -62,10 +62,11 @@ Pour des injections nettes P (production moins consommation, par nœud) et un en
 La consommation du fichier, multipliée par un **facteur de charge** (1 par défaut ; la page le fait varier). Puis
 deux temps (`src/grid/state.js`) :
 
-1. **La répartition**, sur le réseau tel que son fichier l'a (toutes ses branches en service) : depuis le J3, celle
-   **au moindre coût** (§ 5). Si aucune ne sert toute la consommation, elle en déleste le moins possible, puis, à
-   délestage égal, choisit la moins chère : l'ordre lexicographique de Sami (§ 7), en deux résolutions, sans prix de
-   la défaillance.
+1. **La répartition**, sur le réseau tel que son fichier l'a (toutes ses branches en service) : **la moins chère qui
+   tient la règle N-1**, tant qu'il en existe une (§ 5 ; Sami, 14/11, au vu de [mesures/cascade-j3.md](mesures/cascade-j3.md)),
+   et la moins chère au-delà (`dispatch: "secure"`, par défaut). Si aucune ne sert toute la consommation, elle en
+   déleste le moins possible, puis, à délestage égal, choisit la moins chère : l'ordre lexicographique de Sami (§ 7),
+   en deux résolutions, sans prix de la défaillance. `dispatch: "cost"` prend toujours la moins chère (le J3).
 2. **L'équilibre des îlots** (`src/grid/balance.js`) : les branches coupées ne changent pas la répartition. Les
    centrales gardent ses consignes, et chaque îlot comble son propre écart. S'il manque de puissance, ses centrales
    montent toutes de la même part de leur marge (jusqu'à Pmax), et il déleste le reste au prorata de ses
@@ -106,7 +107,7 @@ limite, et un arrondi ne doit pas les compter en surcharge. Grid2Op compare stri
 ## 6. Les jalons (le détail dans [recherche/pistes.md](recherche/pistes.md))
 
 - **J2, la cascade** (fait le 14/11, `src/cascade/`, refaite au J3 sous la répartition au moindre coût :
-  [mesures/cascade-j3.md](mesures/cascade-j3.md)) : la règle de Grid2Op 1.12.6, déterministe (Sami, 14/11),
+  [mesures/cascade-j3.md](mesures/cascade-j3.md), puis sous la répartition N-1 : [mesures/cascade-n1.md](mesures/cascade-n1.md)) : la règle de Grid2Op 1.12.6, déterministe (Sami, 14/11),
   lue dans son code : dans un pas, une branche au-delà de 2 fois sa limite tombe aussitôt, et on recalcule jusqu'à ce
   que plus rien ne tombe ; une branche au-delà de sa limite tombe à son 3e pas d'affilée ; un îlot sans assez de
   production déleste. L'expérience : toutes les pertes simples et des paires tirées par graine (`createRng`), à
@@ -143,6 +144,7 @@ les surcharges, puis le coût (Sami, 14/11).
 et ceux d'après chaque perte d'une branche de l'IEEE 14 (J1) ; la répartition des trois réseaux à 1,2 fois leur
 charge, et les cascades de l'IEEE 30 après chaque perte simple, au même facteur (J2) ; la répartition des trois réseaux
 à 0,7 fois leur charge, sans et avec la règle N-1, ses prix nodaux et son coût ; l'état des trois réseaux à 1,2 fois
-leur charge et les cascades de l'IEEE 30 à sa charge de base, sous cette répartition (J3). Les empreintes du J2
+leur charge et les cascades de l'IEEE 30 à sa charge de base, sous cette répartition (J3) ; les cascades de l'IEEE 30
+après des paires de pertes à 0,8 fois sa charge, sous la répartition N-1. Les empreintes du J2
 gardent leur répartition (`dispatch: "pmax"`). Une refonte n'en change aucun ;
 un changement voulu du modèle met à jour le hachage et le dit dans son commit, avec les mesures avant et après.

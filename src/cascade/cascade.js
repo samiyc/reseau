@@ -3,7 +3,8 @@
  * `BaseEnv`): within a step, a branch past `hard` times its limit trips at once, the flows are recomputed, and again
  * until nothing trips; a branch past its limit has its counter raised once a step, and trips when the counter goes
  * past `allowed`, so on its third overloaded step in a row. A branch back under its limit at the end of a step has
- * its counter reset. The generators keep the setpoints of the dispatch, solved once before the first step; each island
+ * its counter reset. The generators keep the setpoints of the dispatch (by default N-1 secure while it can be, the
+ * cheapest past that: src/grid/state.js), solved once before the first step; each island
  * is balanced around them (src/grid/balance.js), or, under J2's "pmax" dispatch, by src/grid/supply.js.
  */
 
@@ -19,7 +20,7 @@ export const GRID2OP_RULE = Object.freeze({ allowed: 2, hard: 2 });
  * unless given), the rule, and each branch's counter.
  */
 export function createCascade(/** @type {Grid} */ grid, options = {}) {
-  const { loadFactor = 1, inService = grid.inService, rule = GRID2OP_RULE, dispatch = "cost" } = options;
+  const { loadFactor = 1, inService = grid.inService, rule = GRID2OP_RULE, dispatch = "secure" } = options;
   const setpoints = setpointsFor(grid, options);
   return { grid, loadFactor, dispatch, setpoints, rule, inService: Uint8Array.from(inService), counter: new Int32Array(grid.branchCount), step: 0 };
 }
