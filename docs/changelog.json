@@ -7,7 +7,7 @@
       "version": "0.3.1",
       "title": "Les cascades partent d'une répartition qui tient la règle N-1",
       "date": "14/11/2026",
-      "commits": [],
+      "commits": ["d4a1edc"],
       "items": [
         "La répartition du modèle est maintenant la moins chère qui tient la règle N-1, tant qu'il en existe une (jusqu'à 0,72, 0,81 et 0,77 fois la charge), et la moins chère au-delà : le choix de Sami, au vu des cascades de la 0.3.0.",
         "Sous cette limite, plus aucune perte d'une ligne ne fait tomber d'autre ligne, sur les trois réseaux ; une paire de pertes coûte en moyenne 0,1 à 1 % de la consommation, contre 2,6 à 28 % depuis la répartition au moindre coût.",
