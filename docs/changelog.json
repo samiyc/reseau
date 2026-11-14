@@ -7,7 +7,7 @@
       "version": "0.1.0",
       "title": "Les flux de l'IEEE 14, et une ligne qui tombe",
       "date": "14/11/2026",
-      "commits": ["21f15d1", "b5cddbe"],
+      "commits": ["21f15d1", "b5cddbe", "f9e8e5b"],
       "items": [
         "Le cadrage : la physique des flux, la règle N-1 et les grandes pannes, les réseaux de test publics vérifiés sur leurs fichiers (IEEE, PGLib-OPF, RTS-GMLC, Grid2Op), onze pistes classées ; les recommandations validées par Sami.",
         "Le calcul des flux en courant continu sur les réseaux IEEE à 14, 30 et 118 nœuds de PGLib-OPF, avec leurs limites de ligne : un clic coupe une ligne, son flux se reporte sur les autres.",
