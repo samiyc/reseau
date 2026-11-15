@@ -156,3 +156,58 @@ après des paires de pertes à 0,8 fois sa charge, sous la répartition N-1 ; l'
 charge et les cascades de l'IEEE 30 à sa charge de base, sous la répartition au-delà de la limite N-1. Les empreintes du J2
 gardent leur répartition (`dispatch: "pmax"`). Une refonte n'en change aucun ;
 un changement voulu du modèle met à jour le hachage et le dit dans son commit, avec les mesures avant et après.
+
+## 10. La journée de RTS-GMLC (J4, `src/day/`)
+
+**Les données** : RTS-GMLC au commit `3ece0d3` du dépôt `GridMod/RTS-GMLC` (23/10/2025), téléchargé par
+`scripts/rts-fetch.js` dans `data/rts-gmlc/brut/` (50 Mo, hors de git), puis converti par `scripts/rts-convert.js`.
+Le dépôt garde le réseau (`data/rts_gmlc.json`, au format des fichiers PGLib, plus les caractéristiques des groupes)
+et les séries de 2020 **ramenées à l'heure** (`data/rts_gmlc_series.json.gz`, 1,1 Mo) : la prévision de la veille,
+et le réalisé, moyenne des douze pas de 5 minutes de chaque heure.
+
+**Une heure** (`src/day/rts.js`) :
+
+- **La consommation** de chaque nœud est celle de sa zone à cette heure, au prorata de sa part de la consommation
+  de la zone dans `bus.csv` (le README des séries de RTS-GMLC).
+- **Les 73 groupes thermiques** (turbines à combustion, cycles combinés, vapeur, le nucléaire) sont l'objet du
+  démarrage. Un groupe en marche donne son premier point de fonctionnement (`Output_pct_0`, à son coût moyen), puis
+  trois tranches jusqu'à Pmax, chacune à son coût marginal (consommation spécifique incrémentale fois le prix du
+  combustible). Ces consommations croissent sur les 73 groupes : la courbe est convexe, et la tranche la moins chère
+  se remplit d'abord.
+- **Le vent, le soleil, l'hydraulique** donnent au plus leur série de l'heure, sans coût. **Hypothèse** : tous
+  s'écrêtent, l'hydraulique et le solaire en toiture compris (RTS-GMLC les impose). La centrale solaire
+  thermodynamique est prise sans son stockage (**hypothèse**).
+- **Hors du modèle** : le stockage (J7), les compensateurs synchrones, et la liaison à courant continu 113-316
+  (**hypothèse** : 0 MW).
+- **Les rampes ne lient pas à l'heure** : la plus lente (une vapeur au fioul, 60 MW/h) dépasse les 7 MW entre son
+  Pmin et son Pmax, et chaque groupe atteint son premier point en une heure (vérifié sur `gen.csv`, 15/11). Elles
+  compteront au pas de 5 minutes (J6).
+
+**La règle à battre** (`src/day/commit.js`) : la liste de préséance avec réserve, décidée la veille sur la prévision.
+Les groupes sont classés par coût moyen à pleine charge. À chaque heure, la règle garde en marche ceux que leur durée
+minimale de marche retient, laisse à l'arrêt ceux que leur durée minimale d'arrêt retient, puis parcourt la liste tant
+que la capacité en marche est sous le besoin. Le besoin est la consommation prévue, moins le vent, le soleil et
+l'hydraulique prévus, plus une réserve faite de trois réglages :
+
+- `reserve` : un multiple des besoins de réserve publiés (tournante et de réglage à la hausse, fichiers de la veille) ;
+- `renewable` : une part du vent et du soleil prévus, contre leur erreur de prévision ;
+- `hold` : un groupe en marche le reste tant que la liste le voudra de nouveau dans les `hold` heures, plutôt que de
+  s'arrêter puis redémarrer.
+
+**Hypothèses** : chaque jour se joue seul, sans histoire ; les groupes de sa première heure sont déjà en marche (sans
+coût de démarrage, leur durée minimale comptée de cette heure) ; un groupe à l'arrêt depuis le début du jour démarre
+à froid. Un démarrage coûte à froid, tiède ou chaud selon les heures d'arrêt (les temps et les chaleurs de démarrage de
+RTS-GMLC, au prix de son combustible).
+
+**La journée jouée** (`src/day/day.js`) : le démarrage de la veille est figé ; à chaque heure, sur le réalisé, la
+répartition la moins chère des groupes en marche, lignes tenues, avec le moindre délestage s'il le faut (§ 5). Ce
+qu'elle mesure, à part : le **coût** ($ : les répartitions et les démarrages), l'**énergie non distribuée** (MWh),
+l'**énergie écrêtée** (MWh). **Hypothèse** : aucun groupe ne démarre dans l'heure même ; seule la réserve de la veille
+couvre l'erreur de prévision.
+
+**Ce que disent les données** (vérifié le 15/11) :
+
+- **La consommation réalisée est la prévision fois une constante par zone**, à l'heure : 0,9198, 0,9981 et 0,9943, à
+  3·10⁻⁴ près sur les 8 784 heures. L'erreur de prévision de RTS-GMLC n'est donc que dans le vent et le soleil (le
+  réalisé du vent s'écarte de 20 à 120 MW en moyenne par parc).
+- **Le vent peut manquer de 600 MW** : à la première heure du 19 juillet (jour 200), 671 MW prévus, 57 réalisés.

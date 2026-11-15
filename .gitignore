@@ -37,3 +37,5 @@ tmp/
 replays/
 # The traces of mcts-commun (MCTS_TRACE=1) and the page server's failed requests.
 logs/
+# The raw RTS-GMLC files, downloaded again by scripts/rts-fetch.js.
+data/rts-gmlc/brut/

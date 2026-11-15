@@ -83,9 +83,12 @@ région fictive du sud-ouest des États-Unis. Dépôt `GridMod/RTS-GMLC`, lu le 
   veille (`DAY_AHEAD_*`, horaire) et le réalisé (`REAL_TIME_*`, au pas de 5 minutes). Charge par zone, éolien,
   photovoltaïque, toitures, hydraulique, solaire thermodynamique, réserves. **L'écart entre les deux est une vraie
   erreur de prévision**, sans rien inventer.
-- **Les ordres de grandeur** (nos sommes sur les fichiers, à revérifier avant de les afficher) : environ 14 500 MW
-  installés, dont 8 076 MW thermiques et 2 508 MW éoliens ; une pointe de **8 192 MW** (somme horaire des trois
-  zones, prévision de la veille).
+- **Les ordres de grandeur** (nos sommes sur les fichiers, **revérifiées le 15/11** sur le commit `3ece0d3`) :
+  14 550 MW installés, dont 8 076 MW thermiques, 2 508 MW éoliens, 1 555 MW photovoltaïques, 1 161 MW en toiture et
+  1 000 MW hydrauliques ; une pointe de **8 192 MW** (somme horaire des trois zones, prévision de la veille, le
+  26 août) et de 7 961 MW au réalisé ; 37,7 TWh consommés dans l'année d'après la prévision.
+- **Le réalisé de la consommation est la prévision fois une constante par zone** (0,9198, 0,9981, 0,9943, à l'heure) :
+  la seule erreur de prévision est celle du vent et du soleil ([../modele.md](../modele.md) § 10).
 - **La licence** : un accord d'utilisation NREL/DOE : usage, copie et diffusion libres, à condition de garder la
   notice et de **citer DOE/NREL/Alliance**.
 - **L'article de référence** (Barrows et al., IEEE Trans. Power Systems, 2020, de mémoire) n'est pas nommé dans le

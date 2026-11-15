@@ -1,4 +1,5 @@
 import { readFileSync } from "node:fs";
+import { gunzipSync } from "node:zlib";
 import { createGrid } from "../src/grid/case.js";
 
 /**
@@ -41,4 +42,14 @@ export function triangle({ congested = false } = {}) {
     },
     gencost: { columns: ["c2", "c1", "c0"], rows: costs },
   });
+}
+
+/** RTS-GMLC (data/rts_gmlc.json, scripts/rts-convert.js): its JSON, its grid, and its 2020 series by hour, read once. */
+let rtsCache = null;
+export function rts() {
+  if (rtsCache) return rtsCache;
+  const data = JSON.parse(readFileSync(new URL("../data/rts_gmlc.json", import.meta.url), "utf8"));
+  const series = JSON.parse(gunzipSync(readFileSync(new URL("../data/rts_gmlc_series.json.gz", import.meta.url))).toString("utf8"));
+  rtsCache = { data, series, grid: createGrid(data) };
+  return rtsCache;
 }
