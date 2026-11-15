@@ -68,6 +68,5 @@ La perte moyenne d'une perte simple, puis la pire charge après une perte (α) e
 
 ## 3. La queue de Dobson
 
-Sous la limite N-1, elle n'a pas de matière : presque rien ne cascade. Au-delà, la distribution des pertes n'a pas
-encore été regardée sous cette répartition : à faire avant de reposer la question 5 du cadrage (déterministe ou
-probabiliste, à l'OPA).
+Regardée le 15/11, avec toutes les paires : [cascade-queue.md](cascade-queue.md). Sur l'IEEE 118, autour de sa limite
+N-1, la densité des tailles décroît avec une pente de −1,1 à −1,7, dans la plage de Dobson ; au-delà, du tout ou rien.

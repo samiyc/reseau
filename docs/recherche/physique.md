@@ -91,6 +91,17 @@ distribution du nombre de composants perdus « a une région en loi de puissance
 probabilité notable de panne totale au-delà. **C'est l'expérience à reproduire** (P3) : la taille des coupures selon
 la charge du réseau, et le coude.
 
+**Les exposants**, lus le 15/11 dans deux articles des mêmes auteurs. Ils portent sur la **densité** de probabilité de
+la taille, pas sur la probabilité de la dépasser (dont la pente est plus douce d'une unité).
+
+- Les grandes pannes nord-américaines recensées par le NERC, de 1984 à 1998 : la densité de la consommation perdue
+  décroît « close to a power dependence with an exponent of about -1.1 » (2002). Sur l'énergie non servie, l'ajustement
+  donne un exposant de 1,23 ± 0,64. Les auteurs ajoutent que 15 ans de données « suggèrent » la queue plutôt qu'ils ne
+  la prouvent.
+- Le modèle de branchement, à sa charge critique : un exposant de −1,5 avant la saturation (2004). La charge critique
+  est le coude où le nombre moyen de défaillances croît brusquement. Un exposant entre −1 et −2 est compatible avec les
+  données du NERC.
+
 **La règle de Grid2Op**, lue dans son code le 14/11 (version 1.12.6 : `Parameters.py`, `Backend.next_grid_state`,
 `BaseEnv`) : `HARD_OVERFLOW_THRESHOLD = 2.0`, `SOFT_OVERFLOW_THRESHOLD = 1.0`, `NB_TIMESTEP_OVERFLOW_ALLOWED = 2`,
 `NB_TIMESTEP_RECONNECTION = 10`. Dans un pas (5 minutes), une ligne au-delà de 2 fois sa limite tombe aussitôt et les
@@ -131,6 +142,14 @@ actifs, les surcharges et les reports : ce qui fait une cascade thermique.
   p. 1290-1300, DOI 10.1109/TPWRS.2009.2021235 (résumé seulement)
 - I. Dobson, B. A. Carreras, D. E. Newman, « A Loading-Dependent Model of Probabilistic Cascading Failure »,
   *Probability in the Engineering and Informational Sciences* 19(1), 2005, DOI 10.1017/S0269964805050023 (résumé)
+- I. Dobson, D. E. Newman, B. A. Carreras, V. E. Lynch, « An initial complex systems analysis of the risks of blackouts
+  in power transmission systems », *Power Systems and Communications Infrastructures for the future*, Pékin,
+  septembre 2002 (lu, introduction et annexe 1) :
+  https://documents.pserc.wisc.edu/documents/publications/papers/2002_general_publications/dobsoncris02.pdf
+- I. Dobson, B. A. Carreras, D. E. Newman, « A criticality approach to monitoring cascading failure risk and failure
+  propagation in transmission systems », *Electricity Transmission in Deregulated Markets*, Carnegie Mellon,
+  Pittsburgh, décembre 2004 (lu, § I et II) :
+  https://documents.pserc.wisc.edu/documents/publications/papers/2005_general_publications/dobsoncmu04.pdf
 - I. Dobson et al., « Complex systems analysis of series of blackouts », *Chaos* 17(2), 2007,
   DOI 10.1063/1.2737822 (non lu : l'accès a été refusé)
 - UCTE, *Final Report of the Investigation Committee on the 28 September 2003 Blackout in Italy*, avril 2004 :

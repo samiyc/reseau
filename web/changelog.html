@@ -19,6 +19,16 @@
         <h2>Les versions</h2>
 
       <article class="version">
+        <h3><span class="tag">0.3.3</span> La queue des tailles de panne <span class="date">15/11/2026</span></h3>
+        <ul>
+          <li>La distribution des tailles de panne, depuis la répartition du modèle : toutes les pertes d'une ligne, toutes les paires (17 205 sur l'IEEE 118) et des triplets, de 0,7 à 1,3 fois la charge.</li>
+          <li>Sur l'IEEE 118, autour de sa limite N-1, la densité des tailles décroît comme une loi de puissance, de pente −1,1 à −1,7 : la plage des pannes nord-américaines (environ −1,1) et du modèle de Dobson à sa charge critique (−1,5).</li>
+          <li>Au-delà, du tout ou rien : une cascade s'éteint aussitôt ou emporte une grande part du réseau, et le milieu de la distribution se vide. Les IEEE 14 et 30 sont trop petits pour une queue : leurs petites pertes sont des nœuds isolés.</li>
+        </ul>
+        <p class="commits"></p>
+      </article>
+
+      <article class="version">
         <h3><span class="tag">0.3.2</span> Au-delà de la règle N-1, la plus petite surcharge après une perte <span class="date">14/11/2026</span></h3>
         <ul>
           <li>Quand aucune répartition ne tient la règle N-1, le modèle ne retombe plus sur la moins chère : il prend celle dont la pire charge d'une ligne après une perte est la plus faible, puis la moins chère à ce niveau, après le moindre délestage. Le choix de Sami, au vu de la falaise de la 0.3.1.</li>

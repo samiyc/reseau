@@ -54,7 +54,9 @@ la répartition (1,03 sur le 30, 1,09 sur le 118) ; aucun des trois réseaux n'e
 leur limite, et une perte sur deux fait cascade pour quelques millionièmes de dépassement. **Depuis la répartition N-1** (le choix de
 Sami, [../mesures/cascade-n1.md](../mesures/cascade-n1.md)) : plus aucune perte simple ne cascade sous la limite N-1,
 les paires perdent 0,1 à 1 % ; au-delà, une falaise, que la répartition à la moindre charge après une perte (le
-choix suivant de Sami) change en pente sur les IEEE 30 et 118.
+choix suivant de Sami) change en pente sur les IEEE 30 et 118. **La queue** ([../mesures/cascade-queue.md](../mesures/cascade-queue.md),
+15/11) : sur le 118, autour de sa limite N-1, une densité des tailles de pente −1,1 à −1,7, dans la plage de Dobson ;
+au-delà, du tout ou rien. Les IEEE 14 et 30 sont trop petits pour une queue.
 
 - **La règle** : celle de Grid2Op ([physique.md](physique.md) § 5), lue dans son code : au-delà de 2 fois sa limite,
   une ligne tombe aussitôt ; au-delà de sa limite, à son 3e pas d'affilée. Après chaque chute, on recalcule ; un

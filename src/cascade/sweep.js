@@ -78,11 +78,11 @@ function dispatchOf(/** @type {import("../grid/balance.js").Setpoints | null} */
 }
 
 /**
- * Every event at one load factor, under `dispatch` ("secure" or "cost", solved once for all the events, or J2's
- * "pmax"): the summary, how many cascades did not settle within `maxSteps`, the MW the dispatch itself sheds before
- * any loss, and whether it holds the N-1 rule.
+ * Every event at one load factor, each run to the end of its cascade, under `dispatch` ("secure" or "cost", solved
+ * once for all the events, or J2's "pmax"): the share of the demand each one sheds, the lines each one trips, how
+ * many did not settle within `maxSteps`, and the dispatch.
  */
-export function sweepFactor(/** @type {Grid} */ grid, /** @type {number} */ loadFactor, /** @type {number[][]} */ events, { dispatch = "secure", maxSteps = 50 } = {}) {
+export function cascadeSizes(/** @type {Grid} */ grid, /** @type {number} */ loadFactor, /** @type {number[][]} */ events, { dispatch = "secure", maxSteps = 50 } = {}) {
   const setpoints = setpointsFor(grid, { loadFactor, dispatch });
   const shares = [];
   const lost = [];
@@ -94,5 +94,14 @@ export function sweepFactor(/** @type {Grid} */ grid, /** @type {number} */ load
     lost.push(result.lost);
     if (!result.settled) unsettled += 1;
   }
+  return { shares, lost, unsettled, setpoints };
+}
+
+/**
+ * Every event at one load factor (`cascadeSizes`): the summary, how many cascades did not settle, the MW the dispatch
+ * itself sheds before any loss, and whether it holds the N-1 rule.
+ */
+export function sweepFactor(/** @type {Grid} */ grid, /** @type {number} */ loadFactor, /** @type {number[][]} */ events, options = {}) {
+  const { shares, lost, unsettled, setpoints } = cascadeSizes(grid, loadFactor, events, options);
   return { loadFactor, ...summarize(shares, lost), unsettled, ...dispatchOf(setpoints) };
 }

@@ -45,6 +45,8 @@ dans [`../modele.md`](../modele.md).
    ligne surchargée tombe avec une probabilité) ?
    → **Recommandation** : déterministe d'abord ; le hasard est dans les pannes initiales, tirées par graine. Le
    probabiliste ensuite, s'il change les conclusions.
+   → **Sami, 14/11** : déterministe. **Mesuré le 15/11** ([../mesures/cascade-queue.md](../mesures/cascade-queue.md)) :
+   elle suffit à faire voir la charge critique et une queue dans la plage de Dobson, sur le 118.
 
 ### Le modèle
 

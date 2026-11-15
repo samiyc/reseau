@@ -4,6 +4,17 @@
   "intro": "Un réseau électrique en simulation : des lignes où le courant suit les lois de Kirchhoff, des centrales, une consommation, puis les pannes et leurs cascades. Un modèle pour comprendre, pas pour exploiter un vrai réseau.",
   "versions": [
     {
+      "version": "0.3.3",
+      "title": "La queue des tailles de panne",
+      "date": "15/11/2026",
+      "commits": [],
+      "items": [
+        "La distribution des tailles de panne, depuis la répartition du modèle : toutes les pertes d'une ligne, toutes les paires (17 205 sur l'IEEE 118) et des triplets, de 0,7 à 1,3 fois la charge.",
+        "Sur l'IEEE 118, autour de sa limite N-1, la densité des tailles décroît comme une loi de puissance, de pente −1,1 à −1,7 : la plage des pannes nord-américaines (environ −1,1) et du modèle de Dobson à sa charge critique (−1,5).",
+        "Au-delà, du tout ou rien : une cascade s'éteint aussitôt ou emporte une grande part du réseau, et le milieu de la distribution se vide. Les IEEE 14 et 30 sont trop petits pour une queue : leurs petites pertes sont des nœuds isolés."
+      ]
+    },
+    {
       "version": "0.3.2",
       "title": "Au-delà de la règle N-1, la plus petite surcharge après une perte",
       "date": "14/11/2026",
