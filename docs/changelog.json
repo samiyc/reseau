@@ -7,7 +7,7 @@
       "version": "0.3.3",
       "title": "La queue des tailles de panne",
       "date": "15/11/2026",
-      "commits": [],
+      "commits": ["fb73b72"],
       "items": [
         "La distribution des tailles de panne, depuis la répartition du modèle : toutes les pertes d'une ligne, toutes les paires (17 205 sur l'IEEE 118) et des triplets, de 0,7 à 1,3 fois la charge.",
         "Sur l'IEEE 118, autour de sa limite N-1, la densité des tailles décroît comme une loi de puissance, de pente −1,1 à −1,7 : la plage des pannes nord-américaines (environ −1,1) et du modèle de Dobson à sa charge critique (−1,5).",
