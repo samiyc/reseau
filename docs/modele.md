@@ -123,7 +123,9 @@ limite, et un arrondi ne doit pas les compter en surcharge. Grid2Op compare stri
   qui retrouve les six coûts DC de PGLib-OPF au dernier chiffre publié près ; les prix nodaux ; la règle N-1 par la
   LODF ; la charge maximale sans et avec elle, et le prix de la sécurité
   ([mesures/opf-j3.md](mesures/opf-j3.md)).
-- **J4, la journée** : RTS-GMLC, au pas horaire ; la liste de préséance avec réserve, réglée par `mcts-race`.
+- **J4, la journée** (fait le 15/11, `src/day/`, § 10) : RTS-GMLC, au pas horaire ; la liste de préséance avec
+  réserve, réglée par `mcts-race` sur les jours pairs, mesurée sur les impairs
+  ([mesures/journee-j4.md](mesures/journee-j4.md)).
 - **J5 et après** : le faisceau puis l'ISMCTS sur le démarrage ; la conduite au pas de 5 minutes ; le stockage au J7.
 
 ## 7. Les mesures
@@ -153,7 +155,8 @@ charge, et les cascades de l'IEEE 30 après chaque perte simple, au même facteu
 à 0,7 fois leur charge, sans et avec la règle N-1, ses prix nodaux et son coût ; l'état des trois réseaux à 1,2 fois
 leur charge et les cascades de l'IEEE 30 à sa charge de base, sous cette répartition (J3) ; les cascades de l'IEEE 30
 après des paires de pertes à 0,8 fois sa charge, sous la répartition N-1 ; l'état des trois réseaux à 1,2 fois leur
-charge et les cascades de l'IEEE 30 à sa charge de base, sous la répartition au-delà de la limite N-1. Les empreintes du J2
+charge et les cascades de l'IEEE 30 à sa charge de base, sous la répartition au-delà de la limite N-1 ; deux jours de
+RTS-GMLC sous la liste réglée, démarrage dans l'heure compris (J4). Les empreintes du J2
 gardent leur répartition (`dispatch: "pmax"`). Une refonte n'en change aucun ;
 un changement voulu du modèle met à jour le hachage et le dit dans son commit, avec les mesures avant et après.
 
@@ -199,11 +202,18 @@ coût de démarrage, leur durée minimale comptée de cette heure) ; un groupe �
 à froid. Un démarrage coûte à froid, tiède ou chaud selon les heures d'arrêt (les temps et les chaleurs de démarrage de
 RTS-GMLC, au prix de son combustible).
 
-**La journée jouée** (`src/day/day.js`) : le démarrage de la veille est figé ; à chaque heure, sur le réalisé, la
-répartition la moins chère des groupes en marche, lignes tenues, avec le moindre délestage s'il le faut (§ 5). Ce
-qu'elle mesure, à part : le **coût** ($ : les répartitions et les démarrages), l'**énergie non distribuée** (MWh),
-l'**énergie écrêtée** (MWh). **Hypothèse** : aucun groupe ne démarre dans l'heure même ; seule la réserve de la veille
-couvre l'erreur de prévision.
+**La journée jouée** (`src/day/day.js`) : le démarrage de la veille, puis à chaque heure, sur le réalisé, la
+répartition la moins chère des groupes en marche, lignes tenues, avec le moindre délestage s'il le faut (§ 5). **Le
+démarrage dans l'heure** (Sami, 15/11) : quand la répartition délesterait, les turbines à combustion à l'arrêt
+démarrent, les moins chères d'abord, et restent leur durée minimale de marche. **Hypothèse** : une turbine démarre
+dans l'heure (RTS-GMLC ne donne pas de durée de démarrage ; ses « Start Time » sont les heures d'arrêt après
+lesquelles un groupe est chaud, tiède puis froid ; `reserves.csv` admet les turbines dans la réserve tournante à
+600 s). Ce qu'elle mesure, à part : le **coût** ($ : les répartitions et tous les démarrages), l'**énergie non
+distribuée** (MWh), l'**énergie écrêtée** (MWh).
+
+**La règle réglée** ([mesures/journee-j4.md](mesures/journee-j4.md)) : la réserve publiée une fois (**hypothèse** :
+une obligation, le modèle n'ayant pas encore de panne de groupe), une marge de 30 % sur le vent et le soleil prévus,
+un maintien de 12 heures. Elle coûte 7,6 % de moins que la liste simple sur les jours impairs de 2020.
 
 **Ce que disent les données** (vérifié le 15/11) :
 

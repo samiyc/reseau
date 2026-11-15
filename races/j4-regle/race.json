@@ -1,0 +1,373 @@
+{
+  "id": "j4-regle",
+  "alive": [
+    "v0.1-h12",
+    "v0.1-h24",
+    "v0.2-h12",
+    "v0.2-h24",
+    "v0.3-h12",
+    "v0.3-h24",
+    "v0.4-h12",
+    "v0.4-h24"
+  ],
+  "dropped": [
+    {
+      "variant": "v0.2-h6",
+      "mean": 1112795.586585196,
+      "gap": {
+        "n": 40,
+        "mean": 9563.05766581922,
+        "low": 1883.9472610565545,
+        "high": 17242.168070581887
+      },
+      "seeds": 40
+    },
+    {
+      "variant": "v0.1-h6",
+      "mean": 1129584.2238134844,
+      "gap": {
+        "n": 40,
+        "mean": 26351.694894108434,
+        "low": 1502.410473396656,
+        "high": 51200.979314820215
+      },
+      "seeds": 40
+    },
+    {
+      "variant": "v0-h6",
+      "mean": 1137366.5766473897,
+      "gap": {
+        "n": 40,
+        "mean": 34134.047728013145,
+        "low": 6715.197839932207,
+        "high": 61552.89761609408
+      },
+      "seeds": 40
+    },
+    {
+      "variant": "v0-h12",
+      "mean": 1128485.2791351245,
+      "gap": {
+        "n": 60,
+        "mean": 25169.673476939897,
+        "low": 4698.6325732552905,
+        "high": 45640.7143806245
+      },
+      "seeds": 60
+    },
+    {
+      "variant": "v0-h24",
+      "mean": 1128485.2791351245,
+      "gap": {
+        "n": 60,
+        "mean": 25169.673476939897,
+        "low": 4698.6325732552905,
+        "high": 45640.7143806245
+      },
+      "seeds": 60
+    },
+    {
+      "variant": "v0.3-h6",
+      "mean": 1293388.3985947156,
+      "gap": {
+        "n": 100,
+        "mean": 4642.922347755153,
+        "low": 764.836834793151,
+        "high": 8521.007860717156
+      },
+      "seeds": 100
+    },
+    {
+      "variant": "v0.5-h12",
+      "mean": 1490569.971802223,
+      "gap": {
+        "n": 140,
+        "mean": 10037.591010036878,
+        "low": 86.29171386155213,
+        "high": 19988.890306212204
+      },
+      "seeds": 140
+    },
+    {
+      "variant": "v0.5-h24",
+      "mean": 1490569.971802223,
+      "gap": {
+        "n": 140,
+        "mean": 10037.591010036878,
+        "low": 86.29171386155213,
+        "high": 19988.890306212204
+      },
+      "seeds": 140
+    },
+    {
+      "variant": "v0.5-h6",
+      "mean": 1491917.7767908585,
+      "gap": {
+        "n": 140,
+        "mean": 11385.395998672346,
+        "low": 1298.6938803299436,
+        "high": 21472.09811701475
+      },
+      "seeds": 140
+    },
+    {
+      "variant": "v0.4-h6",
+      "mean": 1410081.1002179622,
+      "gap": {
+        "n": 180,
+        "mean": 6741.52493018478,
+        "low": 230.06491177688167,
+        "high": 13252.984948592679
+      },
+      "seeds": 180
+    }
+  ],
+  "rounds": [
+    {
+      "from": 1,
+      "count": 20,
+      "jobs": [
+        "race-j4-regle-v0-h6-1",
+        "race-j4-regle-v0-h12-1",
+        "race-j4-regle-v0-h24-1",
+        "race-j4-regle-v0.1-h6-1",
+        "race-j4-regle-v0.1-h12-1",
+        "race-j4-regle-v0.1-h24-1",
+        "race-j4-regle-v0.2-h6-1",
+        "race-j4-regle-v0.2-h12-1",
+        "race-j4-regle-v0.2-h24-1",
+        "race-j4-regle-v0.3-h6-1",
+        "race-j4-regle-v0.3-h12-1",
+        "race-j4-regle-v0.3-h24-1",
+        "race-j4-regle-v0.4-h6-1",
+        "race-j4-regle-v0.4-h12-1",
+        "race-j4-regle-v0.4-h24-1",
+        "race-j4-regle-v0.5-h6-1",
+        "race-j4-regle-v0.5-h12-1",
+        "race-j4-regle-v0.5-h24-1"
+      ],
+      "at": "2026-11-15T22:30:00.778Z"
+    },
+    {
+      "from": 21,
+      "count": 20,
+      "jobs": [
+        "race-j4-regle-v0-h6-21",
+        "race-j4-regle-v0-h12-21",
+        "race-j4-regle-v0-h24-21",
+        "race-j4-regle-v0.1-h6-21",
+        "race-j4-regle-v0.1-h12-21",
+        "race-j4-regle-v0.1-h24-21",
+        "race-j4-regle-v0.2-h6-21",
+        "race-j4-regle-v0.2-h12-21",
+        "race-j4-regle-v0.2-h24-21",
+        "race-j4-regle-v0.3-h6-21",
+        "race-j4-regle-v0.3-h12-21",
+        "race-j4-regle-v0.3-h24-21",
+        "race-j4-regle-v0.4-h6-21",
+        "race-j4-regle-v0.4-h12-21",
+        "race-j4-regle-v0.4-h24-21",
+        "race-j4-regle-v0.5-h6-21",
+        "race-j4-regle-v0.5-h12-21",
+        "race-j4-regle-v0.5-h24-21"
+      ],
+      "at": "2026-11-15T22:30:37.389Z"
+    },
+    {
+      "from": 41,
+      "count": 20,
+      "jobs": [
+        "race-j4-regle-v0-h12-41",
+        "race-j4-regle-v0-h24-41",
+        "race-j4-regle-v0.1-h12-41",
+        "race-j4-regle-v0.1-h24-41",
+        "race-j4-regle-v0.2-h12-41",
+        "race-j4-regle-v0.2-h24-41",
+        "race-j4-regle-v0.3-h6-41",
+        "race-j4-regle-v0.3-h12-41",
+        "race-j4-regle-v0.3-h24-41",
+        "race-j4-regle-v0.4-h6-41",
+        "race-j4-regle-v0.4-h12-41",
+        "race-j4-regle-v0.4-h24-41",
+        "race-j4-regle-v0.5-h6-41",
+        "race-j4-regle-v0.5-h12-41",
+        "race-j4-regle-v0.5-h24-41"
+      ],
+      "at": "2026-11-15T22:31:07.941Z"
+    },
+    {
+      "from": 61,
+      "count": 20,
+      "jobs": [
+        "race-j4-regle-v0.1-h12-61",
+        "race-j4-regle-v0.1-h24-61",
+        "race-j4-regle-v0.2-h12-61",
+        "race-j4-regle-v0.2-h24-61",
+        "race-j4-regle-v0.3-h6-61",
+        "race-j4-regle-v0.3-h12-61",
+        "race-j4-regle-v0.3-h24-61",
+        "race-j4-regle-v0.4-h6-61",
+        "race-j4-regle-v0.4-h12-61",
+        "race-j4-regle-v0.4-h24-61",
+        "race-j4-regle-v0.5-h6-61",
+        "race-j4-regle-v0.5-h12-61",
+        "race-j4-regle-v0.5-h24-61"
+      ],
+      "at": "2026-11-15T22:31:38.391Z"
+    },
+    {
+      "from": 81,
+      "count": 20,
+      "jobs": [
+        "race-j4-regle-v0.1-h12-81",
+        "race-j4-regle-v0.1-h24-81",
+        "race-j4-regle-v0.2-h12-81",
+        "race-j4-regle-v0.2-h24-81",
+        "race-j4-regle-v0.3-h6-81",
+        "race-j4-regle-v0.3-h12-81",
+        "race-j4-regle-v0.3-h24-81",
+        "race-j4-regle-v0.4-h6-81",
+        "race-j4-regle-v0.4-h12-81",
+        "race-j4-regle-v0.4-h24-81",
+        "race-j4-regle-v0.5-h6-81",
+        "race-j4-regle-v0.5-h12-81",
+        "race-j4-regle-v0.5-h24-81"
+      ],
+      "at": "2026-11-15T22:32:08.794Z"
+    },
+    {
+      "from": 101,
+      "count": 20,
+      "jobs": [
+        "race-j4-regle-v0.1-h12-101",
+        "race-j4-regle-v0.1-h24-101",
+        "race-j4-regle-v0.2-h12-101",
+        "race-j4-regle-v0.2-h24-101",
+        "race-j4-regle-v0.3-h12-101",
+        "race-j4-regle-v0.3-h24-101",
+        "race-j4-regle-v0.4-h6-101",
+        "race-j4-regle-v0.4-h12-101",
+        "race-j4-regle-v0.4-h24-101",
+        "race-j4-regle-v0.5-h6-101",
+        "race-j4-regle-v0.5-h12-101",
+        "race-j4-regle-v0.5-h24-101"
+      ],
+      "at": "2026-11-15T22:32:39.183Z"
+    },
+    {
+      "from": 121,
+      "count": 20,
+      "jobs": [
+        "race-j4-regle-v0.1-h12-121",
+        "race-j4-regle-v0.1-h24-121",
+        "race-j4-regle-v0.2-h12-121",
+        "race-j4-regle-v0.2-h24-121",
+        "race-j4-regle-v0.3-h12-121",
+        "race-j4-regle-v0.3-h24-121",
+        "race-j4-regle-v0.4-h6-121",
+        "race-j4-regle-v0.4-h12-121",
+        "race-j4-regle-v0.4-h24-121",
+        "race-j4-regle-v0.5-h6-121",
+        "race-j4-regle-v0.5-h12-121",
+        "race-j4-regle-v0.5-h24-121"
+      ],
+      "at": "2026-11-15T22:33:09.564Z"
+    },
+    {
+      "from": 141,
+      "count": 20,
+      "jobs": [
+        "race-j4-regle-v0.1-h12-141",
+        "race-j4-regle-v0.1-h24-141",
+        "race-j4-regle-v0.2-h12-141",
+        "race-j4-regle-v0.2-h24-141",
+        "race-j4-regle-v0.3-h12-141",
+        "race-j4-regle-v0.3-h24-141",
+        "race-j4-regle-v0.4-h6-141",
+        "race-j4-regle-v0.4-h12-141",
+        "race-j4-regle-v0.4-h24-141"
+      ],
+      "at": "2026-11-15T22:33:39.902Z"
+    },
+    {
+      "from": 161,
+      "count": 20,
+      "jobs": [
+        "race-j4-regle-v0.1-h12-161",
+        "race-j4-regle-v0.1-h24-161",
+        "race-j4-regle-v0.2-h12-161",
+        "race-j4-regle-v0.2-h24-161",
+        "race-j4-regle-v0.3-h12-161",
+        "race-j4-regle-v0.3-h24-161",
+        "race-j4-regle-v0.4-h6-161",
+        "race-j4-regle-v0.4-h12-161",
+        "race-j4-regle-v0.4-h24-161"
+      ],
+      "at": "2026-11-15T22:34:10.185Z"
+    },
+    {
+      "from": 181,
+      "count": 3,
+      "jobs": [
+        "race-j4-regle-v0.1-h12-181",
+        "race-j4-regle-v0.1-h24-181",
+        "race-j4-regle-v0.2-h12-181",
+        "race-j4-regle-v0.2-h24-181",
+        "race-j4-regle-v0.3-h12-181",
+        "race-j4-regle-v0.3-h24-181",
+        "race-j4-regle-v0.4-h12-181",
+        "race-j4-regle-v0.4-h24-181"
+      ],
+      "at": "2026-11-15T22:34:40.466Z"
+    }
+  ],
+  "look": {
+    "seeds": 183,
+    "standings": [
+      {
+        "variant": "v0.3-h12",
+        "mean": 1396581.0257468657
+      },
+      {
+        "variant": "v0.3-h24",
+        "mean": 1396581.0257468657
+      },
+      {
+        "variant": "v0.2-h12",
+        "mean": 1397472.8148809045
+      },
+      {
+        "variant": "v0.2-h24",
+        "mean": 1397472.8148809045
+      },
+      {
+        "variant": "v0.4-h12",
+        "mean": 1401278.2464145836
+      },
+      {
+        "variant": "v0.4-h24",
+        "mean": 1401278.2464145836
+      },
+      {
+        "variant": "v0.1-h12",
+        "mean": 1402366.2989817746
+      },
+      {
+        "variant": "v0.1-h24",
+        "mean": 1402366.2989817746
+      }
+    ],
+    "best": "v0.3-h12",
+    "dropped": [],
+    "alive": [
+      "v0.1-h12",
+      "v0.1-h24",
+      "v0.2-h12",
+      "v0.2-h24",
+      "v0.3-h12",
+      "v0.3-h24",
+      "v0.4-h12",
+      "v0.4-h24"
+    ]
+  }
+}

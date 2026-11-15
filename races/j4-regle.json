@@ -1,0 +1,31 @@
+{
+  "id": "j4-regle",
+  "command": "node scripts/day-race.js --variant {variant} --from {from} --count {count} --out {out}",
+  "cwd": "..",
+  "variants": [
+    "v0-h6",
+    "v0-h12",
+    "v0-h24",
+    "v0.1-h6",
+    "v0.1-h12",
+    "v0.1-h24",
+    "v0.2-h6",
+    "v0.2-h12",
+    "v0.2-h24",
+    "v0.3-h6",
+    "v0.3-h12",
+    "v0.3-h24",
+    "v0.4-h6",
+    "v0.4-h12",
+    "v0.4-h24",
+    "v0.5-h6",
+    "v0.5-h12",
+    "v0.5-h24"
+  ],
+  "batch": 20,
+  "maxSeeds": 183,
+  "minSeeds": 40,
+  "maximize": false,
+  "threads": 1,
+  "estimate": "5 min"
+}

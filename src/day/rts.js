@@ -24,7 +24,7 @@ export function thermalUnits(/** @type {Grid} */ grid, /** @type {any[]} */ unit
     if (!unit.curve) return [];
     const { points, base, marginal } = unit.curve;
     const full = base + marginal.reduce((sum, m, i) => sum + m * (points[i + 1] - points[i]), 0);
-    return [{ g, uid: unit.uid, area: unit.area, bus: grid.genBus[g], pmax: grid.pmax[g], first: points[0], points, base, marginal, fullLoad: full / grid.pmax[g], minUp: unit.minUp, minDown: unit.minDown, start: unit.start }];
+    return [{ g, uid: unit.uid, type: unit.type, fast: unit.type === "CT", area: unit.area, bus: grid.genBus[g], pmax: grid.pmax[g], first: points[0], points, base, marginal, fullLoad: full / grid.pmax[g], minUp: unit.minUp, minDown: unit.minDown, start: unit.start }];
   });
 }
 

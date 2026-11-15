@@ -99,15 +99,21 @@ describe("a day played", () => {
     const result = playDay(day, commitment);
     assert.equal(result.failed, 0);
     assert.equal(result.unserved, 0);
-    assert.ok(Math.abs(result.cost - sum(result.hours.map((h) => h.cost)) - commitment.startCosts) < 1e-6);
+    assert.ok(Math.abs(result.cost - sum(result.hours.map((h) => h.cost)) - result.startCosts) < 1e-6);
+    assert.equal(result.fastStarts, 0);
     assert.ok(result.curtailed >= 0);
   });
 
-  it("sheds load at the first hour of day 200, when the wind falls 614 MW under its forecast", () => {
+  it("sheds load at the first hour of day 200, when the wind falls 614 MW under its forecast, unless turbines start", () => {
     const { data, grid, series } = rts();
     const day = createDay(grid, data, series, 200);
-    const result = playDay(day, priorityCommit(day, { reserve: 1 }));
-    assert.ok(result.hours[0].shed > 100);
+    const commitment = priorityCommit(day, { reserve: 1 });
+    assert.ok(playDay(day, commitment, { fastStart: false }).hours[0].shed > 100);
+    const fast = playDay(day, commitment);
+    assert.ok(fast.hours[0].shed < 1e-6);
+    assert.ok(fast.fastStarts > 0);
+    const turbines = fast.hours[0].on.reduce((count, on, u) => count + (on && !commitment.committed[0][u] ? 1 : 0), 0);
+    assert.ok(turbines > 0 && day.thermal.every((unit, u) => !fast.hours[0].on[u] || commitment.committed[0][u] || unit.fast));
     const [forecast, real] = ["dayAhead", "realTime"].map((part) => sum(hourOf(day, part, 0).available.filter((_, g) => data.units[g].type === "WIND")));
     assert.ok(Math.abs(forecast - real - 614) < 1);
   });

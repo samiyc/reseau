@@ -5,7 +5,10 @@ import { solveFlows } from "../src/flow/dcflow.js";
 import { runCascade } from "../src/cascade/cascade.js";
 import { baseInjection, describeState, setpointsFor } from "../src/grid/state.js";
 import { solveDispatch } from "../src/opf/dispatch.js";
-import { grid } from "./cases.js";
+import { grid, rts } from "./cases.js";
+import { createDay } from "../src/day/rts.js";
+import { priorityCommit } from "../src/day/commit.js";
+import { playDay } from "../src/day/day.js";
 
 /**
  * What the model does, held in a hash (as in the other clients of mcts-commun): a refactor must leave it unchanged.
@@ -36,6 +39,9 @@ const EXPECTED = {
   // 1.2 times their load, and the IEEE 30's cascades after each single loss at its base load.
   stateMargin: "5413cc647e3d03e8",
   cascades30Margin: "e00e6d58b268a56b",
+  // 15/11/2026, J4: RTS-GMLC's days 100 and 200 under the tuned priority list (a margin of 30 % on the wind and sun
+  // forecast, units held on 12 hours), the fast start included: the commitment, then each hour's units on and cost.
+  days: "15b97afc73e5aea8",
 };
 
 const digest = (value) => createHash("sha256").update(JSON.stringify(value)).digest("hex").slice(0, 16);
@@ -94,7 +100,21 @@ function dispatches() {
   })));
 }
 
+function days() {
+  const { data, grid: g, series } = rts();
+  return digest([100, 200].map((index) => {
+    const day = createDay(g, data, series, index);
+    const commitment = priorityCommit(day, { reserve: 1, renewable: 0.3, hold: 12 });
+    const played = playDay(day, commitment);
+    return [commitment.committed.map((on) => [...on]), played.hours.map((h) => [[...h.on], Math.round(h.cost * 1e3) / 1e3, rounded([h.shed])])];
+  }));
+}
+
 describe("the fingerprints of the model", () => {
+  it("keeps the RTS-GMLC days under the tuned priority list", () => {
+    assert.equal(days(), EXPECTED.days);
+  });
+
   it("keeps the base flows of the three PGLib grids", () => {
     assert.deepEqual({ base14: base(14), base30: base(30), base118: base(118) }, { base14: EXPECTED.base14, base30: EXPECTED.base30, base118: EXPECTED.base118 });
   });

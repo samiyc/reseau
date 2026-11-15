@@ -95,6 +95,10 @@ sous 0,7 fois la charge.
 
 ## P6. La journée RTS-GMLC et la règle à battre (J4)
 
+**Faite le 15/11** ([../mesures/journee-j4.md](../mesures/journee-j4.md)) : la liste réglée (la réserve publiée, une
+marge de 30 % sur le vent et le soleil prévus, un maintien de 12 heures) coûte 7,6 % de moins que la liste simple,
+IC [−8,6 ; −6,7 %], sur les 183 jours impairs, sans énergie non distribuée. Les turbines démarrent dans l'heure (Sami).
+
 - **Le modèle** : les 73 groupes thermiques avec leurs Pmin, rampes, durées minimales et coûts de démarrage ; le
   renouvelable écrêtable ; les séries de 2020.
 - **Les jours** : tirés par graine parmi les 366 ; la décision de la veille voit `DAY_AHEAD_*`, le jour se joue sur

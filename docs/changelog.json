@@ -4,6 +4,19 @@
   "intro": "Un réseau électrique en simulation : des lignes où le courant suit les lois de Kirchhoff, des centrales, une consommation, puis les pannes et leurs cascades. Un modèle pour comprendre, pas pour exploiter un vrai réseau.",
   "versions": [
     {
+      "version": "0.4.0",
+      "title": "La journée de RTS-GMLC, et la règle à battre",
+      "date": "15/11/2026",
+      "commits": [],
+      "items": [
+        "RTS-GMLC, le réseau principal : 73 nœuds, 73 groupes thermiques, le vent, le soleil et l'hydraulique de 2020, heure par heure, avec la prévision de la veille et le réalisé.",
+        "La liste de préséance avec réserve : la veille, sur la prévision, les groupes les moins chers d'abord, assez pour la consommation et une réserve. Puis, à chaque heure, la répartition la moins chère sur le réalisé, lignes tenues.",
+        "Quand le vent manque (jusqu'à 600 MW sous sa prévision), les turbines à combustion démarrent dans l'heure : le choix de Sami.",
+        "La règle réglée par une course sur les jours pairs de 2020 : une marge de 30 % sur le vent et le soleil prévus, et garder en marche un groupe dont on aura besoin dans les 12 heures. Sur les jours impairs, elle coûte 7,6 % de moins que la liste simple, sans énergie non distribuée. C'est la règle que la recherche devra battre.",
+        "Un constat sur les données : la consommation réalisée de RTS-GMLC est sa prévision fois une constante par zone ; seuls le vent et le soleil se trompent."
+      ]
+    },
+    {
       "version": "0.3.3",
       "title": "La queue des tailles de panne",
       "date": "15/11/2026",
