@@ -7,7 +7,7 @@
       "version": "0.4.0",
       "title": "La journée de RTS-GMLC, et la règle à battre",
       "date": "15/11/2026",
-      "commits": [],
+      "commits": ["4387150", "0f2f66f"],
       "items": [
         "RTS-GMLC, le réseau principal : 73 nœuds, 73 groupes thermiques, le vent, le soleil et l'hydraulique de 2020, heure par heure, avec la prévision de la veille et le réalisé.",
         "La liste de préséance avec réserve : la veille, sur la prévision, les groupes les moins chers d'abord, assez pour la consommation et une réserve. Puis, à chaque heure, la répartition la moins chère sur le réalisé, lignes tenues.",
