@@ -18,6 +18,6 @@ const out = resolve(values.out);
 mkdirSync(dirname(out), { recursive: true });
 for (let seed = Number(values.from); seed < Number(values.from) + Number(values.count); seed += 1) {
   const day = rts.day(dayOfSeed("train", seed));
-  const result = playDay(day, priorityCommit(day, settings));
+  const result = playDay(day, priorityCommit(day, settings), settings);
   appendFileSync(out, `${JSON.stringify({ seed, score: result.cost, unserved: result.unserved, day: day.index })}\n`);
 }

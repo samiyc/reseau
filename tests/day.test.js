@@ -125,3 +125,12 @@ describe("the shares of a grid's areas", () => {
     assert.deepEqual(Array.from(shares), [0.25, 0.75, 1, 0]);
   });
 });
+
+describe("the names of the rule's variants (scripts/rts-data.js)", () => {
+  it("read the reserve, the margin, the hold and the fast start", async () => {
+    const { settingsOf } = await import("../scripts/rts-data.js");
+    assert.deepEqual(settingsOf("v0.3-h12"), { reserve: 1, renewable: 0.3, hold: 12, fastStart: true });
+    assert.deepEqual(settingsOf("r2-v0-h0-nofast"), { reserve: 2, renewable: 0, hold: 0, fastStart: false });
+    assert.throws(() => settingsOf("v0.3"));
+  });
+});

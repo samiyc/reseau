@@ -24,13 +24,16 @@ import { hourGrid, hourOf } from "./rts.js";
 /** Load shed under this, in MW, is none. */
 const SHED_TOLERANCE = 1e-6;
 
-/** One hour's dispatch under the units on: its cost, the load it sheds, the energy it curtails. */
+/**
+ * One hour's dispatch under the units on: its cost, the load it sheds, the energy it curtails; and, for the measures
+ * that look at the state itself (the N-1 rule, the cascades), the hour's grid and its dispatch.
+ */
 export function dispatchHour(day, hour, /** @type {Uint8Array} */ on) {
   const grid = hourGrid(day, hour, on);
   const dispatch = solveDispatch(grid, { shedding: true });
-  if (dispatch.status !== "optimal") return { status: dispatch.status, cost: NaN, shed: NaN, curtailed: NaN };
+  if (dispatch.status !== "optimal") return { status: dispatch.status, cost: NaN, shed: NaN, curtailed: NaN, grid, dispatch };
   const used = grid.renewable.reduce((sum, renewable, g) => sum + (renewable ? dispatch.generation[g] : 0), 0);
-  return { status: "optimal", cost: dispatch.cost, shed: dispatch.shedTotal ?? 0, curtailed: hour.available.reduce((a, b) => a + b, 0) - used };
+  return { status: "optimal", cost: dispatch.cost, shed: dispatch.shedTotal ?? 0, curtailed: hour.available.reduce((a, b) => a + b, 0) - used, grid, dispatch };
 }
 
 /** The fast units free to start at an hour, in merit order: off, and off for their minimum down time. */
