@@ -7,7 +7,7 @@
       "version": "0.5.1",
       "title": "Les cascades du faisceau N-1 : 2 heures fragiles sur 240",
       "date": "17/11/2026",
-      "commits": ["721b69c"],
+      "commits": ["721b69c", "bc8a3d8"],
       "items": [
         "Aux 240 heures de la mesure des cascades, le faisceau noté sous la règle N-1 ne laisse que 2 heures fragiles, contre 31 pour la liste N-1 et 56 pour la liste réglée. Une perte simple y coûte en moyenne 0,14 % de la consommation, contre 1,29 %.",
         "Les heures du soir restent souvent un peu hors de la règle, mais leurs pertes n'y font plus tomber de ligne en chaîne.",
