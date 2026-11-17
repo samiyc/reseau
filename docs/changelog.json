@@ -7,7 +7,7 @@
       "version": "0.5.0",
       "title": "Le faisceau sur le démarrage bat les deux règles (J5)",
       "date": "17/11/2026",
-      "commits": ["f2d8bb4"],
+      "commits": ["f2d8bb4", "237f418"],
       "items": [
         "Le faisceau choisit les groupes à démarrer la veille, sur la prévision : à chaque heure, il essaie l'heure de la liste, un groupe de plus parmi les huit suivants, un ou deux de moins, ou tout gardé, et note chaque plan sur sa journée complétée par la liste.",
         "Contre la liste réglée, il coûte 1 % de moins sur les jours impairs (−12 à −14 k$ par jour), sans énergie non distribuée.",
