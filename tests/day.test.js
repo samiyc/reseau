@@ -160,9 +160,10 @@ describe("the shares of a grid's areas", () => {
 describe("the names of the rule's variants (scripts/rts-data.js)", () => {
   it("read the reserve, the margin, the hold, the fast start and the N-1 rule", async () => {
     const { settingsOf } = await import("../scripts/rts-data.js");
-    assert.deepEqual(settingsOf("v0.3-h12"), { reserve: 1, renewable: 0.3, hold: 12, fastStart: true, security: false });
-    assert.deepEqual(settingsOf("r2-v0-h0-nofast"), { reserve: 2, renewable: 0, hold: 0, fastStart: false, security: false });
-    assert.deepEqual(settingsOf("v0.3-h12-n1"), { reserve: 1, renewable: 0.3, hold: 12, fastStart: true, security: true });
+    assert.deepEqual(settingsOf("v0.3-h12"), { beam: 0, reserve: 1, renewable: 0.3, hold: 12, fastStart: true, security: false });
+    assert.deepEqual(settingsOf("r2-v0-h0-nofast"), { beam: 0, reserve: 2, renewable: 0, hold: 0, fastStart: false, security: false });
+    assert.deepEqual(settingsOf("v0.3-h12-n1"), { beam: 0, reserve: 1, renewable: 0.3, hold: 12, fastStart: true, security: true });
+    assert.deepEqual(settingsOf("b10-v0.3-h12-n1"), { beam: 10, reserve: 1, renewable: 0.3, hold: 12, fastStart: true, security: true });
     assert.throws(() => settingsOf("v0.3"));
   });
 });

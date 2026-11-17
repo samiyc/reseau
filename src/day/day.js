@@ -50,17 +50,26 @@ function playHour(play, /** @type {Uint8Array} */ planned, /** @type {number} */
   const { day, order, state } = play;
   const hour = hourOf(day, "realTime", h);
   const on = Uint8Array.from(planned, (p, u) => (p || (state.on[u] && state.fast[u] && state.since[u] < day.thermal[u].minUp) ? 1 : 0));
-  let result = dispatchHour(day, hour, on, play);
-  const free = fastFree(day, order, on, state);
-  while (result.status === "optimal" && result.shed > SHED_TOLERANCE && free.length > 0) {
+  const result = withFastStarts(day, hour, on, { free: fastFree(day, order, on, state), security: play.security });
+  return { ...result, on, load: hour.load.reduce((a, b) => a + b, 0) };
+}
+
+/**
+ * An hour's dispatch, with the fast units `free` started (into `on`), the cheapest first, while it sheds load and some
+ * are left: each round starts enough of them to cover the load shed, then dispatches again.
+ */
+export function withFastStarts(day, hour, /** @type {Uint8Array} */ on, { free, security = false }) {
+  let result = dispatchHour(day, hour, on, { security });
+  const left = [...free];
+  while (result.status === "optimal" && result.shed > SHED_TOLERANCE && left.length > 0) {
     let added = 0;
-    while (free.length > 0 && added < result.shed) {
-      const u = free.shift();
+    while (left.length > 0 && added < result.shed) {
+      const u = left.shift();
       [on[u], added] = [1, added + day.thermal[u].pmax];
     }
-    result = dispatchHour(day, hour, on, play);
+    result = dispatchHour(day, hour, on, { security });
   }
-  return { ...result, on, load: hour.load.reduce((a, b) => a + b, 0) };
+  return result;
 }
 
 /**

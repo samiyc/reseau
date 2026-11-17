@@ -1,7 +1,7 @@
 import { writeFileSync } from "node:fs";
 import { runCascade } from "../src/cascade/cascade.js";
 import { allPairs, tailOf } from "../src/cascade/tail.js";
-import { priorityCommit } from "../src/day/commit.js";
+import { planDay } from "../src/day/beam.js";
 import { playDay } from "../src/day/day.js";
 import { loadRts, settingsOf } from "./rts-data.js";
 
@@ -28,7 +28,7 @@ const started = performance.now();
 /** Every event at one hour of the year: the sizes of its cascades, and the lines each one trips; null without a dispatch. */
 function measureHour(/** @type {number} */ yearHour) {
   const day = rts.day(Math.floor(yearHour / 24));
-  const hour = playDay(day, priorityCommit(day, settings), settings).hours[yearHour % 24];
+  const hour = playDay(day, planDay(day, settings), settings).hours[yearHour % 24];
   if (hour.status !== "optimal") return null;
   const { grid, dispatch } = hour;
   const margin = "margin" in dispatch ? Number(dispatch.margin) : null;

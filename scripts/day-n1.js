@@ -1,5 +1,5 @@
 import { writeFileSync } from "node:fs";
-import { priorityCommit } from "../src/day/commit.js";
+import { planDay } from "../src/day/beam.js";
 import { playDay } from "../src/day/day.js";
 import { lodf } from "../src/flow/sensitivity.js";
 import { n1Overloads } from "../src/opf/security.js";
@@ -23,7 +23,7 @@ const hours = [];
 const pairs = new Map();
 for (let index = 0; index < 366; index += 1) {
   const day = rts.day(index);
-  const played = playDay(day, priorityCommit(day, settings), settings);
+  const played = playDay(day, planDay(day, settings), settings);
   played.hours.forEach((hour, h) => {
     const overloads = hour.status === "optimal" ? n1Overloads(hour.grid, hour.dispatch.flows.flow, factors) : [];
     const worst = overloads.reduce((max, o) => Math.max(max, o.loading), 0);

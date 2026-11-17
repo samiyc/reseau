@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { runCascade } from "../src/cascade/cascade.js";
-import { priorityCommit } from "../src/day/commit.js";
+import { planDay } from "../src/day/beam.js";
 import { playDay } from "../src/day/day.js";
 import { loadRts, settingsOf } from "./rts-data.js";
 
@@ -22,7 +22,7 @@ const count = (/** @type {Map<string, number>} */ map, /** @type {string} */ key
 let large = 0;
 for (const { yearHour } of fragile) {
   const day = rts.day(Math.floor(yearHour / 24));
-  const { grid, dispatch } = playDay(day, priorityCommit(day, settings), settings).hours[yearHour % 24];
+  const { grid, dispatch } = playDay(day, planDay(day, settings), settings).hours[yearHour % 24];
   const setpoints = { generation: dispatch.generation, shed: dispatch.shed, cost: dispatch.cost, prices: null, secure: false, margin: null };
   for (let k = 0; k < grid.branchCount; k += 1) {
     const cascade = runCascade(grid, { setpoints, dispatch: "cost", inService: Uint8Array.from(grid.inService, (on, j) => (j === k ? 0 : on)) });

@@ -42,7 +42,7 @@ export function startCost(/** @type {Thermal} */ unit, /** @type {number} */ off
 }
 
 /** The units the list alone wants at a need: the shortest head of the list whose capacity reaches it. */
-function wantedAt(/** @type {Thermal[]} */ thermal, /** @type {number[]} */ order, /** @type {number} */ need) {
+export function wantedAt(/** @type {Thermal[]} */ thermal, /** @type {number[]} */ order, /** @type {number} */ need) {
   const wanted = new Uint8Array(thermal.length);
   let capacity = 0;
   for (const u of order) {
@@ -56,7 +56,7 @@ function wantedAt(/** @type {Thermal[]} */ thermal, /** @type {number[]} */ orde
 const heldOn = (state, /** @type {Thermal} */ unit, /** @type {number} */ u, /** @type {Uint8Array[]} */ soon) => state.on[u] && (state.since[u] < unit.minUp || soon.some((wanted) => wanted[u]));
 
 /** One hour of the rule: the units on, from the state of the hour before and what the list wants in the next hours. */
-function commitHour({ thermal, order }, state, /** @type {number} */ need, /** @type {Uint8Array[]} */ soon) {
+export function commitHour({ thermal, order }, state, /** @type {number} */ need, /** @type {Uint8Array[]} */ soon) {
   const on = new Uint8Array(thermal.length);
   let capacity = 0;
   thermal.forEach((unit, u) => {

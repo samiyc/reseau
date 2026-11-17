@@ -20,10 +20,12 @@ export const dayOfSeed = (/** @type {"train" | "test"} */ set, /** @type {number
 /**
  * A variant's name as the rule's settings: "v0.25-h24" is the published reserve once, a margin of 25 % on the wind
  * and sun forecast, units held on 24 hours; "r2-" before it sets the reserve to twice the published one, "-nofast"
- * after it forbids the fast start (src/day/day.js), "-n1" last dispatches each hour under the N-1 rule (the N-1 list).
+ * after it forbids the fast start (src/day/day.js), "-n1" last dispatches each hour under the N-1 rule (the N-1 list);
+ * "b10-" first commits by the beam of 10 plans (src/day/beam.js, noted under the N-1 rule with "-n1"), not the rule.
  */
 export function settingsOf(/** @type {string} */ variant) {
-  const match = /^(?:r([\d.]+)-)?v([\d.]+)-h(\d+)(-nofast)?(-n1)?$/.exec(variant);
+  const match = /^(?:b(\d+)-)?(?:r([\d.]+)-)?v([\d.]+)-h(\d+)(-nofast)?(-n1)?$/.exec(variant);
   if (!match) throw new Error(`variante illisible : ${variant}`);
-  return { reserve: match[1] === undefined ? 1 : Number(match[1]), renewable: Number(match[2]), hold: Number(match[3]), fastStart: !match[4], security: Boolean(match[5]) };
+  const [, beam, reserve, renewable, hold, nofast, n1] = match;
+  return { beam: beam === undefined ? 0 : Number(beam), reserve: reserve === undefined ? 1 : Number(reserve), renewable: Number(renewable), hold: Number(hold), fastStart: !nofast, security: Boolean(n1) };
 }
