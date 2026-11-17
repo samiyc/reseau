@@ -40,6 +40,8 @@ dans [`../modele.md`](../modele.md).
    une pénalité de surcharge.
    → **Recommandation** : (a), lexicographique. Elle n'invente aucun prix, et elle dit ce que fait un exploitant :
    la sécurité d'abord. On essaiera (b) seulement si (a) rend la recherche trop prudente.
+   → **Sami, 17/11**, après le J5 ([../mesures/journee-j5.md](../mesures/journee-j5.md)) : on garde (a), même si le
+   faisceau N-1 paie 6,2 % de plus pour 3,9 heures hors N-1 de moins par jour.
 
 5. **La cascade** : déterministe, à la Grid2Op (une ligne surchargée 2 pas tombe), ou probabiliste, à l'OPA (une
    ligne surchargée tombe avec une probabilité) ?

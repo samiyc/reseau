@@ -110,7 +110,8 @@ sont mesurées sur ces jours mêmes : les deux sont rapportées, aucune n'est ch
   3,9 heures hors N-1 par jour, à énergie non distribuée égale (aucune).
 - **Le faisceau sur le coût ne rend pas le réseau plus sûr**, et le faisceau N-1 coûte cher. Entre les deux, il y a
   une frontière : combien payer une heure ramenée sous la règle. La note lexicographique ne la montre pas ; une note
-  pondérée (question 4, b) la parcourrait, au prix d'un prix inventé par heure hors N-1.
+  pondérée (question 4, b) la parcourrait, au prix d'un prix inventé par heure hors N-1. **Sami, 17/11** : on garde
+  la note lexicographique.
 - **Les deux sont décidés sur la prévision** : sur les jours mal prévus, le faisceau peut perdre. Il perd 28 à 38
   jours sur 183 contre la liste réglée. C'est la question de P8 : chercher sur plusieurs mondes météo.
 - **Ses cascades ne sont pas mesurées** : le faisceau N-1 laisse 7,6 heures hors de la règle par jour au lieu de

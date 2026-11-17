@@ -120,7 +120,7 @@ la répartition sous la règle N-1, +3,2 %, et encore 47 % des heures hors de la
   meilleurs plannings partiels, notés par le DC-OPF de chaque heure (avec redémarrage à chaud) et les coûts de
   démarrage. Les successeurs sont proposés par la règle (démarrer le suivant de la liste, arrêter le dernier), comme
   la politique qui élague chez de Mars.
-- **La note** : lexicographique ou pondérée, selon la réponse de Sami ([questions.md](questions.md), question 4).
+- **La note** : lexicographique (Sami, 17/11, [questions.md](questions.md), question 4).
 - **Ce qu'on attend**, en **hypothèse** : 1 à 3 % de coût en moins à énergie non distribuée égale, d'après de Mars.
   Le faisceau voit la prévision seule ; il peut perdre sur les jours mal prévus.
 - **Contre les deux règles** : la liste réglée (le coût) et la liste N-1 (les surcharges), objectif par objectif. Un
