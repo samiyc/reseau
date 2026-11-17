@@ -125,6 +125,10 @@ la répartition sous la règle N-1, +3,2 %, et encore 47 % des heures hors de la
   Le faisceau voit la prévision seule ; il peut perdre sur les jours mal prévus.
 - **Contre les deux règles** : la liste réglée (le coût) et la liste N-1 (les surcharges), objectif par objectif. Un
   faisceau noté sous la répartition N-1 pourrait démarrer les groupes qui rendent le soir tenable (**hypothèse**).
+- **Fait le 17/11** ([../mesures/journee-j5.md](../mesures/journee-j5.md), `src/day/beam.js`) : douze successeurs
+  autour de l'heure de la liste, la note lexicographique avec le démarrage dans l'heure, la liste pour finir chaque
+  plan partiel (méthode du pilote). Contre la liste réglée : **−0,85 à −0,98 %** du coût (8 ou 32 plans), sans énergie
+  non distribuée. Contre la liste N-1 : **−3,9 heures hors N-1 par jour** (11,5 → 7,6), pour +6,2 % de coût.
 
 ## P8. L'ISMCTS sur des mondes météo (J5-J6)
 

@@ -6,7 +6,7 @@ puis les pannes, une ligne qui tombe et la charge qui se reporte sur les autres,
 
 Client de [`mcts-commun`](../mcts-commun/README.md). La recherche sera choisie par la mesure, contre l'ordre de préséance économique avec une marge de réserve, et la règle N-1.
 
-**État** (17/11/2026, version 0.4.2) : le cadrage est fait (`docs/recherche/`, les réponses de Sami dans
+**État** (17/11/2026, version 0.5.0) : le cadrage est fait (`docs/recherche/`, les réponses de Sami dans
 `questions.md`), le modèle écrit (`docs/modele.md`). J1 : le calcul DC des flux sur les IEEE 14, 30 et 118 de
 PGLib-OPF, les facteurs de report (PTDF, LODF). J2 : la cascade, avec la règle de Grid2Op, et sa mesure
 (`docs/mesures/cascade-j2.md`). J3 : la répartition au moindre coût (le DC-OPF, par le solveur `qp` de
@@ -16,7 +16,8 @@ celle dont la pire charge après une perte est la plus faible ; les cascades son
 `cascade-j3.md`), et la distribution de leurs tailles (`cascade-queue.md`). J4 : la journée de RTS-GMLC à l'heure, la liste de préséance avec
 réserve, réglée sur les jours pairs de 2020 et mesurée sur les impairs (`docs/mesures/journee-j4.md`), contre la règle N-1
 (`journee-n1.md`) et dans ses cascades (`rts-cascades.md`) ; la liste N-1, la seconde règle à battre, qui répartit
-chaque heure sous la règle N-1 (`journee-liste-n1.md`). La page montre
+chaque heure sous la règle N-1 (`journee-liste-n1.md`). J5 : le faisceau sur le démarrage, qui bat la liste réglée
+de 1 % sur le coût et la liste N-1 de 3,9 heures hors N-1 par jour (`journee-j5.md`). La page montre
 la carte, la répartition et ses prix, coupe une ligne, lance la cascade et la rejoue pas à pas.
 
 ## Les commandes
@@ -33,7 +34,7 @@ la carte, la répartition et ses prix, coupe une ligne, lance la cascade et la r
 | `node scripts/cascade-tail.js [secure|cost] [triplets] [graine]` | la queue des tailles de panne : toutes les pertes simples et les paires, des triplets tirés par graine, par un créneau ; 7 min |
 | `node scripts/rts-fetch.js`, puis `node scripts/rts-convert.js` | RTS-GMLC : télécharge les 50 Mo du dépôt épinglé dans `data/rts-gmlc/brut/` (hors de git), puis réécrit `data/rts_gmlc*.json*` |
 | `npx mcts-race races/j4-regle.json --follow` | le réglage de la liste de préséance (J4) : 18 variantes sur les jours pairs de 2020, par la file |
-| `node scripts/day-measure.js <variantes…>` | la mesure du J4 sur les 183 jours impairs, chaque variante contre la première, par un créneau |
+| `node scripts/day-measure.js [--part k/n] <variantes…>`, `--merge a.json,b.json… --out x.json` | la mesure du J4 et du J5 sur les 183 jours impairs, chaque variante contre la première, chaque faisceau (`b8-…`, `b32-…`) contre sa règle ; les listes par un créneau, les faisceaux par la file en parts (2 min par jour pour six variantes) |
 | `node scripts/day-n1.js [variante] [sortie]`, `node scripts/rts-cascades.js [heures] [variante] [sortie]` | la règle N-1 sur les 8 784 heures d'une variante (la liste réglée : 2 min, la liste N-1 `v0.3-h12-n1` : 4 min) ; ses cascades à des heures réparties sur les charges de l'année (240 heures : 11 min) ; par la file |
 | `node scripts/rts-cascade-causes.js [fichier] [variante]` | la première ligne tombée et les îlots des grandes pannes des heures fragiles ; 2 min, par un créneau |
 | `node scripts/opf-measure.js` | la mesure du J3 : la validation contre PGLib, la charge maximale, le prix de la sécurité ; 10 s |

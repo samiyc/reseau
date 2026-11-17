@@ -126,7 +126,10 @@ limite, et un arrondi ne doit pas les compter en surcharge. Grid2Op compare stri
 - **J4, la journée** (fait le 15/11, `src/day/`, § 10) : RTS-GMLC, au pas horaire ; la liste de préséance avec
   réserve, réglée par `mcts-race` sur les jours pairs, mesurée sur les impairs
   ([mesures/journee-j4.md](mesures/journee-j4.md)).
-- **J5 et après** : le faisceau puis l'ISMCTS sur le démarrage ; la conduite au pas de 5 minutes ; le stockage au J7.
+- **J5, le faisceau sur le démarrage** (fait le 17/11, `src/day/beam.js`) : la liste propose, le faisceau choisit,
+  noté sur la prévision dans l'ordre de Sami, chaque plan partiel complété par la liste. Il bat la liste réglée de 1 %
+  sur le coût et la liste N-1 de 3,9 heures hors N-1 par jour ([mesures/journee-j5.md](mesures/journee-j5.md)).
+- **Après** : l'ISMCTS sur des mondes météo (P8) ; la conduite au pas de 5 minutes ; le stockage au J7.
 
 ## 7. Les mesures
 

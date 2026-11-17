@@ -112,5 +112,8 @@ répartition de la liste N-1 ([rts-cascades-n1.json](rts-cascades-n1.json)) :
 - **Une recherche sur le démarrage (P7) peut gagner sur les deux** : c'est le démarrage qui laisse 4 166 heures hors de
   la règle, et 31 heures fragiles sur 240. Démarrer un groupe dans la zone 3 ou près des nœuds 107, 208 et 308 aux
   heures du soir est ce que la liste ne sait pas faire (**hypothèse**).
+- **Mesuré le 17/11** ([journee-j5.md](journee-j5.md)) : le faisceau noté sous la répartition N-1 laisse 7,6 heures
+  hors N-1 par jour au lieu de 11,5, surtout en rendant la nuit tenable ; le soir recule de 85-92 % à 60-75 %. Il
+  coûte 6,2 % de plus que la liste N-1.
 - **Battre la liste réglée sur le coût en restant aussi fragile ne suffit plus** : une recherche doit dire où elle se
   place contre l'une et l'autre, sur les trois objectifs.

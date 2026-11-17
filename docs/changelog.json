@@ -4,6 +4,17 @@
   "intro": "Un réseau électrique en simulation : des lignes où le courant suit les lois de Kirchhoff, des centrales, une consommation, puis les pannes et leurs cascades. Un modèle pour comprendre, pas pour exploiter un vrai réseau.",
   "versions": [
     {
+      "version": "0.5.0",
+      "title": "Le faisceau sur le démarrage bat les deux règles (J5)",
+      "date": "17/11/2026",
+      "commits": ["f2d8bb4"],
+      "items": [
+        "Le faisceau choisit les groupes à démarrer la veille, sur la prévision : à chaque heure, il essaie l'heure de la liste, un groupe de plus parmi les huit suivants, un ou deux de moins, ou tout gardé, et note chaque plan sur sa journée complétée par la liste.",
+        "Contre la liste réglée, il coûte 1 % de moins sur les jours impairs (−12 à −14 k$ par jour), sans énergie non distribuée.",
+        "Noté sous la règle N-1, il laisse 7,6 heures par jour hors de la règle au lieu de 11,5 pour la liste N-1, surtout en rendant la nuit tenable ; il coûte 6 % de plus."
+      ]
+    },
+    {
       "version": "0.4.2",
       "title": "La liste N-1, la seconde règle à battre",
       "date": "17/11/2026",

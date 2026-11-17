@@ -79,7 +79,8 @@ publiée à 0 ou 2 fois, puis sans démarrage dans l'heure ([journee-hypotheses.
 **La liste réglée** : la réserve publiée, une marge de 30 % sur le vent et le soleil prévus, un maintien de 12 heures
 (`v0.3-h12`). Elle coûte **1 431 k$ par jour, 14,31 $/MWh**, sur les jours impairs, sans énergie non distribuée. C'est
 contre elle qu'une recherche se mesurera (P7, le faisceau sur le démarrage), sur les mêmes jours impairs, objectif par
-objectif. L'attente de P7, en **hypothèse** d'après de Mars : 1 à 3 % de moins.
+objectif. L'attente de P7, en **hypothèse** d'après de Mars : 1 à 3 % de moins. **Mesuré le 17/11**
+([journee-j5.md](journee-j5.md)) : le faisceau coûte 0,85 à 0,98 % de moins, en bas de l'attente.
 
 **La seconde, la liste N-1** (17/11, [journee-liste-n1.md](journee-liste-n1.md)) : les mêmes groupes démarrés, mais la
 répartition de chaque heure sous la règle N-1, ou à la moindre surcharge quand elle est intenable. Elle coûte
