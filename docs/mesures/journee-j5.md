@@ -114,6 +114,41 @@ sont mesurées sur ces jours mêmes : les deux sont rapportées, aucune n'est ch
   la note lexicographique.
 - **Les deux sont décidés sur la prévision** : sur les jours mal prévus, le faisceau peut perdre. Il perd 28 à 38
   jours sur 183 contre la liste réglée. C'est la question de P8 : chercher sur plusieurs mondes météo.
-- **Ses cascades ne sont pas mesurées** : le faisceau N-1 laisse 7,6 heures hors de la règle par jour au lieu de
-  11,5 ; que ses heures fragiles reculent comme sous la liste N-1 est à vérifier (`node scripts/rts-cascades.js 240
-  b8-v0.3-h12-n1 …`).
+- **Ses cascades** (§ 5) : 2 heures fragiles sur 240 au lieu de 31 pour la liste N-1. Le faisceau N-1 ne fait pas
+  que retirer des heures hors de la règle : il retire surtout celles où une perte part en cascade.
+
+## 5. Les cascades du faisceau N-1 : 2 heures fragiles sur 240
+
+`node scripts/rts-cascades.js 240 b8-v0.3-h12-n1 rts-cascades-faisceau-n1.json`, job
+`reseau-cascades-faisceau-n1`, 7 589 s (le faisceau replanifie la journée de chaque heure), aux mêmes 240 heures que
+[rts-cascades.md](rts-cascades.md) et [journee-liste-n1.md](journee-liste-n1.md) § 3
+([rts-cascades-faisceau-n1.json](rts-cascades-faisceau-n1.json)). Une heure est fragile quand une perte simple y coûte
+plus de 1 % de la consommation en moyenne.
+
+| | Liste réglée | Liste N-1 | Faisceau N-1 de 8 |
+|---|---|---|---|
+| Heures fragiles | 56 | 31 | **2** |
+| Heures qui tiennent la règle N-1 (α = 1) | non relevé | 138 | 171 |
+| Perte moyenne d'une perte simple, sur les 240 heures | 1,65 % | 1,29 % | **0,14 %** |
+| Perte moyenne d'une paire, sur les 240 heures | 2,19 % | 1,67 % | **0,28 %** |
+| Aux heures fragiles : paires sans perte (moins de 0,1 %) | 59,5 % | 50,8 % | 51,2 % |
+| Aux heures fragiles : paires qui perdent de 10 à 32 % | 32,5 % | 42,1 % | 33,2 % |
+
+Aucune cascade non stabilisée, aucune heure sans répartition.
+
+- **29 des 31 heures fragiles de la liste N-1 deviennent calmes** : une perte simple y coûtait de 1,1 à 21,7 % en
+  moyenne, elle y coûte de 0,02 à 0,42 %. 18 tiennent la règle ; les 11 autres restent un peu au-delà (α de 1,01 à
+  1,26 ; sous la liste N-1, α médian de 1,58 aux heures fragiles).
+- **Le soir aussi** : 23 de ces 29 heures sont de la 17e à la 23e heure, 5 la nuit, 1 à la 14e. Le soir reste hors de la
+  règle 60 à 75 % du temps (§ 3), mais d'un peu : ses pertes n'y font plus tomber de ligne en chaîne.
+- **Pourquoi celles-là** : la note somme l'excès α − 1 sur les heures, et les heures fragiles ont les plus grands α ;
+  c'est là que la note gagne le plus. Quels groupes le faisceau y démarre n'est pas relevé : l'**hypothèse** de
+  [journee-liste-n1.md](journee-liste-n1.md) § 3, des groupes qui déchargent la liaison 325-121 de la zone 3, reste à
+  vérifier.
+- **α ne suffit pas à dire qu'une heure est fragile** : aux heures calmes hors de la règle, α va jusqu'à 1,67, sous
+  la liste N-1 comme sous le faisceau. C'est la ligne surchargée qui compte, pas seulement combien.
+- **Les deux heures qui restent** ont le même α et la même perte que sous la liste N-1, à 0,01 % près : la 5e heure du
+  jour 141 (3 438 MW, α = 1,96, 15,5 % par perte simple) et la 15e heure du jour 238, la plus chargée de l'année
+  (7 961 MW, α = 1,62). Le faisceau n'y a pas changé la répartition ; **hypothèse** : aucun des douze successeurs ne
+  les rend tenables (à la pointe, les groupes sont sans doute presque tous en marche).
+- **Le prix reste celui du § 3** : +6,2 % sur la liste N-1, +9,5 % sur la liste réglée.
