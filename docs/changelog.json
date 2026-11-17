@@ -7,7 +7,7 @@
       "version": "0.4.1",
       "title": "La règle à battre, face à la règle N-1 et aux cascades",
       "date": "17/11/2026",
-      "commits": [],
+      "commits": ["55f0dd7", "a0024a5"],
       "items": [
         "Trois heures sur quatre de 2020, la liste réglée ne tient pas la règle N-1 : la perte d'une ligne en surchargerait une autre, de 43 % en médiane. Surtout le soir et la nuit, sur les deux liaisons de la zone 3 et sur les lignes qui évacuent le vent.",
         "Ses cascades, à 240 heures de l'année : des heures calmes, et 56 heures fragiles, le soir et la nuit, où une paire de pertes emporte souvent de 10 à 32 % de la consommation. La fragilité suit l'état du réseau, pas la charge : pas de queue de Dobson.",
