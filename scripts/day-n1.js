@@ -6,12 +6,14 @@ import { n1Overloads } from "../src/opf/security.js";
 import { loadRts, settingsOf } from "./rts-data.js";
 
 /**
- * `node scripts/day-n1.js [variant]`: the third objective of J4's rule, the overloads (docs/mesures/journee-n1.md).
+ * `node scripts/day-n1.js [variant] [out]`: the third objective of J4's rule, the overloads (docs/mesures/journee-n1.md).
  * Plays the variant (the tuned list, "v0.3-h12", by default) on the 366 days of 2020, and checks each hour's dispatch
  * against the N-1 rule (src/opf/security.js): which single loss of a branch would put which other past its rating.
- * The dispatch holds the intact grid's limits, not these. Writes docs/mesures/journee-n1.json, prints the tables.
+ * The dispatch holds the intact grid's limits, not these (unless the variant is an N-1 list, "-n1"). Writes
+ * docs/mesures/<out> (journee-n1.json by default), prints the tables.
  */
 const variant = process.argv[2] ?? "v0.3-h12";
+const out = process.argv[3] ?? "journee-n1.json";
 const settings = settingsOf(variant);
 const rts = loadRts();
 const factors = lodf(rts.grid);
@@ -47,4 +49,4 @@ console.log("| Non N-1 | " + byHour.map((list) => Math.round((100 * list.filter(
 const top = [...pairs.values()].sort((a, b) => b.hours - a.hours).slice(0, 12);
 console.log("| Perte → ligne surchargée | Heures | Pire charge |\n|---|---|---|");
 for (const p of top) console.log(`| ${p.key} | ${p.hours} | ${percent(p.worst)} |`);
-writeFileSync(new URL("../docs/mesures/journee-n1.json", import.meta.url), `${JSON.stringify({ variant, settings, hours, pairs: [...pairs.values()].sort((a, b) => b.hours - a.hours) })}\n`);
+writeFileSync(new URL(`../docs/mesures/${out}`, import.meta.url), `${JSON.stringify({ variant, settings, hours, pairs: [...pairs.values()].sort((a, b) => b.hours - a.hours) })}\n`);

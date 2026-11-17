@@ -12,10 +12,15 @@
  * What a day measures, apart and never blended (CLAUDE.md): its **cost** ($: the dispatch of each hour, the units'
  * first points at their average cost included, plus every start, planned or fast), its **energy not served** (MWh),
  * the **energy curtailed** (MWh: wind, sun and hydro). The dispatch holds every line within its limit: the overloads
- * of the intact grid are none by construction, and the N-1 rule is not asked of it here.
+ * of the intact grid are none by construction.
+ *
+ * **The N-1 list** (Sami, 17/11; with `security`): each hour's dispatch is that past the N-1 limit of the J3
+ * (src/opf/margin.js), in Sami's order: the least load shed, then the least worst loading after a single loss (1 when
+ * the rule holds), then the least cost. Without it, the N-1 rule is not asked of the dispatch.
  */
 
 import { solveDispatch } from "../opf/dispatch.js";
+import { solveMargin } from "../opf/margin.js";
 import { meritOrder, startCost } from "./commit.js";
 import { hourGrid, hourOf } from "./rts.js";
 
@@ -26,11 +31,12 @@ const SHED_TOLERANCE = 1e-6;
 
 /**
  * One hour's dispatch under the units on: its cost, the load it sheds, the energy it curtails; and, for the measures
- * that look at the state itself (the N-1 rule, the cascades), the hour's grid and its dispatch.
+ * that look at the state itself (the N-1 rule, the cascades), the hour's grid and its dispatch. With `security`, the
+ * dispatch past the N-1 limit, and its `margin`, the worst loading after a loss.
  */
-export function dispatchHour(day, hour, /** @type {Uint8Array} */ on) {
+export function dispatchHour(day, hour, /** @type {Uint8Array} */ on, { security = false } = {}) {
   const grid = hourGrid(day, hour, on);
-  const dispatch = solveDispatch(grid, { shedding: true });
+  const dispatch = security ? solveMargin(grid) : solveDispatch(grid, { shedding: true });
   if (dispatch.status !== "optimal") return { status: dispatch.status, cost: NaN, shed: NaN, curtailed: NaN, grid, dispatch };
   const used = grid.renewable.reduce((sum, renewable, g) => sum + (renewable ? dispatch.generation[g] : 0), 0);
   return { status: "optimal", cost: dispatch.cost, shed: dispatch.shedTotal ?? 0, curtailed: hour.available.reduce((a, b) => a + b, 0) - used, grid, dispatch };
@@ -44,7 +50,7 @@ function playHour(play, /** @type {Uint8Array} */ planned, /** @type {number} */
   const { day, order, state } = play;
   const hour = hourOf(day, "realTime", h);
   const on = Uint8Array.from(planned, (p, u) => (p || (state.on[u] && state.fast[u] && state.since[u] < day.thermal[u].minUp) ? 1 : 0));
-  let result = dispatchHour(day, hour, on);
+  let result = dispatchHour(day, hour, on, play);
   const free = fastFree(day, order, on, state);
   while (result.status === "optimal" && result.shed > SHED_TOLERANCE && free.length > 0) {
     let added = 0;
@@ -52,7 +58,7 @@ function playHour(play, /** @type {Uint8Array} */ planned, /** @type {number} */
       const u = free.shift();
       [on[u], added] = [1, added + day.thermal[u].pmax];
     }
-    result = dispatchHour(day, hour, on);
+    result = dispatchHour(day, hour, on, play);
   }
   return { ...result, on, load: hour.load.reduce((a, b) => a + b, 0) };
 }
@@ -84,13 +90,13 @@ function advance(play, /** @type {Uint8Array} */ on, /** @type {Uint8Array} */ p
 }
 
 /**
- * A day under a commitment (src/day/commit.js), with the fast start unless `fastStart` is false: each hour played,
- * and the day's totals. `failed` counts the hours no dispatch could solve, even shedding (none expected).
+ * A day under a commitment (src/day/commit.js), with the fast start unless `fastStart` is false, each hour's dispatch
+ * under the N-1 rule with `security` (the N-1 list): each hour played, and the day's totals. `failed` counts the hours no dispatch could solve, even shedding (none expected).
  */
-export function playDay(day, /** @type {Commitment} */ commitment, { fastStart = true } = {}) {
+export function playDay(day, /** @type {Commitment} */ commitment, { fastStart = true, security = false } = {}) {
   const n = day.thermal.length;
   const state = { on: new Uint8Array(n), since: new Float64Array(n).fill(Infinity), fast: new Uint8Array(n) };
-  const play = { day, order: fastStart ? meritOrder(day.thermal) : [], state, hour: 0 };
+  const play = { day, order: fastStart ? meritOrder(day.thermal) : [], state, hour: 0, security };
   const totals = { startCosts: 0, starts: 0, fastStarts: 0 };
   const hours = commitment.committed.map((planned, h) => {
     play.hour = h;

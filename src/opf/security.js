@@ -58,3 +58,18 @@ export function securityRow(/** @type {import("./problem.js").DispatchModel} */ 
   const bus = Float64Array.from({ length: n }, (_, i) => side * (transfer[l * n + i] + share * transfer[c * n + i]));
   return /** @type {LimitRow} */ ({ branch: l, outage: c, side, bus, offset: side * (offset[l] + share * offset[c]), limit: grid.rate[l] });
 }
+
+/**
+ * The worst loading after a single loss, for the flows of a state: the highest |F(l) + LODF(l, c) · F(c)| / rate over
+ * the contingencies c and the branches l in service (0 without any). At most 1: the state is N-1 secure.
+ */
+export function worstAfterLoss(/** @type {Grid} */ grid, /** @type {Float64Array} */ flow, /** @type {Float64Array} */ factors) {
+  const m = grid.branchCount;
+  let worst = 0;
+  for (const c of contingencies(grid, factors)) {
+    for (let l = 0; l < m; l += 1) {
+      if (l !== c && grid.inService[l] && grid.rate[l] > 0) worst = Math.max(worst, Math.abs(flow[l] + factors[l * m + c] * flow[c]) / grid.rate[l]);
+    }
+  }
+  return worst;
+}

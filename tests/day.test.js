@@ -3,6 +3,8 @@ import assert from "node:assert/strict";
 import { areaShares, createDay, hourGrid, hourOf, reserveOf } from "../src/day/rts.js";
 import { meritOrder, needsOf, priorityCommit, startCost } from "../src/day/commit.js";
 import { playDay } from "../src/day/day.js";
+import { lodf } from "../src/flow/sensitivity.js";
+import { n1Overloads, worstAfterLoss } from "../src/opf/security.js";
 import { rts } from "./cases.js";
 
 const sum = (/** @type {ArrayLike<number>} */ values) => Array.prototype.reduce.call(values, (a, b) => a + b, 0);
@@ -119,6 +121,27 @@ describe("a day played", () => {
   });
 });
 
+describe("the N-1 list (src/day/day.js, security)", () => {
+  it("holds the rule when it can on day 117, keeps the worst loading after a loss least when it cannot, and pays for it", () => {
+    const { data, grid, series } = rts();
+    const factors = lodf(grid);
+    const day = createDay(grid, data, series, 117);
+    const commitment = priorityCommit(day, { reserve: 1, renewable: 0.3, hold: 12 });
+    const [plain, secure] = [false, true].map((security) => playDay(day, commitment, { security }));
+    assert.equal(secure.unserved, 0);
+    secure.hours.forEach((hour, h) => {
+      const { margin, flows } = hour.dispatch;
+      const worst = worstAfterLoss(hour.grid, flows.flow, factors);
+      assert.ok(margin >= 1 && worst <= margin + 1e-5, `heure ${h}`);
+      assert.equal(n1Overloads(hour.grid, flows.flow, factors, { tolerance: 1e-5 }).length === 0, margin <= 1 + 1e-6, `heure ${h}`);
+      assert.ok(hour.cost >= plain.hours[h].cost - 1e-3 * Math.abs(plain.hours[h].cost), `heure ${h}`);
+    });
+    assert.ok(secure.hours.filter((hour) => hour.dispatch.margin <= 1 + 1e-6).length >= 8);
+    assert.ok(secure.hours[17].dispatch.margin > 1.5);
+    assert.ok(worstAfterLoss(plain.hours[17].grid, plain.hours[17].dispatch.flows.flow, factors) > secure.hours[17].dispatch.margin);
+  });
+});
+
 describe("the shares of a grid's areas", () => {
   it("are each bus's load over its area's", () => {
     const shares = areaShares({ load: Float64Array.from([10, 30, 5, 0]) }, [1, 1, 2, 2]);
@@ -127,10 +150,11 @@ describe("the shares of a grid's areas", () => {
 });
 
 describe("the names of the rule's variants (scripts/rts-data.js)", () => {
-  it("read the reserve, the margin, the hold and the fast start", async () => {
+  it("read the reserve, the margin, the hold, the fast start and the N-1 rule", async () => {
     const { settingsOf } = await import("../scripts/rts-data.js");
-    assert.deepEqual(settingsOf("v0.3-h12"), { reserve: 1, renewable: 0.3, hold: 12, fastStart: true });
-    assert.deepEqual(settingsOf("r2-v0-h0-nofast"), { reserve: 2, renewable: 0, hold: 0, fastStart: false });
+    assert.deepEqual(settingsOf("v0.3-h12"), { reserve: 1, renewable: 0.3, hold: 12, fastStart: true, security: false });
+    assert.deepEqual(settingsOf("r2-v0-h0-nofast"), { reserve: 2, renewable: 0, hold: 0, fastStart: false, security: false });
+    assert.deepEqual(settingsOf("v0.3-h12-n1"), { reserve: 1, renewable: 0.3, hold: 12, fastStart: true, security: true });
     assert.throws(() => settingsOf("v0.3"));
   });
 });

@@ -6,14 +6,16 @@ import { playDay } from "../src/day/day.js";
 import { loadRts, settingsOf } from "./rts-data.js";
 
 /**
- * `node scripts/rts-cascades.js [count] [variant]`: the cascades on RTS-GMLC (docs/mesures/rts-cascades.md), the
+ * `node scripts/rts-cascades.js [count] [variant] [out]`: the cascades on RTS-GMLC (docs/mesures/rts-cascades.md), the
  * question of P3 on the main grid. `count` hours (120 by default) spread over the year's loads, from the least to the
  * most loaded (one at each quantile); at each, the state the variant's day leaves (the tuned list, "v0.3-h12"), then
  * every single loss of a branch and every pair, each run to the end of its cascade under Grid2Op's rule. A blackout's
- * size is the share of the demand shed beyond what the dispatch already sheds. Writes docs/mesures/rts-cascades.json.
+ * size is the share of the demand shed beyond what the dispatch already sheds. Writes docs/mesures/<out>
+ * (rts-cascades.json by default).
  */
 const count = Number(process.argv[2] ?? 120);
 const variant = process.argv[3] ?? "v0.3-h12";
+const out = process.argv[4] ?? "rts-cascades.json";
 const settings = settingsOf(variant);
 const rts = loadRts();
 const total = (/** @type {number} */ h) => ["1", "2", "3"].reduce((sum, a) => sum + rts.series.realTime.load[a][h], 0);
@@ -49,4 +51,4 @@ for (const r of results.filter((_, i) => i % 10 === 9 || i === 0)) {
   console.log(`| ${r.load.toFixed(0)} | ${percent(r.single.mean)}, ${percent(over(r.single, 0.1))} | ${percent(r.pair.mean)}, ${percent(over(r.pair, 0.01))}, ${percent(over(r.pair, 0.1))} | ${slope(r.pair.shareSlope)} |`);
 }
 console.log(`\nCascades non stabilisées : ${results.reduce((s, r) => s + r.single.unsettled + r.pair.unsettled, 0)}`);
-writeFileSync(new URL("../docs/mesures/rts-cascades.json", import.meta.url), `${JSON.stringify({ variant, settings, count, results })}\n`);
+writeFileSync(new URL(`../docs/mesures/${out}`, import.meta.url), `${JSON.stringify({ variant, settings, count, results })}\n`);
