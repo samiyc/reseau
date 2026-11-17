@@ -46,6 +46,11 @@ de deux fois sa limite, une ligne tombe aussitôt. Si c'est elle, la perte d'une
 et la perte de 10 à 32 % serait le déséquilibre d'une zone coupée. **Hypothèse** : le script ne garde pas les lignes
 tombées de chaque cascade, et ce lien n'est pas vérifié.
 
+**Vérifié en partie le 17/11** ([journee-liste-n1.md](journee-liste-n1.md) § 3, `scripts/rts-cascade-causes.js`) :
+dans 1 401 des 1 911 pertes simples qui emportent plus de 10 % aux heures fragiles (73 %), la première ligne à tomber
+est bien la liaison 325-121, et le réseau finit le plus souvent en deux îlots. Mais les pertes de départ sont variées
+(315-321, 316-317, 323-325, 215-221…) : ce n'est pas seulement la perte de l'autre liaison et le seuil de 200 %.
+
 ## 3. Ce que ça dit
 
 - **Sur RTS-GMLC, le danger d'une cascade dépend de l'état, pas de la charge** : de ce que la répartition fait passer
@@ -54,6 +59,6 @@ tombées de chaque cascade, et ce lien n'est pas vérifié.
 - **La queue de Dobson ne se voit pas** sous la cascade déterministe : on a des heures calmes et des heures fragiles,
   et dans les heures fragiles du tout ou rien. La question 5 du cadrage (déterministe ou probabiliste) reste ouverte ;
   une cascade probabiliste adoucirait sans doute ce tout ou rien. C'est une hypothèse.
-- **Pour une recherche** (J5 et après) : une répartition qui garde les liaisons entre zones sous la moitié de leur
-  seuil dur rendrait sans doute calmes la plupart des heures fragiles. C'est le troisième objectif, les surcharges, et
-  la règle à battre y est mauvaise.
+- **Pour une recherche** (J5 et après) : la répartition N-1 (la liste N-1) rend calmes 25 des 56 heures fragiles ; les
+  31 autres ne tiennent pas la règle avec les groupes démarrés ([journee-liste-n1.md](journee-liste-n1.md)). Le reste
+  est l'affaire du démarrage.

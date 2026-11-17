@@ -47,8 +47,9 @@ limites du réseau intact, pas celles d'après une perte. Le détail est dans [j
   coût mesuré, mais trois heures sur quatre hors de la règle N-1. Une recherche qui la bat sur le coût devra au moins
   ne pas faire pire ici.
 - **Tenir la règle N-1 coûterait** : sous leur limite N-1, la répartition N-1 coûte de 2 à 57 % de plus sur les
-  IEEE 14 et 30, de 4 à 16 % sur le 118 ([opf-j3.md](opf-j3.md)) ; sur RTS-GMLC, ce n'est pas encore mesuré. Il faudrait aussi savoir si elle est tenable à
-  chaque heure, avec les groupes que la liste a démarrés.
-- **Une hypothèse du J4 à revoir** : la répartition de chaque heure ne demande que le réseau intact. Une liste « N-1 »
-  (la répartition de chaque heure sous la règle, au moindre délestage puis à la moindre surcharge, comme au J3) serait
-  une seconde règle à battre, plus chère et plus sûre. C'est une question pour Sami.
+  IEEE 14 et 30, de 4 à 16 % sur le 118 ([opf-j3.md](opf-j3.md)) ; sur RTS-GMLC, avec les groupes de la liste réglée,
+  3,4 % pour la tenir là où elle est tenable ([journee-liste-n1.md](journee-liste-n1.md)).
+- **Une hypothèse du J4 à revoir** : la répartition de chaque heure ne demande que le réseau intact. **Fait le 17/11**
+  (Sami) : la liste N-1, la répartition de chaque heure sous la règle, au moindre délestage puis à la moindre
+  surcharge, est la seconde règle à battre. Elle coûte 3,4 % de plus, et 47 % des heures restent hors de la règle :
+  les groupes démarrés ne permettent pas mieux ([journee-liste-n1.md](journee-liste-n1.md)).

@@ -81,6 +81,12 @@ publiée à 0 ou 2 fois, puis sans démarrage dans l'heure ([journee-hypotheses.
 contre elle qu'une recherche se mesurera (P7, le faisceau sur le démarrage), sur les mêmes jours impairs, objectif par
 objectif. L'attente de P7, en **hypothèse** d'après de Mars : 1 à 3 % de moins.
 
+**La seconde, la liste N-1** (17/11, [journee-liste-n1.md](journee-liste-n1.md)) : les mêmes groupes démarrés, mais la
+répartition de chaque heure sous la règle N-1, ou à la moindre surcharge quand elle est intenable. Elle coûte
+**1 476 k$ par jour** sur les jours impairs (+3,2 %), sans énergie non distribuée, avec 11,5 heures hors N-1 par jour
+au lieu de 17,6.
+
 Ce que le modèle ne voit pas encore, et qui pourrait changer le réglage : les pannes de groupes (la raison d'être de
-la réserve, P8), la règle N-1 dans la répartition de chaque heure (trois heures sur quatre ne la tiennent pas : [journee-n1.md](journee-n1.md)), la liaison à courant continu, le stockage, et
+la réserve, P8), la règle N-1 dans le démarrage (la liste N-1 ne la tient pas encore à près d'une heure sur deux :
+[journee-liste-n1.md](journee-liste-n1.md)), la liaison à courant continu, le stockage, et
 l'histoire d'un jour à l'autre (chaque jour part sans passé).

@@ -215,6 +215,11 @@ distribuée** (MWh), l'**énergie écrêtée** (MWh).
 une obligation, le modèle n'ayant pas encore de panne de groupe), une marge de 30 % sur le vent et le soleil prévus,
 un maintien de 12 heures. Elle coûte 7,6 % de moins que la liste simple sur les jours impairs de 2020.
 
+**La liste N-1** (Sami, 17/11 ; `playDay(…, { security: true })`, variante `-n1`) : les mêmes groupes démarrés, et à
+chaque heure la répartition au-delà de la limite N-1 (§ 5 : le moindre délestage, puis la moindre pire charge après
+une perte, puis le moindre coût). La seconde règle à battre : 3,2 % plus chère sur les jours impairs, 11,5 heures hors
+N-1 par jour au lieu de 17,6 ([mesures/journee-liste-n1.md](mesures/journee-liste-n1.md)).
+
 **Ce que disent les données** (vérifié le 15/11) :
 
 - **La consommation réalisée est la prévision fois une constante par zone**, à l'heure : 0,9198, 0,9981 et 0,9943, à

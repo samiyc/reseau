@@ -101,6 +101,8 @@ sous 0,7 fois la charge.
 marge de 30 % sur le vent et le soleil prévus, un maintien de 12 heures) coûte 7,6 % de moins que la liste simple,
 IC [−8,6 ; −6,7 %], sur les 183 jours impairs, sans énergie non distribuée. Les turbines démarrent dans l'heure (Sami).
 Mais trois heures sur quatre ne tiennent pas la règle N-1 ([../mesures/journee-n1.md](../mesures/journee-n1.md)).
+**La liste N-1** (17/11, [../mesures/journee-liste-n1.md](../mesures/journee-liste-n1.md)), la seconde règle à battre :
+la répartition sous la règle N-1, +3,2 %, et encore 47 % des heures hors de la règle, faute des bons groupes démarrés.
 
 - **Le modèle** : les 73 groupes thermiques avec leurs Pmin, rampes, durées minimales et coûts de démarrage ; le
   renouvelable écrêtable ; les séries de 2020.
@@ -121,6 +123,8 @@ Mais trois heures sur quatre ne tiennent pas la règle N-1 ([../mesures/journee-
 - **La note** : lexicographique ou pondérée, selon la réponse de Sami ([questions.md](questions.md), question 4).
 - **Ce qu'on attend**, en **hypothèse** : 1 à 3 % de coût en moins à énergie non distribuée égale, d'après de Mars.
   Le faisceau voit la prévision seule ; il peut perdre sur les jours mal prévus.
+- **Contre les deux règles** : la liste réglée (le coût) et la liste N-1 (les surcharges), objectif par objectif. Un
+  faisceau noté sous la répartition N-1 pourrait démarrer les groupes qui rendent le soir tenable (**hypothèse**).
 
 ## P8. L'ISMCTS sur des mondes météo (J5-J6)
 
