@@ -54,7 +54,27 @@ Chaque variante contre la liste simple (la réserve publiée, ni marge sur le re
   5,3 GWh pour la liste réglée, sur 48 GWh disponibles en moyenne. Des groupes en plus tournent à leur minimum et
   prennent la place du renouvelable.
 
-## 3. La règle à battre
+## 3. Le prix des hypothèses
+
+Mesuré le 17/11 par `node scripts/day-measure.js --days all --out journee-hypotheses.json …` (job
+`reseau-hypotheses-j4-2`, 350 s), sur les **366 jours** de 2020 : la liste réglée, puis la même avec la réserve
+publiée à 0 ou 2 fois, puis sans démarrage dans l'heure ([journee-hypotheses.json](journee-hypotheses.json)).
+
+| Variante | Coût par jour | Écart, IC 95 % | Énergie non distribuée | Démarrages (dans l'heure) |
+|---|---|---|---|---|
+| liste réglée | 1 414 k$ | | aucune | 8,4 (2,4) |
+| sans réserve publiée | 1 407 k$ | −6,8 k$ [−10,5 ; −3,2], −0,5 % | aucune | 10,1 (4,2) |
+| deux fois la réserve | 1 429 k$ | +14,9 k$ [+11,4 ; +18,4], +1,1 % | aucune | 7,7 (1,4) |
+| sans démarrage dans l'heure | 1 393 k$ | −20,5 k$ [−25,8 ; −15,3], −1,4 % | 217 MWh par jour, 131 jours | 6,0 (0) |
+
+- **La réserve publiée coûte 0,5 %** : sans elle, les turbines démarrent plus souvent dans l'heure, mais pas assez
+  pour la payer, et le modèle ne délesterait pas plus. Il ne connaît pas encore les pannes de groupe, qui sont sa
+  raison d'être : on la garde (**hypothèse**).
+- **Sans démarrage dans l'heure, la liste délesterait un jour sur trois**, 217 MWh par jour en moyenne (79 GWh dans
+  l'année). Elle coûte moins parce que l'énergie non distribuée ne se paie pas : dans l'ordre de Sami, elle passe
+  derrière toutes les autres.
+
+## 4. La règle à battre
 
 **La liste réglée** : la réserve publiée, une marge de 30 % sur le vent et le soleil prévus, un maintien de 12 heures
 (`v0.3-h12`). Elle coûte **1 431 k$ par jour, 14,31 $/MWh**, sur les jours impairs, sans énergie non distribuée. C'est
@@ -62,5 +82,5 @@ contre elle qu'une recherche se mesurera (P7, le faisceau sur le démarrage), su
 objectif. L'attente de P7, en **hypothèse** d'après de Mars : 1 à 3 % de moins.
 
 Ce que le modèle ne voit pas encore, et qui pourrait changer le réglage : les pannes de groupes (la raison d'être de
-la réserve, P8), la règle N-1 dans la répartition de chaque heure, la liaison à courant continu, le stockage, et
+la réserve, P8), la règle N-1 dans la répartition de chaque heure (trois heures sur quatre ne la tiennent pas : [journee-n1.md](journee-n1.md)), la liaison à courant continu, le stockage, et
 l'histoire d'un jour à l'autre (chaque jour part sans passé).

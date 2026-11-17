@@ -48,6 +48,6 @@ console.log("| Variante | Coût par jour | $/MWh | Écart à la référence, IC 
 console.log("|---|---|---|---|---|---|---|---|");
 for (const s of summary) {
   const gap = s.vsFirst.cost;
-  console.log(`| ${s.variant} | ${k(s.cost)} | ${s.perMWh.toFixed(2).replace(".", ",")} | ${k(gap.mean)} [${k(gap.low)} ; ${k(gap.high)}] | ${gap.losses} sur ${gap.n} | ${s.unserved.toFixed(2).replace(".", ",")} MWh, ${s.unservedDays} jours | ${s.starts.toFixed(1).replace(".", ",")} (${s.fastStarts.toFixed(1).replace(".", ",")}) | ${(s.curtailed / 1000).toFixed(2)} GWh |`);
+  console.log(`| ${s.variant} | ${k(s.cost)} | ${s.perMWh.toFixed(2).replace(".", ",")} | ${k(gap.mean)} [${k(gap.low)} ; ${k(gap.high)}] | ${gap.losses} sur ${gap.n} | ${s.unserved.toFixed(2).replace(".", ",")} MWh, ${s.unservedDays} jours | ${s.starts.toFixed(1).replace(".", ",")} (${s.fastStarts.toFixed(1).replace(".", ",")}) | ${(s.curtailed / 1000).toFixed(2).replace(".", ",")} GWh |`);
 }
 writeFileSync(new URL(`../docs/mesures/${options.out}`, import.meta.url), `${JSON.stringify({ days, summary, results }, null, 1)}\n`);

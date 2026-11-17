@@ -56,7 +56,9 @@ Sami, [../mesures/cascade-n1.md](../mesures/cascade-n1.md)) : plus aucune perte 
 les paires perdent 0,1 à 1 % ; au-delà, une falaise, que la répartition à la moindre charge après une perte (le
 choix suivant de Sami) change en pente sur les IEEE 30 et 118. **La queue** ([../mesures/cascade-queue.md](../mesures/cascade-queue.md),
 15/11) : sur le 118, autour de sa limite N-1, une densité des tailles de pente −1,1 à −1,7, dans la plage de Dobson ;
-au-delà, du tout ou rien. Les IEEE 14 et 30 sont trop petits pour une queue.
+au-delà, du tout ou rien. Les IEEE 14 et 30 sont trop petits pour une queue. **Sur RTS-GMLC**
+([../mesures/rts-cascades.md](../mesures/rts-cascades.md), 17/11) : sous la liste réglée, des heures calmes et des
+heures fragiles (56 sur 240, le soir et la nuit), sans lien avec la charge ; aux heures fragiles, du tout ou rien.
 
 - **La règle** : celle de Grid2Op ([physique.md](physique.md) § 5), lue dans son code : au-delà de 2 fois sa limite,
   une ligne tombe aussitôt ; au-delà de sa limite, à son 3e pas d'affilée. Après chaque chute, on recalcule ; un
@@ -98,6 +100,7 @@ sous 0,7 fois la charge.
 **Faite le 15/11** ([../mesures/journee-j4.md](../mesures/journee-j4.md)) : la liste réglée (la réserve publiée, une
 marge de 30 % sur le vent et le soleil prévus, un maintien de 12 heures) coûte 7,6 % de moins que la liste simple,
 IC [−8,6 ; −6,7 %], sur les 183 jours impairs, sans énergie non distribuée. Les turbines démarrent dans l'heure (Sami).
+Mais trois heures sur quatre ne tiennent pas la règle N-1 ([../mesures/journee-n1.md](../mesures/journee-n1.md)).
 
 - **Le modèle** : les 73 groupes thermiques avec leurs Pmin, rampes, durées minimales et coûts de démarrage ; le
   renouvelable écrêtable ; les séries de 2020.
