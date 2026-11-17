@@ -7,7 +7,7 @@
       "version": "0.4.2",
       "title": "La liste N-1, la seconde règle à battre",
       "date": "17/11/2026",
-      "commits": ["8dd1382", "5da6785"],
+      "commits": ["8dd1382", "5da6785", "d341d93"],
       "items": [
         "La liste N-1 garde les groupes démarrés de la liste réglée, mais répartit chaque heure sous la règle N-1, ou à la moindre surcharge quand elle est intenable. Elle coûte 3,2 % de plus sur les jours impairs, sans énergie non distribuée.",
         "Elle ramène 2 306 heures de 2020 sous la règle ; 47 % des heures restent hors de la règle, surtout le soir : les groupes démarrés ne permettent pas mieux.",
