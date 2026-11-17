@@ -140,6 +140,14 @@ describe("the N-1 list (src/day/day.js, security)", () => {
     assert.ok(secure.hours[17].dispatch.margin > 1.5);
     assert.ok(worstAfterLoss(plain.hours[17].grid, plain.hours[17].dispatch.flows.flow, factors) > secure.hours[17].dispatch.margin);
   });
+
+  it("solves every hour of day 6, whose 22nd took qp more than its 200 proximal rounds", () => {
+    const { data, grid, series } = rts();
+    const day = createDay(grid, data, series, 6);
+    const played = playDay(day, priorityCommit(day, { reserve: 1, renewable: 0.3, hold: 12 }), { security: true });
+    assert.equal(played.failed, 0);
+    assert.ok(played.hours[21].dispatch.margin > 1);
+  });
 });
 
 describe("the shares of a grid's areas", () => {

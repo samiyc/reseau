@@ -71,16 +71,16 @@ const shifted = (active, /** @type {number} */ from, /** @type {number} */ added
 
 /** One stage: solve, add the limits after a loss the dispatch breaks past α, solve again, until none. */
 function tighten(context, stage, warm) {
-  const { model, qp, factors, maxPasses } = context;
+  const { model, qp, factors, maxPasses, maxRounds } = context;
   const n = model.columns.bus.length;
-  let [result, passes, left] = [qp.solve(marginProgram(model, stage), { warm }), 1, 0];
+  let [result, passes, left] = [qp.solve(marginProgram(model, stage), { warm, maxRounds }), 1, 0];
   while (result.status === "optimal") {
     const overloads = n1Overloads(model.grid, flowsOf(model, result.x), factors, { tolerance: result.x[n] - 1 + TOLERANCE });
     left = overloads.length;
     if (left === 0 || passes >= maxPasses) break;
     const before = model.rows.length;
     model.rows.push(...overloads.map((overload) => securityRow(model, factors, overload)));
-    result = qp.solve(marginProgram(model, stage), { warm: shifted(result.active, before, overloads.length) });
+    result = qp.solve(marginProgram(model, stage), { warm: shifted(result.active, before, overloads.length), maxRounds });
     passes += 1;
   }
   return { result, passes, left };
@@ -88,12 +88,14 @@ function tighten(context, stage, warm) {
 
 /**
  * The dispatch past the N-1 limit, at a load factor: a `Dispatch` (src/opf/dispatch.js) and its `margin`, the worst
- * loading after a single loss (1: the rule holds). Its prices are those of the last stage, α held.
+ * loading after a single loss (1: the rule holds). Its prices are those of the last stage, α held. The first stage is
+ * a linear programme, which `qp` solves by proximal rounds: 200, its default, left 8 hours of RTS-GMLC's year
+ * unconverged under the N-1 list (17/11), 1 000 none.
  */
-export function solveMargin(/** @type {Grid} */ grid, { loadFactor = 1, maxPasses = 50 } = {}) {
+export function solveMargin(/** @type {Grid} */ grid, { loadFactor = 1, maxPasses = 50, maxRounds = 1000 } = {}) {
   const { model, cap, failed } = startOf(grid, loadFactor);
   if (failed) return { ...outcomeOf(model, failed, { passes: 1, left: null }), margin: NaN };
-  const context = { model, qp: createQp(model.columns.bus.length + 1), factors: lodf(grid, model.transfer), maxPasses };
+  const context = { model, qp: createQp(model.columns.bus.length + 1), factors: lodf(grid, model.transfer), maxPasses, maxRounds };
   const least = tighten(context, { objective: "margin", cap, alphaCap: Infinity }, undefined);
   if (least.result.status !== "optimal") return { ...outcomeOf(model, least.result, least), margin: NaN };
   const margin = least.result.x[model.columns.bus.length];
