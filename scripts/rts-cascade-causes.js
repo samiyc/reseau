@@ -1,4 +1,5 @@
 import { readFileSync } from "node:fs";
+import { progress } from "mcts-commun/trace.js";
 import { runCascade } from "../src/cascade/cascade.js";
 import { planDay } from "../src/day/beam.js";
 import { playDay } from "../src/day/day.js";
@@ -20,7 +21,8 @@ const fragile = JSON.parse(readFileSync(new URL(`../docs/mesures/${file}`, impor
 const tally = { starts: new Map(), first: new Map(), islands: new Map() };
 const count = (/** @type {Map<string, number>} */ map, /** @type {string} */ key) => map.set(key, (map.get(key) ?? 0) + 1);
 let large = 0;
-for (const { yearHour } of fragile) {
+for (const [i, { yearHour }] of fragile.entries()) {
+  progress("rts-cascade-causes", i + 1, fragile.length, { unit: "heure" });
   const day = rts.day(Math.floor(yearHour / 24));
   const { grid, dispatch } = playDay(day, planDay(day, settings), settings).hours[yearHour % 24];
   const setpoints = { generation: dispatch.generation, shed: dispatch.shed, cost: dispatch.cost, prices: null, secure: false, margin: null };

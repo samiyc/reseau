@@ -1,4 +1,5 @@
 import { writeFileSync } from "node:fs";
+import { progress } from "mcts-commun/trace.js";
 import { planDay } from "../src/day/beam.js";
 import { playDay } from "../src/day/day.js";
 import { lodf } from "../src/flow/sensitivity.js";
@@ -24,6 +25,7 @@ const pairs = new Map();
 for (let index = 0; index < 366; index += 1) {
   const day = rts.day(index);
   const played = playDay(day, planDay(day, settings), settings);
+  progress("day-n1", index + 1, 366, { unit: "jour" });
   played.hours.forEach((hour, h) => {
     const overloads = hour.status === "optimal" ? n1Overloads(hour.grid, hour.dispatch.flows.flow, factors) : [];
     const worst = overloads.reduce((max, o) => Math.max(max, o.loading), 0);

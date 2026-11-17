@@ -1,6 +1,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { parseArgs } from "node:util";
 import { paired } from "mcts-commun/measure.js";
+import { progress } from "mcts-commun/trace.js";
 import { planDay } from "../src/day/beam.js";
 import { playDay } from "../src/day/day.js";
 import { lodf } from "../src/flow/sensitivity.js";
@@ -39,7 +40,7 @@ function play(/** @type {string[]} */ variants, /** @type {number[]} */ days) {
   const rts = loadRts();
   const factors = lodf(rts.grid);
   const results = Object.fromEntries(variants.map((variant) => [variant, []]));
-  for (const index of days) {
+  for (const [i, index] of days.entries()) {
     const day = rts.day(index);
     for (const variant of variants) {
       const settings = settingsOf(variant);
@@ -48,6 +49,7 @@ function play(/** @type {string[]} */ variants, /** @type {number[]} */ days) {
       const worst = r.hours.map((hour) => (hour.status === "optimal" ? Number(worstAfterLoss(hour.grid, hour.dispatch.flows.flow, factors).toFixed(4)) : NaN));
       results[variant].push({ day: index, insecure: worst.filter(broken).length, worst, cost: r.cost, unserved: r.unserved, curtailed: r.curtailed, starts: r.starts, fastStarts: r.fastStarts, startCosts: r.startCosts, load: r.load, failed: r.failed, fromRule: "fromRule" in commitment ? commitment.fromRule : null, forecast: "forecast" in commitment ? commitment.forecast : null });
     }
+    progress("day-measure", i + 1, days.length, { unit: "jour" });
   }
   return results;
 }

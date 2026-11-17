@@ -1,4 +1,5 @@
 import { writeFileSync } from "node:fs";
+import { progress } from "mcts-commun/trace.js";
 import { runCascade } from "../src/cascade/cascade.js";
 import { allPairs, tailOf } from "../src/cascade/tail.js";
 import { planDay } from "../src/day/beam.js";
@@ -43,7 +44,11 @@ function measureHour(/** @type {number} */ yearHour) {
   return { yearHour, load: hour.load, margin, single: run(events.single), pair: run(events.pair) };
 }
 
-const measured = chosen.map(measureHour);
+const measured = chosen.map((yearHour, i) => {
+  const result = measureHour(yearHour);
+  progress("rts-cascades", i + 1, count, { unit: "heure" });
+  return result;
+});
 const results = measured.filter((r) => r !== null);
 const percent = (/** @type {number} */ v) => `${(100 * v).toFixed(1).replace(".", ",")} %`;
 const slope = (/** @type {number | null} */ v) => (v === null ? "—" : v.toFixed(2).replace(".", ","));
